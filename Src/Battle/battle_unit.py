@@ -78,12 +78,13 @@ class BattleUnit:
         Calculate base mobility from training.
 
         Returns:
-            Mobility value (0-6)
+            Mobility value (1-6), minimum 1 so all units can move
         """
         # Max 6 mobility at 100 training
         if self.training >= 100:
             return self.MAX_MOBILITY
-        return int(self.training / 16.67)  # 100/6 ≈ 16.67
+        # Minimum 1 mobility so even untrained units can move
+        return max(1, int(self.training / 16.67))  # 100/6 ≈ 16.67
 
     def get_effective_attack(self) -> float:
         """
@@ -199,14 +200,17 @@ class BattleUnit:
 
     def end_turn(self):
         """End turn, reset flags."""
+        # Check if unit rested (didn't move or attack) BEFORE resetting flags
+        unit_rested = not self.has_moved and not self.has_attacked
+
         self.has_moved = False
         self.has_attacked = False
         if self.state == UnitState.ENGAGED:
             self.state = UnitState.ACTIVE
 
-        # Recover 1 mobility if rested (didn't move or attack)
-        if not self.has_moved and not self.has_attacked:
-            self.mobility = min(self.mobility + 1, self.max_mobility)
+        # Recover 1 mobility if rested (didn't move or attack), up to max of 6
+        if unit_rested:
+            self.mobility = min(self.mobility + 1, self.MAX_MOBILITY)
 
     def set_commander(self, is_commander: bool = True):
         """

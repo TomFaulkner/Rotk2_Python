@@ -366,7 +366,7 @@ class BattleRenderer:
         stats = [
             f"Soldiers: {unit.soldiers}",
             f"War: {unit.get_war_ability()}",
-            f"Mobility: {unit.mobility}/{unit.max_mobility}",
+            f"Mobility: {unit.mobility}/{unit.MAX_MOBILITY}",
             f"Training: {unit.training}",
             f"Loyalty: {unit.loyalty}",
         ]
