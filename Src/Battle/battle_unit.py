@@ -53,6 +53,9 @@ class BattleUnit:
         self.training = getattr(officer, "TrainingLevel", 0)  # 0-100
         self.arms = getattr(officer, "Arms", 100)  # 0-100%
         self.loyalty = getattr(officer, "Loyalty", 50)  # 0-100
+        # Hidden ambition stat for personal combat (derived from War + random factor)
+        # High ambition = auto-accepts personal combat without player choice
+        self.ambition = self._calculate_ambition()
 
         # Battle state
         self.state = UnitState.INACTIVE
@@ -72,6 +75,20 @@ class BattleUnit:
         # Bribe tracking
         self.bribe_attempts = 0
         self.times_bribed = 0
+
+    def _calculate_ambition(self) -> int:
+        """
+        Calculate hidden ambition stat for personal combat.
+        High ambition = general auto-accepts duels.
+        Based on War ability + random factor (some brave, some cautious).
+        """
+        import random
+
+        war = getattr(self.officer, "War", 50)
+        # Base on War (higher War = more confident = more ambitious)
+        # Plus random variation (some low-war officers are ambitious, some high-war are cautious)
+        base_ambition = int(war * 0.6 + random.randint(20, 80) * 0.4)
+        return min(100, max(0, base_ambition))
 
     def calculate_mobility(self) -> int:
         """

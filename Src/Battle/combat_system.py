@@ -601,6 +601,191 @@ class CombatSystem:
 
         return allies
 
+    @staticmethod
+    def can_challenge_to_duel(challenger, target, day: int) -> bool:
+        """
+        Check if challenger can challenge target to a duel.
+
+        Args:
+            challenger: Unit issuing the challenge
+            target: Unit being challenged
+            day: Current battle day (duels only on Day 1)
+
+        Returns:
+            True if duel can be issued
+        """
+        # Duels only on Day 1
+        if day != 1:
+            return False
+
+        # Must be enemies
+        if challenger.is_attacker == target.is_attacker:
+            return False
+
+        # Both must be commanders
+        if not challenger.is_commander or not target.is_commander:
+            return False
+
+        # Both must be alive and on the battlefield
+        if challenger.is_defeated() or target.is_defeated():
+            return False
+
+        # Must be adjacent
+        if not challenger.position or not target.position:
+            return False
+
+        return True
+
+    @staticmethod
+    def resolve_duel(attacker, defender, max_rounds: int = 10) -> dict:
+        """
+        Resolve a personal combat duel between two officers.
+
+        Formula based on ROTK2 mechanics:
+        - Each officer has STAMINA equal to their War stat (separate from damage calc)
+        - Damage = (war^2) / (opponent_war + 40) * random(0.75-1.25)
+        - War stat is used for damage calculation, stamina is used for HP
+        - Fight until someone runs out of stamina or max rounds
+        - If lower War defeats higher, winner gains War ability
+
+        Args:
+            attacker: Attacking unit (challenger)
+            defender: Defending unit (challenged)
+            max_rounds: Maximum rounds to fight (default 10)
+
+        Returns:
+            Dict with duel results:
+            - 'result': 'win', 'loss', or 'draw'
+            - 'winner': Winning unit or None
+            - 'loser': Losing unit or None
+            - 'rounds': List of round results
+            - 'war_gained': True if winner gained War ability
+            - 'attacker_stamina': Final attacker stamina
+            - 'defender_stamina': Final defender stamina
+        """
+        # Get base War stats (used for damage calculation throughout)
+        att_war = attacker.get_war_ability()
+        def_war = defender.get_war_ability()
+
+        # Initialize stamina (HP) from War, but track separately
+        att_stamina = att_war
+        def_stamina = def_war
+
+        rounds = []
+
+        for round_num in range(1, max_rounds + 1):
+            # Calculate damage using BASE War stats (not current stamina)
+            # ROTK2 damage formula: damage scales with war ratio, max ~14
+            # New formula: damage = (war / 8) * (war / (opponent_war + 20)) * random
+            # This produces more reasonable damage (typically 3-14)
+            att_base = (att_war / 8) * (att_war / (def_war + 20))
+            def_base = (def_war / 8) * (def_war / (att_war + 20))
+
+            att_damage = max(1, int(att_base * random.uniform(0.8, 1.2)))
+            def_damage = max(1, int(def_base * random.uniform(0.8, 1.2)))
+
+            # Cap damage at 15 to match ROTK2
+            att_damage = min(att_damage, 15)
+            def_damage = min(def_damage, 15)
+
+            # Apply damage to stamina (HP), not War stat
+            att_stamina -= def_damage
+            def_stamina -= att_damage
+
+            rounds.append(
+                {
+                    "round": round_num,
+                    "att_damage": att_damage,
+                    "def_damage": def_damage,
+                    "att_stamina": max(0, att_stamina),
+                    "def_stamina": max(0, def_stamina),
+                    "att_war": att_war,  # Base War stat (for display)
+                    "def_war": def_war,  # Base War stat (for display)
+                }
+            )
+
+            # Check for winner
+            if att_stamina <= 0 or def_stamina <= 0:
+                break
+
+        # Determine result
+        if att_stamina <= 0 and def_stamina <= 0:
+            # Both defeated - draw
+            return {
+                "result": "draw",
+                "winner": None,
+                "loser": None,
+                "rounds": rounds,
+                "war_gained": False,
+                "attacker_stamina": 0,
+                "defender_stamina": 0,
+                "message": "Both warriors fall! The duel ends in a draw.",
+            }
+        elif att_stamina <= 0:
+            # Defender wins
+            winner, loser = defender, attacker
+        elif def_stamina <= 0:
+            # Attacker wins
+            winner, loser = attacker, defender
+        else:
+            # Max rounds reached - draw
+            return {
+                "result": "draw",
+                "winner": None,
+                "loser": None,
+                "rounds": rounds,
+                "war_gained": False,
+                "attacker_stamina": max(0, att_stamina),
+                "defender_stamina": max(0, def_stamina),
+                "message": f"The duel ends after {max_rounds} rounds - neither can overcome the other!",
+            }
+
+        # Check for War ability gain (upset victory)
+        war_gained = False
+        loser_war = loser.get_war_ability()
+        winner_war = winner.get_war_ability()
+
+        if loser_war > winner_war:
+            # Lower War defeated higher War - gain War ability!
+            new_war = (winner_war + loser_war) // 2
+            # Note: We can't actually modify the officer here, just report it
+            war_gained = True
+            war_message = (
+                f"{winner.get_officer_name()} gains War ability from the experience!"
+            )
+        else:
+            war_message = ""
+
+        return {
+            "result": "win" if winner == attacker else "loss",
+            "winner": winner,
+            "loser": loser,
+            "rounds": rounds,
+            "war_gained": war_gained,
+            "new_war": (winner_war + loser_war) // 2 if war_gained else winner_war,
+            "attacker_stamina": max(0, att_stamina),
+            "defender_stamina": max(0, def_stamina),
+            "message": f"{winner.get_officer_name()} defeats {loser.get_officer_name()}!",
+            "war_message": war_message,
+        }
+
+    @staticmethod
+    def calculate_refuse_penalty(unit) -> int:
+        """
+        Calculate desertion penalty for refusing a duel.
+
+        Args:
+            unit: Unit that refused the duel
+
+        Returns:
+            Number of soldiers that desert
+        """
+        # ~8% desertion penalty
+        base_desertion = int(unit.soldiers * 0.08)
+        # Add some randomness
+        desertion = max(1, base_desertion + random.randint(-2, 2))
+        return min(desertion, unit.soldiers)
+
 
 if __name__ == "__main__":
     # Test combat system
