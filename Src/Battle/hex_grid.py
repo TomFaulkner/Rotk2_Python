@@ -5,6 +5,7 @@ Implements a 12x13 staggered hex grid for ROTK2 battles.
 """
 
 import json
+import random
 from pathlib import Path
 from typing import List, Tuple, Optional, Dict, Any
 from enum import Enum
@@ -94,6 +95,7 @@ class Hex:
         self.terrain = terrain
         self.unit: Optional[Any] = None  # BattleUnit
         self.is_burning = False
+        self.fire_age = 0  # Days the fire has been burning
         self.is_castle = False
         self.is_start_position = False
 
@@ -137,6 +139,61 @@ class Hex:
     def __repr__(self) -> str:
         """String representation."""
         return f"Hex({self.coord}, {self.terrain.name})"
+
+    def set_burning(self, burning: bool = True):
+        """
+        Set whether this hex is on fire.
+
+        Args:
+            burning: True to set on fire, False to extinguish
+        """
+        if burning and not self.is_burning:
+            # Starting new fire, reset age
+            self.fire_age = 0
+        elif not burning:
+            # Extinguishing
+            self.fire_age = 0
+        self.is_burning = burning
+
+    def try_extinguish(self) -> bool:
+        """
+        Try to extinguish the fire naturally.
+
+        Natural extinguish chance = 0.18 + (age * 0.04)
+        ~20% on turn 1, ~40% by turn 5-6
+
+        Returns:
+            True if fire was extinguished
+        """
+        if not self.is_burning:
+            return False
+
+        natural_extinguish_chance = 0.18 + (self.fire_age * 0.04)
+        if random.random() < natural_extinguish_chance:
+            self.set_burning(False)
+            return True
+
+        # Fire continues, increase age
+        self.fire_age += 1
+        return False
+
+    def extinguish(self):
+        """Immediately extinguish fire (e.g., from rain)."""
+        self.set_burning(False)
+
+    def can_catch_fire(self) -> bool:
+        """
+        Check if this hex can catch fire.
+
+        Returns:
+            True if can burn
+        """
+        if self.is_burning:
+            return False
+        if self.terrain in [TerrainType.WATER, TerrainType.EMPTY]:
+            return False
+        # Castles and forts CAN burn but are very resistant
+        return True
 
 
 class HexGrid:

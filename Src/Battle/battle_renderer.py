@@ -32,6 +32,7 @@ class BattleRenderer:
         "water": (65, 105, 225),  # Royal blue
         "castle": (128, 128, 128),  # Gray
         "mountain": (64, 64, 64),  # Dark gray
+        "burning": (255, 69, 0),  # Orange-red for fire
         "grid_line": (100, 100, 100),
         "highlight": (255, 255, 0, 128),
         "selected": (0, 255, 0, 128),
@@ -184,6 +185,20 @@ class BattleRenderer:
             if hex_obj.terrain == TerrainType.CASTLE or hex_obj.is_castle:
                 cx, cy = self.hex_to_pixel(coord)
                 pygame.draw.rect(self.screen, (0, 0, 0), (cx - 5, cy - 5, 10, 10))
+
+            # Draw fire if burning
+            if hex_obj.is_burning:
+                cx, cy = self.hex_to_pixel(coord)
+                # Draw flame effect (orange circle with red center)
+                pygame.draw.circle(self.screen, self.COLORS["burning"], (cx, cy), 8)
+                pygame.draw.circle(self.screen, (255, 0, 0), (cx, cy), 4)
+                # Draw small flame tips
+                for angle in [0.2, 1.0, 1.8, 2.6]:
+                    import math
+
+                    fx = cx + int(8 * math.cos(angle))
+                    fy = cy - int(8 * math.sin(angle))
+                    pygame.draw.circle(self.screen, (255, 100, 0), (fx, fy), 3)
 
     def render_unit(self, unit: BattleUnit, selected: bool = False):
         """
@@ -366,6 +381,7 @@ class BattleRenderer:
         stats = [
             f"Soldiers: {unit.soldiers}",
             f"War: {unit.get_war_ability()}",
+            f"Int: {unit.get_intelligence()}",
             f"Mobility: {unit.mobility}/{unit.MAX_MOBILITY}",
             f"Training: {unit.training}",
             f"Loyalty: {unit.loyalty}",
