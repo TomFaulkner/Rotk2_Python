@@ -1,0 +1,2016 @@
+[
+  {
+    "id": 1,
+    "sequence": 1,
+    "offset": 11716,
+    "name": "幽州-1",
+    "name_index": 0,
+    "position": {
+      "x": 6,
+      "y": 0
+    },
+    "ruler": {
+      "ruler_no": 15,
+      "war_ruler_no": 255,
+      "governor_offset": 11010,
+      "free_officers_offset": null
+    },
+    "resources": {
+      "gold": 2000,
+      "food": 20000,
+      "population": 65000
+    },
+    "development": {
+      "land_value": 0,
+      "popularity": 0,
+      "flood_control": 0,
+      "castle": 1,
+      "horse_quality": 0
+    },
+    "economy": {
+      "rice_price": 50,
+      "has_merchant": false
+    },
+    "military": {
+      "officer_count": 1,
+      "officer_offsets": [
+        11010
+      ],
+      "total_soldiers": 10000
+    },
+    "status": {
+      "delegate_mode": 0,
+      "war_province": null,
+      "transport_target": null
+    },
+    "links": {
+      "next_province_offset": null
+    }
+  },
+  {
+    "id": 2,
+    "sequence": 2,
+    "offset": 11751,
+    "name": "幽州-2",
+    "name_index": 0,
+    "position": {
+      "x": 5,
+      "y": 0
+    },
+    "ruler": {
+      "ruler_no": 255,
+      "war_ruler_no": 255,
+      "governor_offset": 0,
+      "free_officers_offset": null
+    },
+    "resources": {
+      "gold": 100,
+      "food": 2000,
+      "population": 70000
+    },
+    "development": {
+      "land_value": 0,
+      "popularity": 0,
+      "flood_control": 0,
+      "castle": 2,
+      "horse_quality": 0
+    },
+    "economy": {
+      "rice_price": 50,
+      "has_merchant": false
+    },
+    "military": {
+      "officer_count": 0,
+      "officer_offsets": [],
+      "total_soldiers": 0
+    },
+    "status": {
+      "delegate_mode": 0,
+      "war_province": null,
+      "transport_target": null
+    },
+    "links": {
+      "next_province_offset": null
+    }
+  },
+  {
+    "id": 3,
+    "sequence": 3,
+    "offset": 11786,
+    "name": "幽州-3",
+    "name_index": 0,
+    "position": {
+      "x": 4,
+      "y": 1
+    },
+    "ruler": {
+      "ruler_no": 9,
+      "war_ruler_no": 255,
+      "governor_offset": 475,
+      "free_officers_offset": null
+    },
+    "resources": {
+      "gold": 1000,
+      "food": 25000,
+      "population": 100000
+    },
+    "development": {
+      "land_value": 0,
+      "popularity": 0,
+      "flood_control": 0,
+      "castle": 4,
+      "horse_quality": 0
+    },
+    "economy": {
+      "rice_price": 43,
+      "has_merchant": false
+    },
+    "military": {
+      "officer_count": 2,
+      "officer_offsets": [
+        475,
+        905
+      ],
+      "total_soldiers": 12000
+    },
+    "status": {
+      "delegate_mode": 0,
+      "war_province": null,
+      "transport_target": null
+    },
+    "links": {
+      "next_province_offset": null
+    }
+  },
+  {
+    "id": 4,
+    "sequence": 4,
+    "offset": 11821,
+    "name": "幷州-4",
+    "name_index": 1,
+    "position": {
+      "x": 3,
+      "y": 1
+    },
+    "ruler": {
+      "ruler_no": 15,
+      "war_ruler_no": 255,
+      "governor_offset": 131,
+      "free_officers_offset": null
+    },
+    "resources": {
+      "gold": 1000,
+      "food": 25000,
+      "population": 100000
+    },
+    "development": {
+      "land_value": 0,
+      "popularity": 0,
+      "flood_control": 0,
+      "castle": 0,
+      "horse_quality": 0
+    },
+    "economy": {
+      "rice_price": 56,
+      "has_merchant": false
+    },
+    "military": {
+      "officer_count": 3,
+      "officer_offsets": [
+        131,
+        1808,
+        1851
+      ],
+      "total_soldiers": 12000
+    },
+    "status": {
+      "delegate_mode": 0,
+      "war_province": null,
+      "transport_target": null
+    },
+    "links": {
+      "next_province_offset": null
+    }
+  },
+  {
+    "id": 5,
+    "sequence": 5,
+    "offset": 11856,
+    "name": "幷州-5",
+    "name_index": 1,
+    "position": {
+      "x": 3,
+      "y": 2
+    },
+    "ruler": {
+      "ruler_no": 255,
+      "war_ruler_no": 255,
+      "governor_offset": 0,
+      "free_officers_offset": null
+    },
+    "resources": {
+      "gold": 100,
+      "food": 2000,
+      "population": 70000
+    },
+    "development": {
+      "land_value": 0,
+      "popularity": 0,
+      "flood_control": 0,
+      "castle": 1,
+      "horse_quality": 0
+    },
+    "economy": {
+      "rice_price": 50,
+      "has_merchant": false
+    },
+    "military": {
+      "officer_count": 0,
+      "officer_offsets": [],
+      "total_soldiers": 0
+    },
+    "status": {
+      "delegate_mode": 0,
+      "war_province": null,
+      "transport_target": null
+    },
+    "links": {
+      "next_province_offset": null
+    }
+  },
+  {
+    "id": 6,
+    "sequence": 6,
+    "offset": 11891,
+    "name": "冀州-6",
+    "name_index": 2,
+    "position": {
+      "x": 5,
+      "y": 1
+    },
+    "ruler": {
+      "ruler_no": 3,
+      "war_ruler_no": 255,
+      "governor_offset": 217,
+      "free_officers_offset": null
+    },
+    "resources": {
+      "gold": 1000,
+      "food": 70000,
+      "population": 500000
+    },
+    "development": {
+      "land_value": 0,
+      "popularity": 0,
+      "flood_control": 0,
+      "castle": 3,
+      "horse_quality": 0
+    },
+    "economy": {
+      "rice_price": 54,
+      "has_merchant": false
+    },
+    "military": {
+      "officer_count": 17,
+      "officer_offsets": [
+        217,
+        948,
+        991,
+        1034,
+        1077,
+        1120,
+        1163,
+        1206,
+        1249,
+        1292,
+        1378,
+        1421,
+        1464,
+        4044,
+        4259,
+        4388,
+        4646
+      ],
+      "total_soldiers": 27000
+    },
+    "status": {
+      "delegate_mode": 0,
+      "war_province": null,
+      "transport_target": null
+    },
+    "links": {
+      "next_province_offset": null
+    }
+  },
+  {
+    "id": 7,
+    "sequence": 7,
+    "offset": 11926,
+    "name": "冀州-7",
+    "name_index": 2,
+    "position": {
+      "x": 4,
+      "y": 2
+    },
+    "ruler": {
+      "ruler_no": 11,
+      "war_ruler_no": 255,
+      "governor_offset": 561,
+      "free_officers_offset": null
+    },
+    "resources": {
+      "gold": 1000,
+      "food": 30000,
+      "population": 120000
+    },
+    "development": {
+      "land_value": 0,
+      "popularity": 0,
+      "flood_control": 0,
+      "castle": 3,
+      "horse_quality": 0
+    },
+    "economy": {
+      "rice_price": 49,
+      "has_merchant": false
+    },
+    "military": {
+      "officer_count": 4,
+      "officer_offsets": [
+        561,
+        1335,
+        2926,
+        4861
+      ],
+      "total_soldiers": 14000
+    },
+    "status": {
+      "delegate_mode": 0,
+      "war_province": null,
+      "transport_target": null
+    },
+    "links": {
+      "next_province_offset": null
+    }
+  },
+  {
+    "id": 8,
+    "sequence": 8,
+    "offset": 11961,
+    "name": "青州-8",
+    "name_index": 3,
+    "position": {
+      "x": 6,
+      "y": 2
+    },
+    "ruler": {
+      "ruler_no": 12,
+      "war_ruler_no": 255,
+      "governor_offset": 604,
+      "free_officers_offset": null
+    },
+    "resources": {
+      "gold": 1000,
+      "food": 25000,
+      "population": 80000
+    },
+    "development": {
+      "land_value": 0,
+      "popularity": 0,
+      "flood_control": 0,
+      "castle": 2,
+      "horse_quality": 0
+    },
+    "economy": {
+      "rice_price": 49,
+      "has_merchant": false
+    },
+    "military": {
+      "officer_count": 3,
+      "officer_offsets": [
+        604,
+        5033,
+        5463
+      ],
+      "total_soldiers": 12000
+    },
+    "status": {
+      "delegate_mode": 0,
+      "war_province": null,
+      "transport_target": null
+    },
+    "links": {
+      "next_province_offset": null
+    }
+  },
+  {
+    "id": 9,
+    "sequence": 9,
+    "offset": 11996,
+    "name": "兗州-9",
+    "name_index": 4,
+    "position": {
+      "x": 5,
+      "y": 2
+    },
+    "ruler": {
+      "ruler_no": 15,
+      "war_ruler_no": 255,
+      "governor_offset": 88,
+      "free_officers_offset": null
+    },
+    "resources": {
+      "gold": 3000,
+      "food": 60000,
+      "population": 350000
+    },
+    "development": {
+      "land_value": 0,
+      "popularity": 0,
+      "flood_control": 0,
+      "castle": 2,
+      "horse_quality": 0
+    },
+    "economy": {
+      "rice_price": 50,
+      "has_merchant": false
+    },
+    "military": {
+      "officer_count": 9,
+      "officer_offsets": [
+        88,
+        1507,
+        1550,
+        1593,
+        1636,
+        1679,
+        1722,
+        1765,
+        2023
+      ],
+      "total_soldiers": 20000
+    },
+    "status": {
+      "delegate_mode": 0,
+      "war_province": null,
+      "transport_target": null
+    },
+    "links": {
+      "next_province_offset": null
+    }
+  },
+  {
+    "id": 10,
+    "sequence": 10,
+    "offset": 12031,
+    "name": "司州-10",
+    "name_index": 5,
+    "position": {
+      "x": 4,
+      "y": 3
+    },
+    "ruler": {
+      "ruler_no": 8,
+      "war_ruler_no": 255,
+      "governor_offset": 432,
+      "free_officers_offset": null
+    },
+    "resources": {
+      "gold": 1000,
+      "food": 50000,
+      "population": 800000
+    },
+    "development": {
+      "land_value": 0,
+      "popularity": 0,
+      "flood_control": 0,
+      "castle": 6,
+      "horse_quality": 0
+    },
+    "economy": {
+      "rice_price": 57,
+      "has_merchant": false
+    },
+    "military": {
+      "officer_count": 8,
+      "officer_offsets": [
+        432,
+        2066,
+        2324,
+        3399,
+        4173,
+        4818,
+        5119,
+        5635
+      ],
+      "total_soldiers": 22000
+    },
+    "status": {
+      "delegate_mode": 0,
+      "war_province": null,
+      "transport_target": null
+    },
+    "links": {
+      "next_province_offset": null
+    }
+  },
+  {
+    "id": 11,
+    "sequence": 11,
+    "offset": 12066,
+    "name": "司州-11",
+    "name_index": 5,
+    "position": {
+      "x": 3,
+      "y": 3
+    },
+    "ruler": {
+      "ruler_no": 8,
+      "war_ruler_no": 255,
+      "governor_offset": 733,
+      "free_officers_offset": null
+    },
+    "resources": {
+      "gold": 500,
+      "food": 25000,
+      "population": 450000
+    },
+    "development": {
+      "land_value": 0,
+      "popularity": 0,
+      "flood_control": 0,
+      "castle": 3,
+      "horse_quality": 0
+    },
+    "economy": {
+      "rice_price": 51,
+      "has_merchant": false
+    },
+    "military": {
+      "officer_count": 5,
+      "officer_offsets": [
+        733,
+        3614,
+        4775,
+        6280,
+        6366
+      ],
+      "total_soldiers": 9000
+    },
+    "status": {
+      "delegate_mode": 0,
+      "war_province": null,
+      "transport_target": null
+    },
+    "links": {
+      "next_province_offset": null
+    }
+  },
+  {
+    "id": 12,
+    "sequence": 12,
+    "offset": 12101,
+    "name": "雍州-12",
+    "name_index": 6,
+    "position": {
+      "x": 2,
+      "y": 4
+    },
+    "ruler": {
+      "ruler_no": 8,
+      "war_ruler_no": 255,
+      "governor_offset": 776,
+      "free_officers_offset": null
+    },
+    "resources": {
+      "gold": 500,
+      "food": 25000,
+      "population": 250000
+    },
+    "development": {
+      "land_value": 0,
+      "popularity": 0,
+      "flood_control": 0,
+      "castle": 4,
+      "horse_quality": 0
+    },
+    "economy": {
+      "rice_price": 50,
+      "has_merchant": false
+    },
+    "military": {
+      "officer_count": 3,
+      "officer_offsets": [
+        776,
+        2969,
+        4087
+      ],
+      "total_soldiers": 7000
+    },
+    "status": {
+      "delegate_mode": 0,
+      "war_province": null,
+      "transport_target": null
+    },
+    "links": {
+      "next_province_offset": null
+    }
+  },
+  {
+    "id": 13,
+    "sequence": 13,
+    "offset": 12136,
+    "name": "雍州-13",
+    "name_index": 6,
+    "position": {
+      "x": 1,
+      "y": 4
+    },
+    "ruler": {
+      "ruler_no": 255,
+      "war_ruler_no": 255,
+      "governor_offset": 0,
+      "free_officers_offset": null
+    },
+    "resources": {
+      "gold": 100,
+      "food": 2000,
+      "population": 240000
+    },
+    "development": {
+      "land_value": 0,
+      "popularity": 0,
+      "flood_control": 0,
+      "castle": 3,
+      "horse_quality": 0
+    },
+    "economy": {
+      "rice_price": 50,
+      "has_merchant": false
+    },
+    "military": {
+      "officer_count": 0,
+      "officer_offsets": [],
+      "total_soldiers": 0
+    },
+    "status": {
+      "delegate_mode": 0,
+      "war_province": null,
+      "transport_target": null
+    },
+    "links": {
+      "next_province_offset": null
+    }
+  },
+  {
+    "id": 14,
+    "sequence": 14,
+    "offset": 12171,
+    "name": "涼州-14",
+    "name_index": 7,
+    "position": {
+      "x": 0,
+      "y": 4
+    },
+    "ruler": {
+      "ruler_no": 5,
+      "war_ruler_no": 255,
+      "governor_offset": 303,
+      "free_officers_offset": null
+    },
+    "resources": {
+      "gold": 1000,
+      "food": 25000,
+      "population": 230000
+    },
+    "development": {
+      "land_value": 0,
+      "popularity": 0,
+      "flood_control": 0,
+      "castle": 1,
+      "horse_quality": 0
+    },
+    "economy": {
+      "rice_price": 41,
+      "has_merchant": false
+    },
+    "military": {
+      "officer_count": 3,
+      "officer_offsets": [
+        303,
+        3055,
+        3700
+      ],
+      "total_soldiers": 12000
+    },
+    "status": {
+      "delegate_mode": 0,
+      "war_province": null,
+      "transport_target": null
+    },
+    "links": {
+      "next_province_offset": null
+    }
+  },
+  {
+    "id": 15,
+    "sequence": 15,
+    "offset": 12206,
+    "name": "涼州-15",
+    "name_index": 7,
+    "position": {
+      "x": 0,
+      "y": 3
+    },
+    "ruler": {
+      "ruler_no": 255,
+      "war_ruler_no": 255,
+      "governor_offset": 0,
+      "free_officers_offset": null
+    },
+    "resources": {
+      "gold": 100,
+      "food": 2000,
+      "population": 80000
+    },
+    "development": {
+      "land_value": 0,
+      "popularity": 0,
+      "flood_control": 0,
+      "castle": 1,
+      "horse_quality": 0
+    },
+    "economy": {
+      "rice_price": 50,
+      "has_merchant": false
+    },
+    "military": {
+      "officer_count": 0,
+      "officer_offsets": [],
+      "total_soldiers": 0
+    },
+    "status": {
+      "delegate_mode": 0,
+      "war_province": null,
+      "transport_target": null
+    },
+    "links": {
+      "next_province_offset": null
+    }
+  },
+  {
+    "id": 16,
+    "sequence": 16,
+    "offset": 12241,
+    "name": "徐州-16",
+    "name_index": 8,
+    "position": {
+      "x": 6,
+      "y": 3
+    },
+    "ruler": {
+      "ruler_no": 10,
+      "war_ruler_no": 255,
+      "governor_offset": 518,
+      "free_officers_offset": null
+    },
+    "resources": {
+      "gold": 1000,
+      "food": 35000,
+      "population": 150000
+    },
+    "development": {
+      "land_value": 0,
+      "popularity": 0,
+      "flood_control": 0,
+      "castle": 2,
+      "horse_quality": 0
+    },
+    "economy": {
+      "rice_price": 48,
+      "has_merchant": false
+    },
+    "military": {
+      "officer_count": 6,
+      "officer_offsets": [
+        518,
+        3829,
+        3872,
+        4431,
+        4947,
+        4990
+      ],
+      "total_soldiers": 15000
+    },
+    "status": {
+      "delegate_mode": 0,
+      "war_province": null,
+      "transport_target": null
+    },
+    "links": {
+      "next_province_offset": null
+    }
+  },
+  {
+    "id": 17,
+    "sequence": 17,
+    "offset": 12276,
+    "name": "予州-17",
+    "name_index": 9,
+    "position": {
+      "x": 5,
+      "y": 3
+    },
+    "ruler": {
+      "ruler_no": 255,
+      "war_ruler_no": 255,
+      "governor_offset": 0,
+      "free_officers_offset": null
+    },
+    "resources": {
+      "gold": 100,
+      "food": 2000,
+      "population": 200000
+    },
+    "development": {
+      "land_value": 0,
+      "popularity": 0,
+      "flood_control": 0,
+      "castle": 4,
+      "horse_quality": 0
+    },
+    "economy": {
+      "rice_price": 50,
+      "has_merchant": false
+    },
+    "military": {
+      "officer_count": 0,
+      "officer_offsets": [],
+      "total_soldiers": 0
+    },
+    "status": {
+      "delegate_mode": 0,
+      "war_province": null,
+      "transport_target": null
+    },
+    "links": {
+      "next_province_offset": null
+    }
+  },
+  {
+    "id": 18,
+    "sequence": 18,
+    "offset": 12311,
+    "name": "予州-18",
+    "name_index": 9,
+    "position": {
+      "x": 6,
+      "y": 4
+    },
+    "ruler": {
+      "ruler_no": 255,
+      "war_ruler_no": 255,
+      "governor_offset": 0,
+      "free_officers_offset": null
+    },
+    "resources": {
+      "gold": 100,
+      "food": 2000,
+      "population": 250000
+    },
+    "development": {
+      "land_value": 0,
+      "popularity": 0,
+      "flood_control": 0,
+      "castle": 3,
+      "horse_quality": 0
+    },
+    "economy": {
+      "rice_price": 50,
+      "has_merchant": false
+    },
+    "military": {
+      "officer_count": 0,
+      "officer_offsets": [],
+      "total_soldiers": 0
+    },
+    "status": {
+      "delegate_mode": 0,
+      "war_province": null,
+      "transport_target": null
+    },
+    "links": {
+      "next_province_offset": null
+    }
+  },
+  {
+    "id": 19,
+    "sequence": 19,
+    "offset": 12346,
+    "name": "荊州-19",
+    "name_index": 10,
+    "position": {
+      "x": 4,
+      "y": 4
+    },
+    "ruler": {
+      "ruler_no": 4,
+      "war_ruler_no": 255,
+      "governor_offset": 260,
+      "free_officers_offset": null
+    },
+    "resources": {
+      "gold": 1000,
+      "food": 40000,
+      "population": 900000
+    },
+    "development": {
+      "land_value": 0,
+      "popularity": 0,
+      "flood_control": 0,
+      "castle": 4,
+      "horse_quality": 0
+    },
+    "economy": {
+      "rice_price": 47,
+      "has_merchant": false
+    },
+    "military": {
+      "officer_count": 8,
+      "officer_offsets": [
+        260,
+        1937,
+        2668,
+        3657,
+        4001,
+        4517,
+        5936,
+        5979
+      ],
+      "total_soldiers": 17000
+    },
+    "status": {
+      "delegate_mode": 0,
+      "war_province": null,
+      "transport_target": null
+    },
+    "links": {
+      "next_province_offset": null
+    }
+  },
+  {
+    "id": 20,
+    "sequence": 20,
+    "offset": 12381,
+    "name": "荊州-20",
+    "name_index": 10,
+    "position": {
+      "x": 3,
+      "y": 4
+    },
+    "ruler": {
+      "ruler_no": 7,
+      "war_ruler_no": 255,
+      "governor_offset": 389,
+      "free_officers_offset": null
+    },
+    "resources": {
+      "gold": 1000,
+      "food": 45000,
+      "population": 800000
+    },
+    "development": {
+      "land_value": 0,
+      "popularity": 0,
+      "flood_control": 0,
+      "castle": 3,
+      "horse_quality": 0
+    },
+    "economy": {
+      "rice_price": 42,
+      "has_merchant": false
+    },
+    "military": {
+      "officer_count": 11,
+      "officer_offsets": [
+        389,
+        1894,
+        1980,
+        2152,
+        2238,
+        2711,
+        2883,
+        3098,
+        3141,
+        3356,
+        3786
+      ],
+      "total_soldiers": 20000
+    },
+    "status": {
+      "delegate_mode": 0,
+      "war_province": null,
+      "transport_target": null
+    },
+    "links": {
+      "next_province_offset": null
+    }
+  },
+  {
+    "id": 21,
+    "sequence": 21,
+    "offset": 12416,
+    "name": "荊州-21",
+    "name_index": 10,
+    "position": {
+      "x": 4,
+      "y": 5
+    },
+    "ruler": {
+      "ruler_no": 15,
+      "war_ruler_no": 255,
+      "governor_offset": 174,
+      "free_officers_offset": null
+    },
+    "resources": {
+      "gold": 1000,
+      "food": 50000,
+      "population": 600000
+    },
+    "development": {
+      "land_value": 0,
+      "popularity": 0,
+      "flood_control": 0,
+      "castle": 4,
+      "horse_quality": 0
+    },
+    "economy": {
+      "rice_price": 55,
+      "has_merchant": false
+    },
+    "military": {
+      "officer_count": 7,
+      "officer_offsets": [
+        174,
+        2410,
+        2453,
+        2496,
+        2582,
+        2625,
+        2797
+      ],
+      "total_soldiers": 21000
+    },
+    "status": {
+      "delegate_mode": 0,
+      "war_province": null,
+      "transport_target": null
+    },
+    "links": {
+      "next_province_offset": null
+    }
+  },
+  {
+    "id": 22,
+    "sequence": 22,
+    "offset": 12451,
+    "name": "荊州-22",
+    "name_index": 10,
+    "position": {
+      "x": 5,
+      "y": 5
+    },
+    "ruler": {
+      "ruler_no": 255,
+      "war_ruler_no": 255,
+      "governor_offset": 0,
+      "free_officers_offset": null
+    },
+    "resources": {
+      "gold": 100,
+      "food": 2000,
+      "population": 500000
+    },
+    "development": {
+      "land_value": 0,
+      "popularity": 0,
+      "flood_control": 0,
+      "castle": 3,
+      "horse_quality": 0
+    },
+    "economy": {
+      "rice_price": 50,
+      "has_merchant": false
+    },
+    "military": {
+      "officer_count": 0,
+      "officer_offsets": [],
+      "total_soldiers": 0
+    },
+    "status": {
+      "delegate_mode": 0,
+      "war_province": null,
+      "transport_target": null
+    },
+    "links": {
+      "next_province_offset": null
+    }
+  },
+  {
+    "id": 23,
+    "sequence": 23,
+    "offset": 12486,
+    "name": "荊州-23",
+    "name_index": 10,
+    "position": {
+      "x": 4,
+      "y": 6
+    },
+    "ruler": {
+      "ruler_no": 255,
+      "war_ruler_no": 255,
+      "governor_offset": 0,
+      "free_officers_offset": null
+    },
+    "resources": {
+      "gold": 100,
+      "food": 2000,
+      "population": 650000
+    },
+    "development": {
+      "land_value": 0,
+      "popularity": 0,
+      "flood_control": 0,
+      "castle": 1,
+      "horse_quality": 0
+    },
+    "economy": {
+      "rice_price": 50,
+      "has_merchant": false
+    },
+    "military": {
+      "officer_count": 0,
+      "officer_offsets": [],
+      "total_soldiers": 0
+    },
+    "status": {
+      "delegate_mode": 0,
+      "war_province": null,
+      "transport_target": null
+    },
+    "links": {
+      "next_province_offset": null
+    }
+  },
+  {
+    "id": 24,
+    "sequence": 24,
+    "offset": 12521,
+    "name": "揚州-24",
+    "name_index": 11,
+    "position": {
+      "x": 7,
+      "y": 3
+    },
+    "ruler": {
+      "ruler_no": 13,
+      "war_ruler_no": 255,
+      "governor_offset": 647,
+      "free_officers_offset": null
+    },
+    "resources": {
+      "gold": 1000,
+      "food": 25000,
+      "population": 350000
+    },
+    "development": {
+      "land_value": 0,
+      "popularity": 0,
+      "flood_control": 0,
+      "castle": 3,
+      "horse_quality": 0
+    },
+    "economy": {
+      "rice_price": 48,
+      "has_merchant": false
+    },
+    "military": {
+      "officer_count": 2,
+      "officer_offsets": [
+        647,
+        2367
+      ],
+      "total_soldiers": 11000
+    },
+    "status": {
+      "delegate_mode": 0,
+      "war_province": null,
+      "transport_target": null
+    },
+    "links": {
+      "next_province_offset": null
+    }
+  },
+  {
+    "id": 25,
+    "sequence": 25,
+    "offset": 12556,
+    "name": "揚州-25",
+    "name_index": 11,
+    "position": {
+      "x": 7,
+      "y": 4
+    },
+    "ruler": {
+      "ruler_no": 255,
+      "war_ruler_no": 255,
+      "governor_offset": 0,
+      "free_officers_offset": null
+    },
+    "resources": {
+      "gold": 100,
+      "food": 2000,
+      "population": 150000
+    },
+    "development": {
+      "land_value": 0,
+      "popularity": 0,
+      "flood_control": 0,
+      "castle": 1,
+      "horse_quality": 0
+    },
+    "economy": {
+      "rice_price": 50,
+      "has_merchant": false
+    },
+    "military": {
+      "officer_count": 0,
+      "officer_offsets": [],
+      "total_soldiers": 0
+    },
+    "status": {
+      "delegate_mode": 0,
+      "war_province": null,
+      "transport_target": null
+    },
+    "links": {
+      "next_province_offset": null
+    }
+  },
+  {
+    "id": 26,
+    "sequence": 26,
+    "offset": 12591,
+    "name": "揚州-26",
+    "name_index": 11,
+    "position": {
+      "x": 7,
+      "y": 5
+    },
+    "ruler": {
+      "ruler_no": 255,
+      "war_ruler_no": 255,
+      "governor_offset": 0,
+      "free_officers_offset": null
+    },
+    "resources": {
+      "gold": 100,
+      "food": 2000,
+      "population": 70000
+    },
+    "development": {
+      "land_value": 0,
+      "popularity": 0,
+      "flood_control": 0,
+      "castle": 0,
+      "horse_quality": 0
+    },
+    "economy": {
+      "rice_price": 50,
+      "has_merchant": false
+    },
+    "military": {
+      "officer_count": 0,
+      "officer_offsets": [],
+      "total_soldiers": 0
+    },
+    "status": {
+      "delegate_mode": 0,
+      "war_province": null,
+      "transport_target": null
+    },
+    "links": {
+      "next_province_offset": null
+    }
+  },
+  {
+    "id": 27,
+    "sequence": 27,
+    "offset": 12626,
+    "name": "揚州-27",
+    "name_index": 11,
+    "position": {
+      "x": 6,
+      "y": 5
+    },
+    "ruler": {
+      "ruler_no": 255,
+      "war_ruler_no": 255,
+      "governor_offset": 0,
+      "free_officers_offset": null
+    },
+    "resources": {
+      "gold": 100,
+      "food": 2000,
+      "population": 80000
+    },
+    "development": {
+      "land_value": 0,
+      "popularity": 0,
+      "flood_control": 0,
+      "castle": 4,
+      "horse_quality": 0
+    },
+    "economy": {
+      "rice_price": 50,
+      "has_merchant": false
+    },
+    "military": {
+      "officer_count": 0,
+      "officer_offsets": [],
+      "total_soldiers": 0
+    },
+    "status": {
+      "delegate_mode": 0,
+      "war_province": null,
+      "transport_target": null
+    },
+    "links": {
+      "next_province_offset": null
+    }
+  },
+  {
+    "id": 28,
+    "sequence": 28,
+    "offset": 12661,
+    "name": "揚州-28",
+    "name_index": 11,
+    "position": {
+      "x": 5,
+      "y": 4
+    },
+    "ruler": {
+      "ruler_no": 14,
+      "war_ruler_no": 255,
+      "governor_offset": 690,
+      "free_officers_offset": null
+    },
+    "resources": {
+      "gold": 1000,
+      "food": 30000,
+      "population": 150000
+    },
+    "development": {
+      "land_value": 0,
+      "popularity": 0,
+      "flood_control": 0,
+      "castle": 0,
+      "horse_quality": 0
+    },
+    "economy": {
+      "rice_price": 45,
+      "has_merchant": false
+    },
+    "military": {
+      "officer_count": 4,
+      "officer_offsets": [
+        690,
+        3915,
+        3958,
+        4474
+      ],
+      "total_soldiers": 14000
+    },
+    "status": {
+      "delegate_mode": 0,
+      "war_province": null,
+      "transport_target": null
+    },
+    "links": {
+      "next_province_offset": null
+    }
+  },
+  {
+    "id": 29,
+    "sequence": 29,
+    "offset": 12696,
+    "name": "益州-29",
+    "name_index": 12,
+    "position": {
+      "x": 2,
+      "y": 5
+    },
+    "ruler": {
+      "ruler_no": 255,
+      "war_ruler_no": 255,
+      "governor_offset": 0,
+      "free_officers_offset": null
+    },
+    "resources": {
+      "gold": 100,
+      "food": 2000,
+      "population": 300000
+    },
+    "development": {
+      "land_value": 0,
+      "popularity": 0,
+      "flood_control": 0,
+      "castle": 3,
+      "horse_quality": 0
+    },
+    "economy": {
+      "rice_price": 50,
+      "has_merchant": false
+    },
+    "military": {
+      "officer_count": 0,
+      "officer_offsets": [],
+      "total_soldiers": 0
+    },
+    "status": {
+      "delegate_mode": 0,
+      "war_province": null,
+      "transport_target": null
+    },
+    "links": {
+      "next_province_offset": null
+    }
+  },
+  {
+    "id": 30,
+    "sequence": 30,
+    "offset": 12731,
+    "name": "益州-30",
+    "name_index": 12,
+    "position": {
+      "x": 1,
+      "y": 5
+    },
+    "ruler": {
+      "ruler_no": 6,
+      "war_ruler_no": 255,
+      "governor_offset": 862,
+      "free_officers_offset": null
+    },
+    "resources": {
+      "gold": 500,
+      "food": 25000,
+      "population": 300000
+    },
+    "development": {
+      "land_value": 0,
+      "popularity": 0,
+      "flood_control": 0,
+      "castle": 0,
+      "horse_quality": 0
+    },
+    "economy": {
+      "rice_price": 53,
+      "has_merchant": false
+    },
+    "military": {
+      "officer_count": 2,
+      "officer_offsets": [
+        862,
+        5721
+      ],
+      "total_soldiers": 6000
+    },
+    "status": {
+      "delegate_mode": 0,
+      "war_province": null,
+      "transport_target": null
+    },
+    "links": {
+      "next_province_offset": null
+    }
+  },
+  {
+    "id": 31,
+    "sequence": 31,
+    "offset": 12766,
+    "name": "益州-31",
+    "name_index": 12,
+    "position": {
+      "x": 3,
+      "y": 5
+    },
+    "ruler": {
+      "ruler_no": 255,
+      "war_ruler_no": 255,
+      "governor_offset": 0,
+      "free_officers_offset": null
+    },
+    "resources": {
+      "gold": 100,
+      "food": 2000,
+      "population": 300000
+    },
+    "development": {
+      "land_value": 0,
+      "popularity": 0,
+      "flood_control": 0,
+      "castle": 1,
+      "horse_quality": 0
+    },
+    "economy": {
+      "rice_price": 50,
+      "has_merchant": false
+    },
+    "military": {
+      "officer_count": 0,
+      "officer_offsets": [],
+      "total_soldiers": 0
+    },
+    "status": {
+      "delegate_mode": 0,
+      "war_province": null,
+      "transport_target": null
+    },
+    "links": {
+      "next_province_offset": null
+    }
+  },
+  {
+    "id": 32,
+    "sequence": 32,
+    "offset": 12801,
+    "name": "益州-32",
+    "name_index": 12,
+    "position": {
+      "x": 2,
+      "y": 6
+    },
+    "ruler": {
+      "ruler_no": 6,
+      "war_ruler_no": 255,
+      "governor_offset": 819,
+      "free_officers_offset": null
+    },
+    "resources": {
+      "gold": 500,
+      "food": 25000,
+      "population": 250000
+    },
+    "development": {
+      "land_value": 0,
+      "popularity": 0,
+      "flood_control": 0,
+      "castle": 0,
+      "horse_quality": 0
+    },
+    "economy": {
+      "rice_price": 51,
+      "has_merchant": false
+    },
+    "military": {
+      "officer_count": 2,
+      "officer_offsets": [
+        819,
+        5248
+      ],
+      "total_soldiers": 6000
+    },
+    "status": {
+      "delegate_mode": 0,
+      "war_province": null,
+      "transport_target": null
+    },
+    "links": {
+      "next_province_offset": null
+    }
+  },
+  {
+    "id": 33,
+    "sequence": 33,
+    "offset": 12836,
+    "name": "益州-33",
+    "name_index": 12,
+    "position": {
+      "x": 1,
+      "y": 6
+    },
+    "ruler": {
+      "ruler_no": 6,
+      "war_ruler_no": 255,
+      "governor_offset": 346,
+      "free_officers_offset": null
+    },
+    "resources": {
+      "gold": 1000,
+      "food": 35000,
+      "population": 350000
+    },
+    "development": {
+      "land_value": 0,
+      "popularity": 0,
+      "flood_control": 0,
+      "castle": 4,
+      "horse_quality": 0
+    },
+    "economy": {
+      "rice_price": 74,
+      "has_merchant": false
+    },
+    "military": {
+      "officer_count": 8,
+      "officer_offsets": [
+        346,
+        2754,
+        3270,
+        4130,
+        4216,
+        4689,
+        5291,
+        5334
+      ],
+      "total_soldiers": 17000
+    },
+    "status": {
+      "delegate_mode": 0,
+      "war_province": null,
+      "transport_target": null
+    },
+    "links": {
+      "next_province_offset": null
+    }
+  },
+  {
+    "id": 34,
+    "sequence": 34,
+    "offset": 12871,
+    "name": "益州-34",
+    "name_index": 12,
+    "position": {
+      "x": 2,
+      "y": 7
+    },
+    "ruler": {
+      "ruler_no": 255,
+      "war_ruler_no": 255,
+      "governor_offset": 0,
+      "free_officers_offset": null
+    },
+    "resources": {
+      "gold": 100,
+      "food": 2000,
+      "population": 150000
+    },
+    "development": {
+      "land_value": 0,
+      "popularity": 0,
+      "flood_control": 0,
+      "castle": 3,
+      "horse_quality": 0
+    },
+    "economy": {
+      "rice_price": 50,
+      "has_merchant": false
+    },
+    "military": {
+      "officer_count": 0,
+      "officer_offsets": [],
+      "total_soldiers": 0
+    },
+    "status": {
+      "delegate_mode": 0,
+      "war_province": null,
+      "transport_target": null
+    },
+    "links": {
+      "next_province_offset": null
+    }
+  },
+  {
+    "id": 35,
+    "sequence": 35,
+    "offset": 12906,
+    "name": "益州-35",
+    "name_index": 12,
+    "position": {
+      "x": 1,
+      "y": 7
+    },
+    "ruler": {
+      "ruler_no": 255,
+      "war_ruler_no": 255,
+      "governor_offset": 0,
+      "free_officers_offset": null
+    },
+    "resources": {
+      "gold": 100,
+      "food": 2000,
+      "population": 80000
+    },
+    "development": {
+      "land_value": 0,
+      "popularity": 0,
+      "flood_control": 0,
+      "castle": 1,
+      "horse_quality": 0
+    },
+    "economy": {
+      "rice_price": 50,
+      "has_merchant": false
+    },
+    "military": {
+      "officer_count": 0,
+      "officer_offsets": [],
+      "total_soldiers": 0
+    },
+    "status": {
+      "delegate_mode": 0,
+      "war_province": null,
+      "transport_target": null
+    },
+    "links": {
+      "next_province_offset": null
+    }
+  },
+  {
+    "id": 36,
+    "sequence": 36,
+    "offset": 12941,
+    "name": "益州-36",
+    "name_index": 12,
+    "position": {
+      "x": 2,
+      "y": 8
+    },
+    "ruler": {
+      "ruler_no": 255,
+      "war_ruler_no": 255,
+      "governor_offset": 0,
+      "free_officers_offset": null
+    },
+    "resources": {
+      "gold": 100,
+      "food": 2000,
+      "population": 85000
+    },
+    "development": {
+      "land_value": 0,
+      "popularity": 0,
+      "flood_control": 0,
+      "castle": 2,
+      "horse_quality": 0
+    },
+    "economy": {
+      "rice_price": 50,
+      "has_merchant": false
+    },
+    "military": {
+      "officer_count": 0,
+      "officer_offsets": [],
+      "total_soldiers": 0
+    },
+    "status": {
+      "delegate_mode": 0,
+      "war_province": null,
+      "transport_target": null
+    },
+    "links": {
+      "next_province_offset": null
+    }
+  },
+  {
+    "id": 37,
+    "sequence": 37,
+    "offset": 12976,
+    "name": "交州-37",
+    "name_index": 13,
+    "position": {
+      "x": 6,
+      "y": 6
+    },
+    "ruler": {
+      "ruler_no": 255,
+      "war_ruler_no": 255,
+      "governor_offset": 0,
+      "free_officers_offset": null
+    },
+    "resources": {
+      "gold": 100,
+      "food": 2000,
+      "population": 60000
+    },
+    "development": {
+      "land_value": 0,
+      "popularity": 0,
+      "flood_control": 0,
+      "castle": 1,
+      "horse_quality": 0
+    },
+    "economy": {
+      "rice_price": 50,
+      "has_merchant": false
+    },
+    "military": {
+      "officer_count": 0,
+      "officer_offsets": [],
+      "total_soldiers": 0
+    },
+    "status": {
+      "delegate_mode": 0,
+      "war_province": null,
+      "transport_target": null
+    },
+    "links": {
+      "next_province_offset": null
+    }
+  },
+  {
+    "id": 38,
+    "sequence": 38,
+    "offset": 13011,
+    "name": "交州-38",
+    "name_index": 13,
+    "position": {
+      "x": 5,
+      "y": 6
+    },
+    "ruler": {
+      "ruler_no": 255,
+      "war_ruler_no": 255,
+      "governor_offset": 0,
+      "free_officers_offset": null
+    },
+    "resources": {
+      "gold": 100,
+      "food": 2000,
+      "population": 44600
+    },
+    "development": {
+      "land_value": 0,
+      "popularity": 0,
+      "flood_control": 0,
+      "castle": 0,
+      "horse_quality": 0
+    },
+    "economy": {
+      "rice_price": 50,
+      "has_merchant": false
+    },
+    "military": {
+      "officer_count": 0,
+      "officer_offsets": [],
+      "total_soldiers": 0
+    },
+    "status": {
+      "delegate_mode": 0,
+      "war_province": null,
+      "transport_target": null
+    },
+    "links": {
+      "next_province_offset": null
+    }
+  },
+  {
+    "id": 39,
+    "sequence": 39,
+    "offset": 13046,
+    "name": "交州-39",
+    "name_index": 13,
+    "position": {
+      "x": 4,
+      "y": 7
+    },
+    "ruler": {
+      "ruler_no": 255,
+      "war_ruler_no": 255,
+      "governor_offset": 0,
+      "free_officers_offset": null
+    },
+    "resources": {
+      "gold": 100,
+      "food": 2000,
+      "population": 60000
+    },
+    "development": {
+      "land_value": 0,
+      "popularity": 0,
+      "flood_control": 0,
+      "castle": 0,
+      "horse_quality": 0
+    },
+    "economy": {
+      "rice_price": 50,
+      "has_merchant": false
+    },
+    "military": {
+      "officer_count": 0,
+      "officer_offsets": [],
+      "total_soldiers": 0
+    },
+    "status": {
+      "delegate_mode": 0,
+      "war_province": null,
+      "transport_target": null
+    },
+    "links": {
+      "next_province_offset": null
+    }
+  },
+  {
+    "id": 40,
+    "sequence": 40,
+    "offset": 13081,
+    "name": "交州-40",
+    "name_index": 13,
+    "position": {
+      "x": 3,
+      "y": 6
+    },
+    "ruler": {
+      "ruler_no": 255,
+      "war_ruler_no": 255,
+      "governor_offset": 0,
+      "free_officers_offset": null
+    },
+    "resources": {
+      "gold": 100,
+      "food": 2000,
+      "population": 65000
+    },
+    "development": {
+      "land_value": 0,
+      "popularity": 0,
+      "flood_control": 0,
+      "castle": 0,
+      "horse_quality": 0
+    },
+    "economy": {
+      "rice_price": 50,
+      "has_merchant": false
+    },
+    "military": {
+      "officer_count": 0,
+      "officer_offsets": [],
+      "total_soldiers": 0
+    },
+    "status": {
+      "delegate_mode": 0,
+      "war_province": null,
+      "transport_target": null
+    },
+    "links": {
+      "next_province_offset": null
+    }
+  },
+  {
+    "id": 41,
+    "sequence": 41,
+    "offset": 13116,
+    "name": "交州-41",
+    "name_index": 13,
+    "position": {
+      "x": 3,
+      "y": 7
+    },
+    "ruler": {
+      "ruler_no": 255,
+      "war_ruler_no": 255,
+      "governor_offset": 0,
+      "free_officers_offset": null
+    },
+    "resources": {
+      "gold": 100,
+      "food": 2000,
+      "population": 80000
+    },
+    "development": {
+      "land_value": 0,
+      "popularity": 0,
+      "flood_control": 0,
+      "castle": 1,
+      "horse_quality": 0
+    },
+    "economy": {
+      "rice_price": 50,
+      "has_merchant": false
+    },
+    "military": {
+      "officer_count": 0,
+      "officer_offsets": [],
+      "total_soldiers": 0
+    },
+    "status": {
+      "delegate_mode": 0,
+      "war_province": null,
+      "transport_target": null
+    },
+    "links": {
+      "next_province_offset": null
+    }
+  }
+]

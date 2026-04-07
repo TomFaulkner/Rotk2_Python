@@ -1,0 +1,1238 @@
+Romance of the Three Kingdoms II
+
+A Guide by Greg Hartman
+
+Contact: good_catholic_boy /at/ yahoo /dot/ com
+         aolim: goodcatholicboy9
+
+-please do not contact me if you are lame
+-if you are emailing me, please put something in the topic to indicate
+that you are asking about this faq.  i am very wary of emails from
+people i don't know (you should be also).  you may also feel free to
+contact me via my im name, but experience is teaching me that this method
+is very inefficient, so it is generally better to send me an email.
+-i find it weird to say this, but the only language i can speak with any
+degree of clarity is english.  please, if you are contacting me, do so in
+english (although if you require an answer that is only half-intelligible,
+german might work also).  definitely do not bother emailing me in any
+other language; i won't even respond.
+****************************************
+
+
+Version History
+
+Version 1.0 (6/25/03)
+Version 1.1 (7/10/03)
+     -fixed minor error in "threat" command section
+     -fixed many typos, syntax, and other annoying errors
+     -added more misc tips/strategies
+Version 1.11 (8/03/03)
+     -several very minor syntax errors corrected
+     -error in "trust" section corrected
+     -(very) brief credits section added
+Version 1.12 (1/03/04)
+     -correction about adviser intel (section V, 7)
+     -addition to credits section
+     -minor typographical corrections
+     -minor correction about difficulty levels
+     -yet one more refinement on the 'threat' section
+Version 1.13 (1/04/04)
+     -glaring typo corrected
+Version 1.14 (1/12/04)
+     -change in legal stuff
+Version 1.15 (2/07/04)
+     -change in contact info
+Version 1.16 (2/09/04)
+     -change in legal
+     -some clarifications made throughout
+Version 1.2 (2/26/04)
+     -rewrote that god awful intro, removing the word "playability"
+Version 1.21 (2/12/06)
+     -minor correction regarding surrendering
+Version 1.22 (4/23/06)
+     -added a point regarding a new ruler with no follower.
+
+
+****************************************
+
+Contents:
+
+I. Intro, etc
+II. Setting up a game
+III. The Command Screen
+IV. War
+V. Misc tips and tricks
+VI. Credits
+
+****************************************
+
+
+I. Intro
+
+
+     In my opinion, RoTK2 is probably the best version of Romance that
+was released for the SNES. Although the series added a great deal of new
+features in the third and fourth installments, I have never found them
+as enjoyable as the second.  Romance 2 does have it's faults, notably in
+AI (the computer is not very aggressive at all, with the exception of a
+few rulers) and in gameplay (battles are too skewed towards the defenders,
+most significantly in the fact that they have the ability to field twice
+as many soldiers as the attackers, assuming no allied support on either
+side).  Nevertheless, as I look back, I realize that I don't like
+Romance 3, and I never really got into 4.  Maybe it's the game's
+simplicity, maybe it's something else, but I prefer it just the same.
+
+     This, incidentally, is my first ever faq/walkthrough/etc, so I
+would greatly appreciate any feedback (even if it's "this faq stinks"),
+so long as it is honest.  If you have any additional info to share,
+send it to me and I will post it in the guide, with proper credit of
+course.
+
+     Having said that, Romance of the Three Kingdoms Two lets a player
+control a faction in 2nd or 3rd century China in an effort to reunite
+the country during the Three Kingdoms Period.  All facets of whichever
+kingdom you choose will be under your control.
+
+
+
+
+*****************************************
+
+II.  Setting up a Game
+
+There are Six Scenarios from which you can choose to play.
+
+1. Dong Zhuo Triumphs in Louyang - 189 AD
+     Probably the scenario with the most parity between rulers.  Sun
+Jian (province 21), Cao Cao (pr 9), and Yuan Shao (pr 6) all are
+probably the most powerful from the opening of the scenario and are
+the most suitable choice for beginners.  Although Dong Zhuo
+(pr 10, 11, 12), starts with the most overall soldiers and lands he can
+be somewhat of a challenge due to his generally crummy followers
+and low charm rating.  Liu Yan (pr 33, 30, 32) is also good for a
+beginner because he starts out quite powerful and far away from any
+other major opponent.  Liu Biao (pr 20), Tao Quian (pr 16), and Yuan
+Shu (pr 19) are on somewhat of a middle ground, while Gongsun Zan (pr 3)
+Liu Bei (pr 4) and Ma Teng (pr 14) are the scenario's challenges.  Of
+these three, however, the only one who is really hard to play as is
+Gongsun Zan; Ma Teng starts off completely isolated and unthreatened and
+Liu Bei isn't threatened by anyone powerful off the start and begins
+with Guan Yu and Zhang Fei, two of the best warriors in the game. Hain
+Fu (pr 7, called Han Fu in all other Romance games), Kong Rong (pr 8),
+Wang Lang (pr 24), and Liu Yong (pr 28) are all unplayable in this
+scenario, although i'm not sure why.  They all pretty much stink, so
+I guess only someone who was a real veteran would want to play as them
+anyway.
+
+2. Rivals Struggle for Power - 194 AD
+     Another reasonably balanced scenario, although less so than the
+first.  Cao Cao (pr 10,11) is probably the most powerful overall and
+thus the easiest ruler to be.  Sun Ce (pr 24) is another good strong
+choice. Yuan Shao (pr 6,7) is reasonably strong but many of his officers
+suffer from mediocrity.  Liu Zhang (pr 33,32,34) is in basically the
+same position that Liu Yan was in last scenario and is yet another
+strong choice, as is Ma Teng (pr. 14) who has gained a ton of followers
+since the first scenario.  Liu Biao (pr 20,21), Liu Bei (pr 16) and Yuan
+Shu (pr 19, 17) are pretty much in the middle of the road. Lu Bu (pr 9)
+starts decent, but stinks as a ruler and is hard to do much with.  Li
+Jue (pr 12) is pretty much awful and makes a very tough game.  Gongsun
+Zan (pr. 3) is tough too, but at least he starts with Zhao Yun, another
+of the best generals in the game.  Zhang Lu (pr 29), Kong Rong (pr 8),
+Yang Feng (pr 5), and Liu Yong (pr 28) are all unplayable.  This is
+somewhat disappointing because Zhang Lu could make an interesting
+(but challenging) play.  Again this scenario is balanced, so if you play
+well it is completely possible to win with just about any ruler.
+
+3. Aged Liu Bei Hides - 201 AD
+    This scenario is actually still relatively balanced, although all
+the major rulers have quite a lot of power.  Once again, Cao Cao
+(purple) is the strongest on the map and the best choice for an easy
+game.  After him, Sun Quan (red) is probably the next strongest.  Liu
+Bei (green) has only one province, but it is pretty stacked with good
+officers and is, overall, not a bad choice either.  Liu Zhang (orange)
+and Ma Teng (purple spotted blue) are still good choices, as they can't
+really get threatened from the start.  Liu Biao (blue spotted green) has
+4 provinces, but they're not that awesome.  He's still easily as good a
+choice as Liu Bei though.  Yuan Shao (yellow) might look tempting, but
+he's actually pretty crummy in this scenario.  He personally won't live
+very long, and Cao Cao usually let's him have it fairly early into the
+game.  His officers are still pretty weak compared to the other rulers.
+Zhang Lu is selectable in this scenario and is good for a challenge
+that is more or less doable.
+
+4. Cao Cao Covets Control of China - 208 AD
+     This scenario throws parity out the window.  Completely.  Cao Cao
+is by far the most powerful ruler, ruling essentially all of northern
+China.  After him Sun Quan (red) is probably the most powerful, followed
+by Liu Zhang (orange) and Ma Teng (purple/blue).  Liu Bei still only
+has one province (19) but it's full of generals and has a bunch of good
+hidden officers, making him a reasonable choice.  Liu Biao has been
+replaced in this scenario by Han Xuan (pr 21), Zhao Fan (pr 22), Liu Du
+(pr 23), and Jin Xuan (pr 20).  All of these rulers stink, although some
+do have decent officers (especially Han Xuan, who has Huang Zhong).
+Incidentally, if you want a challenge (and i mean a challenge) try
+playing as Jin Xuan.  It's next to impossible to win with him. Zhang Lu
+(pr 29, still) is tough, but still a little better than the chumps in Liu
+Biao's old lands.
+
+5. Nation Breaks into Three Divisions - 215 AD
+     Well this scenario goes back to relative parity once again.  Cao
+Cao (purple) is still clearly the strongest, but Liu Bei and Sun Quan
+(green and red, respectively) are still reasonably close to him.  Just
+by looking at the map you should be able to tell that Meng Huo (yellow)
+is going to be a tough play.  I prefer playing this scenario to the next
+because the conflict that takes place around the central province (19)
+is actually relatively interesting.
+
+6. The Three-Way Contest - 220 AD
+     This scenario is really very similar to the last one.  Cao Pi has
+succeeded Cao Cao and gained control of provinces 19 and 20.  Sun
+Quan is still more powerful than Liu Bei, and probably an easier choice
+Meng Huo remains in the south, still very weak compared to the other
+rulers.  In all honesty i almost never play this scenario, it just
+doesn't do it for me.
+
+     Once you pick your scenario and ruler you'll be asked for a
+difficulty level (1-3).  The differences between difficulties can be
+subtle, yet they are definitely significant.  Firstly, I notice almost
+no difference in AI between difficulty levels.  This does not
+necessarily mean, however, that the computer controlled rulers don't get
+soldiers faster on the higher difficulty levels (they might, it's been
+a long time since i've played an entire game on 1, so i don't know).
+I suspect though that their armies get bigger more quickly on higher
+levels, but this probably comes from getting larger bonuses from the
+game randomly.
+     What's this about bonuses, you might ask?  Well, basically, the
+game cheats.  Computer rulers gain either gold or rice at the game's
+discrection throughout the game.  The amount of these bonuses varies
+depending on the ruler.  For example, Cao Cao, whom the computer plays
+the best, gets the largest bonuses.  Dong Zhuo, whom the computer plays
+quite poorly, gets a low bonus (so low it might actually be negative).
+Regardless, the game is always awful about buying arms, even on the
+highest difficulty levels, so use this to your advantage in war.  I
+notice no difference in diplomacy based on difficulty either.
+     So what are the differences then?  The biggest difference that I
+can see takes place in battle.  Generally, it would seem that your
+troops become less and less effective as the difficulty level raises.
+My own belief is that on the lowest difficulty, your troops are given
+a mild advantage independent of all other factors, on the middle
+difficulty, no advantage is assigned to either you or the computer, and
+that on the highest difficulty, the computer is assigned an advantage.
+This is a huge pain on the highest difficulty level, especially when
+you are conquering a ruler that has a high war ability. Taking Lu Bu
+off of the defending castle, for example, will likely take at least 500
+men, and that's if they are really good generals attacking
+simultaneously.  On the other hand if you have a really good general
+defending a castle on the lowest difficulty level you will probably
+never lose the city.  Another significant disparity between the skill
+levels is how quickly and efficiently the computer rulers train their
+troops.  On the lowest level, they tend not to do a very good job; on the
+higher levels, the computer's troops get trained almost as quickly as the
+players.
+     There are also other more subtle differences.  Domestic qualities
+of your province (land value, flood control, people's loyalty) go up
+much more slowly on the third level than they do on the first.  I also
+find it generally more difficult to recruit generals from other rulers
+on a difficulty that isn't 1.  Finally, the chances of successfully
+using the spy commands, especially 'tiger-wolf,' seem to be lower on
+the higher levels.  In total, changing the difficulty seems to change
+very little besides a multiplier here and there.  I guess it's the
+easiest way to program varying difficulties without expending too much
+effort.
+
+     Lastly, you will be asked if you want to view other province's
+wars.  I generally always set this to yes, because, of course, the
+results of the wars are different when they are simulated.  The biggest
+single change you'll notice is that damage done to units is much less
+averaged off.  For example, if Cao Cao conquers Kong Rong and you watch
+the battle, one unit might take 30 damage, another 20, and another 10.
+If you simulated the battle they would all take 20 damage.  In all
+reality, it's not too critical if you view battles or not, it's simply
+a matter of personal preference.
+
+
+***************************************
+
+III.  The Command Screen
+
+     The game turns progress in months, with each province being able
+to strategize once a month.  All the leaders go in a particular order
+that is closely based on total troop strength that is calculated in the
+beginning of the month.  The ruler with the lowest strength plots his
+strategy first, the ruler with the most plots his last.  There are
+other factors that influence this order, such as total officers and
+total provinces (i think), but troop totals play the largest role.  It
+is a big advantage to go last, by the way, especially in the later
+scenarios where many of the rulers have many provinces.  This is because
+of how the 'tiger-wolf' spy tactic works.  If you go first, for example,
+you might incite a rebellion successfully against one of your rivals
+(that is, trick one of his governors to become a ruler in his own right)
+but if he goes after you, he can (and occasionally will) just switch the
+governor to get around your plot.  If your turn of the month is after
+the ruler whom you plotted against, he won't go again until the next month,
+and his governor will have already rebelled before he can transfer him out.
+     Regardless, once it is your turn to go you'll be greeted by the
+command screen, which has all of your province's info in a little box in
+the center of the screen and all of your possible commands listed at the
+top.
+
+
+A. Explanation of Provincial Info
+
+1. In the upper left corner of the screen is a little yellow crown with
+a name next to it.  This is the name of the ruler of your empire.
+
+2. Just below your ruler's name is a little blue symbol that is
+apparently a kind of hat (it looks more like a box to me).  Regardless,
+this is the name of the governor of the particular province.  If this
+is your capital (home province) the names for both ruler and governor
+will be the same.
+
+3. To the right of the governor and ruler's names will be a picture of
+the governor of this particular province.  If this is your capital, it
+will be a picture of your ruler (obviously).  As a side note, it is
+possible to generally tell if an officer is "good" based on his picture.
+The game comes with several generic looking faces that go with many
+of the mediocre officers in the game.  Most of the really talented
+officers have their own unique mug shots.  Of course, some of the really
+lousy officers have pictures too (Cao Bao comes to mind) so this method
+isn't foolproof, but it's still a good general gauge.
+
+4. To the right of the governor's picture will be the date and season,
+the province number and name (really only the number is important) and,
+if you have your advisor in this province, a picture of a scroll and
+his name.  Note that in this game, unlike other Romance of the Three
+Kingdoms games, you can only have one advisor throughout your entire
+empire.  He absolutely should be in your capital.  Keep your advisor and
+ruler together at all times, because most of the commands you need an
+advisor for can only be used in your home province anyway.
+
+The following info is in that large tan box in the middle of the screen
+
+5. Pop. stands for the population of the province divided by 100.  3500
+thus becomes 350,000, in real numbers.  Generally, the higher this
+number the better. The more people you have, the more taxes you collect.
+Drafting, the plague, warfare, and floods will decrease your province's
+population. Every January it will increase (by a percentage, i think).
+Most of the really high population provinces are in central China. (19
+20, 10, 21). There are, however, other high population cities in other
+places (23 and 22, for example).  Population matters a lot, so try and
+get large provinces. Incidentally, when i talk about populations or
+soldiers or rice, i will be using the onscreen numbers, and not the
+actual numbers; don't be confused.
+
+6. Soldr. - The amount of soldiers divided by 100.  Early in a scenario
+(i mean like the first year or two) you are reasonably safe from attack
+and sometimes ready to expand, with 300 soldiers.  Of course this varies
+depending on who is bordering you, but early in the game 300 is a lot.
+Because of the way battles work, if you have more than 500, you are
+very safe from invasion, because the attackers can never bring more than
+5 generals/500 troops unless they arrange a joint attack.  The computer
+will almost never attack a city with more than 500 troops because of this.
+
+7. Gold - Amount of gold in the province.  Gold is used to hire troops,
+buy arms/food/horses, reward/recruit officers, etc.  You gain gold from
+taxes in January.
+
+8. Rice - barrels of food in the province.  For every month of warfare
+1 soldier needs 1 barrel of rice.  Therefore if you have 500 troops and
+100 rice in a city you are in a lot of trouble if someone attacks you.
+The computer will exploit a situation like this, so make sure that you
+always, always, always have at least much rice as soldiers in a city.
+You gain rice from your harvest in July.
+
+9. PL - people's loyalty.  The most important of the domestic qualities
+in a city, it is also the easiest to raise.  Giving food to the people
+will raise it; drafting, getting attacked, collecting a special tax, or
+a disaster will lower it.  Do not let it fall below like 30, because if
+it does your people might riot (especially if your governor's charm or
+your ruler's trust are low).  Generally, get this value to at least the
+high 80s by july of the first year of your scenario and keep it around
+100 the rest of the game (not hard at all).  It affects how much rice
+you collect in tax in July and how much gold you collect in January.
+
+10. Gnls - Total number of generals in the province, counting the ruler
+and advisor, but not free generals.
+
+11. Land - Land value in the province.  This increases when you invest
+money into the land value under the internal affairs command group, and
+decreases when you are attacked or a natural disaster befalls your
+province, such as locusts.  I lost the manual a long time ago, but I
+seem to remember it claiming that this only affected your harvest in
+July, and, well, that's wrong. High land value also yields high gold
+collections in January.  It maxes out at 100, and you should have no
+problem reaching that within a year or two, depending on how many troops
+you are hiring and your difficulty level.
+
+12. FlCl - Flood Control (great abbreviation guys).  This basically
+functions the same as land value, except that it also controls how much
+damage your province takes as a result of floods or typhoons.  For some
+reason it also increases both your harvest and gold collection.
+Keep it high, but it's not super super critical.
+
+13. Hrse - amount of horses in your province.  Horses are not used for
+warfare, but are given to individual generals either to reward them or
+to persuade them to join your army.  Horses cost exactly 100 gold to
+buy and cannot be transferred from one province to another.  Generally,
+I use them to reward officers early in the game to save money, but
+then never buy them again for reasons i'll describe later.  There are
+better things to spend 100 gold on.
+
+14. Trst - Trust in your ruler.  This number is the same for all of your
+lands, and is complicated to explain.  It starts at 50 for all rulers.
+This value affects a lot of different things.  Most importantly, it
+affects how your officers think of you.  If this value is low, their
+loyalties will drop just about every turn, even if they have high
+compatibility with your leader (i'll get to compatibility later). You
+will also find it much harder to recruit officers from other leaders
+and very difficult to form alliances with anyone (not as important as it
+sounds).  When trust reaches about 75 all your officers loyalty will not
+go down.  Ever.  I shouldn't say that.  They won't go down unless
+another ruler uses some type of spy plot against you, which is rare.
+The problem with trust is that it goes down really easily and is hard
+to increase.  The only actions that will increase trust are sending
+reinforcements to an ally when he is attacked (fairly big increase,
+especially if you send a lot of troops and succeed in defending the
+province) or being part of a joint invasion that another ruler has set
+up.  Let me repeat this.  If you ask someone to help you by joining your
+attack on another province your trust will *not* go up.  Only if he asks
+you and you actually come through on your word.  You'll also get a three
+point trust increase if you choose not even to read a message intercepted
+through your province, provided the messenger is from your ally.  This,
+of course, requires you to trust either that your ally isn't trying to
+plot against you or that all your followers are loyal enough not to be
+affected by a plot.
+     A ton of things make trust go down.  Collecting a special tax will
+always drop it.  Never, ever collect a special tax; it's essentially
+selling your trust for pennies.  Anytime someone sends you a diplomatic
+messenger, you'll have the option of accept, refuse and capture.  If
+you ever choose capture you will lose trust (not much, like 3 or 4 -
+sometimes it's still worth it to try and capture someone if you know
+they are a good officer with very low war ability).  Generally, if you
+don't want to ally with someone, show some restraint and just refuse.
+If someone is going through your province and gets intercepted by you and
+he is an officer of your ally you can't try and capture him without
+losing trust, even if he is attempting to recruit one of your officers!
+In this case, just seize the letter.  If your ally is caught trying to
+recruit your enemies' followers, you can't do anything except ignore it
+without losing trust.  If the messenger does not belong to your ally,
+there is more flexibility - you can capture those that are going after
+your followers and seize the letter from those recruiting elsewhere (you
+might even be able to try and capture him, i'm not sure) without a trust
+penalty.
+     Many diplomatic actions reduce trust.  Attacking someone you are
+allied with obviously lowers it a lot, as does betraying your ally in
+combat (again, show some restraint).  Unfortunately, all these rules
+(including the ones above) apply to both rulers you are allied with and
+those with whom you have marriages with, whether or not you initiated
+it.  On top of this, all marriages are permanent, and cannot be
+cancelled for any reason.  In short, if you have a marriage with
+someone, you will never be able to conquer them without destroying
+your trust rating. This means that you won't be able to win the game
+without ruining your trust.  This means don't agree to marriages ever.
+No matter what.  Finally, recruiting from your allies excessively or
+carrying out spy missions against them (especially against their
+governors) lowers your trust.  The same applies for rulers you have
+arranged marriages with.  Stinks, doesn't it?  Well there is one good
+part about trust, and that is that if you find the hereditary seal your
+trust will automatically max out at 100.  Unfortunately you won't find
+the seal until you've conquered at least half of China, so you still
+have to behave yourself for most of the game.
+
+15. Cost - This is the number of barrels of rice you have to sell in
+order get 100 gold.  When selling a lower number is obviously better,
+when buying a larger one is better.  The highest i've ever seen it is
+88.  The lowest i've seen it ever is like 15, which is amazingly
+good if you have a lot of rice in your territory. "Good" prices for
+selling are the 30s.  "Fair" selling prices are in the 40s.  Keep in
+mind that even if you have an awesome rate, there still might be no
+merchants in your territory.  To my knowledge prices are random, but
+they tend to hover around one number for a while before changing more
+dramatically.
+
+16. FrGl - Free Generals that are in your province.  A Free general is a
+general that is not currently serving any particular ruler.  A free
+general can appear in your province in three ways.  First, he can be
+uncovered by using the search command.  Other times free generals from
+other provinces will wander into your land.  Finally, sometimes the
+computer will hide a general in your province to act as a spy.  They
+only do this when they really hate you, and it is not hard at all to
+figure out what they are doing if you know what followers he has
+(oftentimes they'll send someone that is so obviously their follower that
+it's funny).  If you are uncomfortable about recruiting someone you can
+always wait a few turns.  Hidden generals never move from province to
+province, whereas free generals will move after a certain number of
+turns.  Of course, if you don't trust someone and then he wanders
+somewhere else you can't recruit him.  It's almost always safe to recruit
+these guys, unless of course the general happens to be your hated enemy's
+son.
+
+B. The Commands
+
+1. View Commands
+
+1a. Province - views another province.  If you are viewing one of your
+own provinces, it won't expend an officer's turn.  If you are viewing an
+enemy's province, it will expend a turn.  Everyone views a province
+equally well, so use your worst general to view if you can.
+
+1b. General - views a general in this city, bringing up a list of
+officers and finally the general info box.  This never uses up a turn.
+Some quick notes on what each of the numbers mean:
+
+lylty - how loyal the officer is to you.  Generally, an officer is very
+unlikely to leave you if his loyalty rating is higher than 90.  It is
+still reasonably likely that someone will leave you if their loyalty is
+in the 80s, so make sure to reward often.  Incidentally, you should
+never attack anywhere with officers whose loyalties are not in the 90s,
+because the game is extremely proficient at bribing them.  Finally, it
+is also not advised to attack anywhere with either Lu Bu or Wei Yan
+(especially Lu Bu) because these two clowns will desert you like it's
+their job once they get into a battle.  If loyalty ever falls to around
+30 there is a good chance the officer will just leave you and become a
+free general.  If loyalty sits around 60 for a while eventually one of
+the computer rulers will recruit him from you.  Reward often.
+
+arms - the arms rating of his unit.  If he has no soldiers at all this
+will be 100.  Basically this is the percentage of soldiers in his unit
+that have arms.  It is really easy to keep this at 100, just send him
+to the market one turn and have him buy the maximum amount of arms.  The
+only way it goes down is if soldiers die in combat.  The computer tends
+not to buy arms until quite late in the game, so use this to your
+advantage in war.
+
+skill - the training level of his soldiers.  Never attack unless this is
+100.  Skill is generally pretty easy to raise with the train command,
+so make sure to max it out as soon as possible.
+
+soldr - the number of soldiers assigned to this general's unit. The max
+is 100.
+
+intel - the officer's intelligence.  An intel of 80 or above allows
+the general to become your state's advisor.  High intel also makes
+improving land or flood control of a state go more quickly.
+
+war - how effective your general is at leading troops in the field and
+also how good he is at personal combat.  War ability also affects how
+effective your officer is at training soldiers or moving goods between
+provinces.
+
+charm - how charming your officer is.  Charm is used for giving to the
+people and for rewarding or recruiting officers.  Most of the time,
+officers with high intel also have reasonably high charm, but this does
+not hold true always.
+
+age - the officer's age.  Officers have a high chance of passing away
+when they are older, although many officers die in specific years due
+to "evil omens."
+
+Years of service seems mostly irrelevant and is probably just for your
+own personal reference.  It would seem that more years of service would
+lead to the officer being more loyal, but i don't notice any direct
+correlation myself.  Years of service only count from the start of the
+scenario you are playing.  Thus even though Xiahou Dun has been serving
+Cao Cao for 5 years by 194 AD, if you start playing the second scenario
+his years of service will start at 1.
+
+1c. Summary One - lists all the officers in the province and displays
+their loyalty, intel, war ability, and charm.  It never uses up someone's
+turn to use it.
+
+1d. Summary Two - lists all the officers in the province and displays
+their years of service, arms level, training level, and number of
+soldiers.  Very useful, and never uses up anyone's turn to view it.
+
+1e. Territory - lists all the provinces in your empire, their governors,
+the amount of rice and food, how many soldiers are stationed there,
+the people's loyalty and the number of your officers present.  Provinces
+with an asterick by their number are delegated to the control of their
+governor.  This is another free command.
+
+2. Army Commands
+
+2a. Hire - hires soldiers in the current province.  It uses up one
+officer's turn; his abilities do not affect how well he drafts the
+troops. Every soldier you hire costs 10 gold and 1 rice, and lowers both
+the population and the people's loyalty.  After you hire the soldiers
+you will be brought to the assign screen.  The total amount of troops in
+a province can never outnumber the population.  This means if there are
+only 750 people living in a province, you can't draft any soldiers that
+would raise your army's size to over 750.  The only exception to this
+rule is if you move an army into a really small province (ie. move 1000
+soldiers into a province with 500 civilians).  You can have this large of
+an army present, but you won't be able to draft any new recruits.
+
+2b. Assign - reassigns soldiers amongst your officers.  Generally it is
+best to assign the most soldiers to your most loyal followers first (use
+the buttons on the right to sort the generals however you see fit).  If
+all your officers are very loyal (or at least equally loyal) give
+soldiers to the men with the highest war ability, as they are by far
+the most effective fighters.  Having one unit led by an officer with a
+high intel is also a good idea, because these officers excel at fire
+tricks. This command uses an officer's turn and any general is as good as
+the next at reassigning.
+
+2c. Train - trains the soldiers that are in your province.  You do not
+need to have officers assigned to a general in order for him to train.
+The more officers you have training and the higher their war abilities,
+the greater the resulting increase in skill. All officers who participate
+in the training will have used up their turn.
+
+2d. War - invade a neighboring province. First select a province to
+attack, then who will go.  You will then be asked to pick someone to
+command the unit.  Generally you want someone with at least decent war
+ability to command because if your commanding unit gets badly beaten and
+has to retreat you will lose the battle.  Do not let Lu Bu or Wei Yan
+command  your army, ever.  Also do not let anyone whose loyalty is not
+very high command, because if the enemy bribes him you automatically
+lose the battle.  For more on war see the battle section. Obviously,
+going to war uses up the officer's turn.
+
+3. "Person" Commands
+
+3a. Recruit - this command attempts to recruit an officer to join your
+ruler's army.  If this is the home province you can recruit any officer
+from any other ruler, if this is not your capital you can only
+recruit free officers who are in your province.  Obviously, officers with
+lower loyalties are easier to recruit.  I usually don't even try to
+recruit someone unless his loyalty is in the lower 80s or less, as the
+success rate will be quite low.  After you pick the officer you want to
+recruit you will be asked which method you will use to recruit him.
+'Personal Appeal' requires sending your ruler, 'horse' requires having at
+least one horse to give, 'gold' requires having 100 gold to give the
+officer, and 'letter' requires nothing. The manual claims (i think) that
+using a horse is better if the person you are trying to recruit has a
+high war ability, that personal appeal is better if he has high intel,
+and that letter is better if he has high charm.  Some other guides agree
+with this.  I do not.  I notice no difference in success rate at all
+between any of the different methods, so I always use a letter.
+      Many factors seem to affect whether or not your attempt to recruit
+an officer is successful.  The officer's loyalty is obviously the major
+factor, but others seem to be important.  The messenger plays a role, and
+although they are sorted by charm, I have noticed that the guy with the
+highest charm is not always the best at recruiting officers, so if
+you are serious about recruiting somebody you should try sending several
+different messengers. Compatibility is also very important.
+
+***A Quick note about compatibility:
+     Compatibility affects a lot of different factors when it comes to
+personel in this game.  Unfortunately, there is no onscreen number that
+shows any particular officer's compatibility with your ruler or other
+officers, so you'll have to figure it out mostly through trial and error.
+Compatibility greatly affects how loyal officers are to you. Example: Guan
+Yu, who has very high compatibility with Liu Bei is captured by Dong
+Zhuo (fairly unlikely).  Cao Cao then recruits Guan Yu from Dong Zhuo,
+since his loyalty is probably about 20.  Guan Yu has poor compatibility
+with Cao Cao, so his loyalty is very likely low (probably about 60).  Ma
+Teng then recruits Guan Yu off of Cao Cao.  Ma Teng and Guan Yu are very
+compatible, so Guan Yu's loyalty will probably start either in the high
+80s or low 90s with Ma Teng.  Compatibility also affects how often a
+general's loyalty decreases, and how much it decreases when it does.
+Officers with very low compatibility towards their current rulers tend to
+decrease in loyalty very quickly.
+     So how can you tell who is compatible with whom?  This is slightly
+more complicated.  As far as I can tell every general in the game leans
+at least slighty towards one of the three kingdoms: Shu (Liu Bei), Wu
+(Sun Jian/Ce/Quan) or Wei (Cao Cao/Pi).  Guan Yu, for example, is very
+strongly Shu, so any other leader who is strongly Shu, like Ma Teng, is
+a ruler Guan Yu will get along with.  Someone who is less strongly tied
+to a particular kingdom, Ji Ling, for example, won't have a high loyalty
+immediately after being recruited with any leader, but it won't be low
+either.  Yuan Shao, Liu Biao, and Dong Zhuo are probably the most
+important "neutral" compatibility rulers, although Liu Biao is somewhat
+pulled between both Wei and Shu.  In the long run, once you know who to
+recruit, it is an advantage to be a ruler that is strongly either Wei,
+Wu, or Shu.  Most of the best generals are strongly tied to one of the
+three kingdoms, and if you can recruit the right ones you will have to
+worry less about loyalties.
+     I still haven't answered the question.  The best way to check an
+officer's compatibility is to play scenario 5 or 6 and see who he ends
+up with at the end of the game.  For example, if you play as Liu Bei in
+scenario 5, you'll notice that he has many of Liu Zhang's old followers.
+It is safe to assume, then, that these officers are compatible with Liu
+Bei in all other scenarios, and, also, that Liu Zhang, as a ruler, is
+fairly strongly Shu.  Thus Liu Zhang's followers would be loyal to Liu
+Bei, and people that are supposed to follow Liu Bei in later scenarios
+(like Zhuge Liang) will be loyal to Liu Zhang, whether or not there is
+historical reason for them to do so.
+
+
+     Anyway, back to recruiting; compatibility with your ruler will play
+a large role in how successful you are in recruiting any given general.
+I suspect that the messenger's compatibility may also play a role, but
+I am less sure about this.  Trust also plays a major role in your
+chances, but it might only be your trust relative to the other ruler.
+This is actually usually bad, because the game also cheats with trust,
+giving the best rulers, like Cao Cao, trust bonuses as time goes on.  He
+will still be penalized for breaking treaties and the like, of course,
+but in times of peace his trust will go up seemingly for no reason.
+     Recruiting always uses an officer's turn, even if after hearing your
+adviser's advice you decide not to send your messenger.  For best
+results, be fairly persistent while recruiting, try using several
+different generals. Whew.
+
+3b. Search - searches the province for free generals that are in hiding.
+I'm pretty sure that new generals go into hiding every January, so it's
+probably best to search then.  Searching doesn't use a turn if, after
+hearing your adviser's opinion on the matter, you decide not to search;
+otherwise it will use the selected general's turn.  For the most part,
+any general will do.
+
+3c Appoint
+   1. Governor - appoints someone the governor of a province.  When you
+conquer a new province the commander automatically becomes the governor;
+this command will let you appoint someone else to replace him.  Charm
+and war ability are the only abilities that matter for a governor for
+the most part.  If the province can't get attacked and you are only
+going to have one officer in the province, however, intel is more
+important than war ability.  If the province gets attacked the governor
+will be the commander on the defensive side and will almost always be
+guarding the castle, so he should be at least competant at war if you
+are in danger of being attacked.
+   2. Advisor - appoints someone the advisor of your empire.  You can
+only have one advisor, and it usually should be the person who has the
+highest intel throughout your state.  Your advisor should always be
+in the same province as your ruler, as it will make recruiting and spying
+much easier.  You can appoint anyone with an intel of 80 or higher
+advisor, and even if 80 is the highest intel anyone has, you should
+definitely have an advisor, because even if you never listen to him he
+can still let you know if one of your governors has a tendency towards
+rebelling or if a spy is in your midst.  At 80 though, don't bother
+listening to much of what your advisor has to say otherwise, as it's
+mostly random garbage.  A useful advisor will have an intel of at least
+90, probably better 95. If an advisor doesn't have an intel of at least
+90 he will be wrong so often so as not to be useful.  Even with very high
+intels advisors can still be wrong several times consecutively (i've seen
+Pang Tong be wrong 4 times in a row and his intel is 98).  Zhuge Liang is
+the only officer in the game with a perfect 100 in intel, and he is never
+wrong.  Get him if at all possible. Neither of these commands requires
+you to expend a turn.
+
+3d Dismiss
+   1. General - fires a general from your service.  He will become a
+free general in either your province or a neighboring one. The only time
+you will ever really fire a general is if your advisor has alerted you
+that he can no longer be trusted (usually because he is actually a spy
+for one of the other rulers).  You can also fire someone with really low
+loyalty in hopes of recruiting them again, but this is rarely worth it
+unless their loyalty is somewhere around 20 or 30.
+   2. Advisor - relieves your advisor of his duties.  This command is
+essentially useless; you don't need to fire your current advisor to
+appoint a new one, and if you don't have someone else to appoint you
+shouldn't be dismissing your current advisor. Neither of these commands
+require you to expend someone's turn.
+
+3e. Delegate
+   1. Delegate - Delegates a province to be ruled by the governor.  You
+will no longer have to control the province.  This is useful when you
+have a lot of provinces that can't be attacked where you'd only be
+hitting done anyway.  Generally, i delegate all the provinces that can't
+be attacked and only control the ones that border my enemies.  You have
+four choices for policies "full command" (which in this game is the same
+as "balanced"), "internal" (focuses on improving the province),
+"personel"(focuses on getting/rewarding officers), and "military" (self-
+explanatory).  If you have just one officer in the province it doesn't
+much matter which one you pick.  If you think that you'll save yourself
+a ton of time by sending a bunch of disloyal generals into one province
+and delegating it on "personel" you're going to be disappointed.  Even
+on this setting the delegated governor is still terrible about keeping
+your loyalties decent.  I usually just pick "full command."  You can
+also order the province to send goods to a particular state (useful) or
+to attack an enemy territory (not useful -  you won't be impressed by
+their performance).
+   2. Cancel - ends delegated orders for a province.  You will regain
+control of it.  The only way to change policies is to cancel and
+redelegate it. Neither of these commands requires a turn to be spent.
+
+3f. Reward (uses governor/ruler's turn) - you have two basic choices
+(three if you have an advisor).  Gold allows you to give up to 100 gold
+to one of your officers.  How much their loyalty goes up is based on
+your governor's charm and how much money you choose to give.  Horse is
+very similar to gold.  Giving a horse does about the same thing as giving
+100 gold.  Giving writings to a follower does not affect his loyalty at
+all, but it will increase his intel by one point, up to the level of your
+advisor (minus one).  Thus if you have Zhuge Liang as your advisor
+(intel 100) you could in theory raise Cao Bao's (or any other officer's)
+intel to 99.  Rewarding is probably what you will be doing more often
+than anything else.  Unless you need your ruler to do something else that
+turn (like buy arms) he should probably be rewarding someone, unless of
+course everyone's loyalty is 100.  Rewarding with writings is more or
+less a waste of time, as intel is not really worth raising (after all,
+you already have an advisor that is better than you could make someone
+else).
+
+4. Trade
+
+4a. Sell Rice - Sells rice for gold at the rate displayed as "cost." A
+rate of 50 means that you have to sell 50 rice to make 100 gold. Uses
+an officer's turn, anyone will do.
+
+4b. Buy Rice - Buys rice for gold at the rate displayed as "cost." A
+rate of 50 means that you will have to pay 100 gold for 50 rice.  This
+also uses an officer's turn, anyone will do.
+
+4c. Buy Horse - Buys horses at 100 gold/horse.  In my opinion it's not
+worth it since I don't see any advantage in buying horses, but some
+may disagree. It uses someone's turn, anyone will do.
+
+4d. Buy Arms - Buys arms at the price of 1 arm/1 gold. You have to send
+the person you want to have the arms to the store to buy them himself.
+This is very important, as it adds a lot to your unit's ability to fight
+in a war.  It uses your turn to buy your unit arms.
+
+5. Int. Afrs
+
+5a. Land - invest money into developing the land value of your province.
+This is important for both your harvest and your tax collection in
+January.  The higher the intel of the person investing, the more
+successful it will be.  All officers involved in developing land use
+their turns.
+
+5b. Flood - invest money into developing the flood control of your
+province.  This is important for harvests, tax collection, and actually
+controlling damage due to floods.  The higher the intel of the people
+investing, the more successful it will be.  All officers involved
+use their turns.
+
+5c. Give - gives food to the people in order to raise their loyalty to
+your ruler.  This increases both harvest and tax collections in
+January.  The charm of the officers giving food as well as the charm of
+your governor will determine how big of an increase the people's loyalty
+will experience.  Officers that give food will use their turns.
+
+5d. Tax - collect a special tax from your people.  This will lower your
+people's loyalty and also your trust.  Never, ever, ever do this.  It's
+not worth sacraficing your trust for a few hundred gold and a few hundred
+rice.
+
+
+6. Diplomacy
+
+6a. Ally - attempt to ally with another ruler.  Allies are less likely
+to attack you (to varying degrees depending on the other ruler), and
+can assist you in battle either by helping you invade another province
+or by sending reinforcements to you should you be attacked.  Alliances
+are most helpful when you are trying to build your trust, relatively
+weak (overall or on a particular front), or need some help to invade a
+particularly nasty province, such as Liu Biao's capital, which always
+seems to have at least 1000 troops.  Alliances can be broken at any time
+with no penalty to trust, provided that you use the Cancel command,
+rather than simply attacking your former ally. The officer you choose as
+envoy will use his turn.
+
+6b. Joint - attempt to plan a joint attack on a third ruler's province.
+Even if the ruler agrees to help you he might decide at the last second
+not to send any men.  Remember when you do attack that you'll need to
+send enough food to supply both your men as well as his.  Assuming
+your victory, you will give him 10% of the gold and rice in the conquered
+province in appreciation for his support.  He will gain trust, you will
+not.  Your envoy will use his turn.  You must already be allied with the
+ruler you plan on asking to help in your invasion.  After getting an
+acceptance from the other ruler, you can either attack the same turn or
+the next.  After your next turn has passed, the agreement will expire.
+There is no penalty for planning a joint invasion and not actually
+launching the attack.
+
+6c. Marry - attempt to set up a marriage between your family and the
+family of another ruler.  This is almost always a terrible idea.  A
+marriage seems to function as a permanent alliance with the ruler without
+any of the benefits, such as joint attacks.  Your trust will reduce as if
+you were allied with the ruler if you were to attack him.  Marriages
+are permanent and cannot be cancelled. Your envoy will lose his turn.
+If you seal the marriage, the other ruler's hostility towards you will
+drop dramatically, but it's really not worth it.
+
+6d. Gift - offer a gift to a ruler.  It will always be accepted.  Gifts
+are anywhere between 100 and 1000 gold.  The higher the charm of your
+messenger, the lower the ruler's hostility towards you will become.
+Although this is a good (and more or less the only) way of reducing a
+rival ruler's hostility towards you, it's not especially useful.  If you
+are powerful enough the computer rulers will probably ask you to ally,
+and if you aren't powerful enough you're better off spending money on
+making yourself powerful rather than giving it to your rival so he can
+hire troops to invade you.  The deliverer of the gift will use his turn.
+It is occasionally useful to give gifts in order to secure a strong ally
+for use in a joint attack, but otherwise try to avoid giving gifts.
+
+6e. Cancel - cancel an alliance with a ruler.  There is no penalty for
+doing this at all, besides his hostility increasing.  There is no
+penalty in trust if you cancel an alliance and attack your former ally
+in the same turn.  This is the only way to cancel an alliance without
+losing trust.  You don't need to use an officer to cancel an alliance.
+
+6f. Threat - Threaten a ruler in hopes that they will surrender to you.
+This almost never works unless your trust is high, the ruler is
+pathetically weak and you are super powerful. It also seems to work well
+if the other ruler has almost no provisions.  I imagine compatibility is
+also a factor, since you are essentially recruiting another ruler.  If he
+surrenders, his province becomes yours and he becomes your officer.  If
+you fail, he's likely to try and capture the envoy.  The envoy will lose
+his turn.  The only reason to do this is if you are just dying to have
+Liu Yong (or equivalent) as an officer.  I have heard (although i haven't
+really looked into it) that none of the three kingdoms rulers will ever
+surrender, no matter how bad their situation is.  Finally, if a ruler
+does surrender to you, make sure not to make him a governor, since they
+always seem to be apt to rebel.
+
+**Thanks to the email from ProZe.  Apparently Liu Bei will surrender if he
+is weak enough.
+
+7. Spy
+
+7a. Hide General - This command allows you to hide a general who has 100
+loyalty in one of your rival's provinces.  The hidden general becomes a
+free general in the other ruler's province and will probably be recruited
+in a few turns.  Hiding a general is actually a very good way to weaken
+an opponent.  Hidden generals lower all of the loyalties in the other
+ruler's province very quickly.  On top of this, if you invade an enemy
+and he assigns soldiers to your spy, your spy can immediately change
+sides, just bribe him with 0 gold.  Don't be stupid and hide a general
+who already has troops assigned to him.  The computer will just hire him
+anyway and resassign the soldiers, making you look like a dummy.  The
+
+verify option allows you to send a message to the general to make sure
+he's still going along with the plot.  Withdraw allows you to remove the
+general without invading.  Rulers that are "good" or have an advisor with
+a high intel are more likely to figure out what is going on and dismiss
+your general.  In this case he'll just return to your province.  The only
+problem with hiding a general is that sometimes another computer warlord
+will just recruit him off the first ruler.  This is stupid and should
+have been accounted for somehow, but it isn't.  Oh well. Rarely, but
+occasionally, your general will like it better where he's hidden and just
+stay there as an officer.  Make sure you hide someone you have high
+compatibility with.
+
+7b. Rival Tigers - This plot is supposed to raise hostilities between
+two enemy rulers, in hopes that they will attack each other.  It's more
+or less pointless.  Even if it works on both leaders, their hostilities
+barely move, and the game so rarely attacks after a certain point that
+you'll probably never use this.  I can't remember the last time I even
+bothered to try it.  There are better things to do with your time.
+Especially since it takes up two officers' turns.
+
+7c. Tiger Wolf - This is probably the most rewarding spy tactic in the
+game.  Basically you find one of your rival's governors and trick him
+into rebelling against his ruler and establishing his own empire.  Now,
+very rarely do these new rulers ever do much of anything, but they are
+very annoying, especially if they occur in the middle of someone's
+territory.  Given enough effort on your part to persuade them, you can
+get a lot of officers to actually rebel.  Scenario 4 is perfect for this
+because Cao Cao has so many provinces compared to the other rulers.  The
+rules for this are very similar to recruiting, once you get your
+advisor's opinion on the success of you mission, your general will have
+used his turn whether or not you send him.  Definitely worth trying
+though.
+
+7d. Betrayal - This is an attempt to convince one of your rival's
+officers to switch to your side upon your invasion of his ruler's land.
+It is reasonably successful and also relatively powerful, especially if
+you are attacking a province with more than 700 soldiers.  It is fairly
+tricky to get someone with a loyalty higher than the 70s to agree to do
+it.  Unless of course it's Lu Bu or Wei Yan.  But if it's them you
+can probably just bribe them without bothering with the plot.  It uses
+officers turns the same way as tiger-wolf.
+
+7e. Forgery - Here you send a forged letter to an officer in an attempt
+to lower his loyalty with the ruler.  This is most effective if done
+several times a month for several consecutive months, then either
+recruiting the officer or arranging a betrayal.  On difficulty 1 or 2
+it's not really worth the effort as it takes a lot of time and manpower
+to work effectively and it's usually easier just to capture the general
+in battle.  On 3 it might be more worth it, especially if he is an
+officer with a very high war ability.  It also uses officers' turns like
+tiger-wolf.
+
+8. Move Commands
+
+8a. Move General - moves a general and all soldiers assigned to him to
+another province.  If you move into an empty province you will gain
+control of it and have to appoint a governor.
+
+8b. Move Goods - transports money and/or rice to another friendly
+province.  If you select a general with poor war ability to do it, the
+chances for the goods to be stolen by either bandits or another ruler
+(assuming, of course that you are going through his territory) raises
+dramatically.  The computer chooses the path your general will take, and
+it seems to be pretty much the fastest way, even if it is through an
+enemy's territory.
+
+
+**********************************
+
+IV. War
+
+A. The Commands
+
+1. Move
+   1a. Normal - moves your unit in the desired direction.  You stop
+moving no matter how much mobility remains if you move adjacent to an
+enemy unit or get ambushed.  Your mobility depends on the training
+level of your men, and maxes out at 6 (100 skill).  Fields take two
+mobility; forests, hills, and the castle three; and water five.  If you
+rest a turn (by not using any command at all) you will gain one mobility
+point.  When attacking, moving a unit on the defending castle means
+instant victory.
+   1b. Move Enemy - attempts to move an enemy to the square you are going
+to vacate as you move elsewhere.  The enemy must be adjacent to you in
+order to do it.  It is useful if your unit is in a square that is on
+fire, otherwise it's pretty pointless unless you are being especially
+clever in a battle.  Officers with a high intel are the best to do it,
+and it works most effectively against officers with low intels.
+
+2. Attack
+   2a. Simult. - Begin an attack where every other unit also adjacent to
+the target will join in.  Casualties are generally very low on the
+attacking side, unless the unit you are attacking is especially powerful.
+This is the most efficient and best way to eliminate a strong opponent.
+   2b. Normal - Engage the enemy unit with your unit only.  Generally
+one normal attack is more powerful than any single attack from a simult.
+attack, but the attacker's casualties will be noticeably higher. This is
+really only good when you can't do a simult. attack because no other unit
+is nearby or on the map at all.
+   2c. Fire - attempt to set the ground or an adjacent unit on fire.
+Units that become trapped in the fire (ie have no available move out of
+it) will take heavy casualties that are surprisingly random.  If the unit
+has about 20 soldiers left it will usually opt to retreat.  If a unit
+has less than 1 soldier (ie 0 and change) and can't retreat or move out
+of the fire, the leader of that unit will perish in the flames.  Fire
+can be very effective if used properly.  The castle is very hard to
+set on fire.  The higher your unit's leader's intel, the higher the
+chances of him successfully setting the unit on fire. (i have a hunch
+that war ability may also play a role, but again, i can't be sure).
+   2d. Charge - charge at the enemy unit.  Both units will take heavy
+casualties, but if your unit is overpowering, it is definitely worth it.
+Most of the time you will break through to the other side of the enemy
+unit.  The times you don't you'll probably wish you didn't charge,
+because you will very likely take a lot of casualties.  Charging is good
+for eliminating a weak unit and capturing its leader.  Occasionally,
+however, eliminating a unit by charging will cause the leader to perish.
+I'm not even sure if the leader dies randomly, because it seems to be
+the same people who perish all the time, but this could be my
+imagination.
+
+3. Flee - withdraws your unit from the battlefield.  If this is your
+commanding unit you must also withdraw your entire army; you can't change
+your commander mid battle.  The only exception is when you send your
+ruler as reinforcements after a month has already passed in combat.  In
+this case your ruler will become the new commander of your forces.  This
+is a useful trick for extending conflict while attacking a very powerful
+enemy province. Units that flee have a chance of being captured,
+especially if they are close to many other enemy units.
+
+4. View - very useful, very cheap.  Costs 10 gold and you will get info
+on one enemy unit - loyalty, skill, arm level, war ability, and intel.
+Make sure you bring some money along to do this.
+
+5. Tactics
+    5a. Bribe - Attempt to bribe an enemy unit to join your side.  You
+can bribe with up to 99 gold per attempt, and i'd advise you to use the
+max, because even then the chances of success are quite low.  The officer
+you are attempting to bribe keeps the money if you fail, so if you intend
+on bribing a lot bring several thousand dollars.  Try to bribe generals
+that are either low in loyalty or naturally jerks as you'll have the
+most success. If you are bribing someone you have a pact with, you can
+bribe with 0 gold and they will still switch sides.  As with recruiting,
+compatibility plays a role, both in your chances of success, as well as
+in the loyalty the follower will have to you after he switches sides.
+Attempting to bribe someone with a loyalty higher than 90 is almost
+always a waste of time, with very few exceptions.  Lu Bu and Wei Yan
+can (and will) be bribed even if their loyalty is 100.  Other times you
+can get someone with a loyalty in the 90s to switch sides if they have
+very high compatibilty with your ruler and very poor compatibility with
+your opponent (for example: Guan Yu is serving Dong Zhuo and Liu Bei
+attacks him, given enough effort Guan Yu might be successfully bribed).
+    5b. Reinforce - This is only available if you are defending.  You
+can leave extra units inside the castle and bring them out later with
+this command.  Generally, you don't have to leave any units inside unless
+you already have 10 that you want to deploy.
+
+B. Progression of the Battle
+
+      Battles are fought for 30 days, at the end of which either side
+can send additional reinforcements.  The first day of the battle both
+sides will have the option of sending an officer out for personal combat.
+Occasionally a powerful officer will volunteer and challenge the enemy
+without you doing anything.  Regardless if the enemy accepts the
+challenge the two officers will fight until one falls or the match is
+called a draw.  If you refuse personal combat a small amount of soldiers
+will desert from your forces (about 8% +/- 1%).  The same thing will
+happen to the computer if they refuse your challenge.  If neither side
+proposes personal combat the battle continues without it.  The loser of
+personal combat (and his unit) are immediately captured and removed from
+the field of battle.
+
+***A quick note about personal combat
+     If a general with a lower war ability defeats a general with a
+higher war ability, his ability will raise to the average of the two
+numbers, rounded down.  This is a somewhat risky maneouver, but it can
+raise a general's ability if you decide it's worth it.  The biggest
+upset I've ever seen is Jin Xuan (war 43) defeating Yang Huai (war 77).
+
+
+     So how exactly do you win a battle?  The attakcers win if they
+eliminate the enemies commander, move a unit on the castle, or if the
+defenders run out of rice.  The defenders win only if the defenders run
+out or rice or their commander is captured.  Once a battle is decided the
+victor can either recruit, release, or behead any officers he has
+captured.  Officers that were captured by the losing side automatically
+are released back to the victors.  There is absolutely no point in
+releasing any officers, so never do it.  If you don't want to recruit an
+officer for some reason (maybe he's ugly, maybe you just don't like him)
+you can behead him, and that will eliminate him from the game immediately.
+If you capture the enemy ruler your choices are a little more restricted.
+You can never recruit a ruler after besting him in battle.  As long as
+there is a province he can flee to, you can release him; otherwise you're
+gonna have to give him the axe.  If you are the attacker you will gain the
+province you were attempting to conquer, and you will have a chance of
+getting war spoils in the form of an item that will raise an officer's
+abilities and max out his loyalty. Province 10 will always give you some
+spoil of war.
+
+********************************************
+
+V. Misc tricks and tips
+
+1.  All of the Spy commands, and all of the diplomacy commands besides
+'gift' can only be used in your home province, so make sure to keep some
+officers there.  Because of this limitation, even if your leader is lousy
+you're going to have to use him a lot.  Of course you could always try to
+get him beheaded by attacking an enemy province with 0 troops until they
+have him killed, but you'll suffer from horrible loyalties when you
+replace him.
+
+2. While I'm thinking about it, if your ruler dies the most important
+thing to do is pick a good successor.  Charm is the single most
+important stat to watch out for, but often overlooked is compatibility.
+Suppose that you're playing as Sun Ce, and he dies.  Let's also say that
+somehow you have Simi Yi in your service.  Now Simi Yi would make a good
+successor, but his compatibility is probably quite poor with most of
+your good officers.  When you replace a ruler with his successor, all of
+the loyalties throughout your empire get replaced with loyalties as if
+you had recruited all of your followers that turn.  This means that all
+of your former generals, all strongly Wu, would have loyalties that
+reflect them being recruited by a ruler strongly Wei.  They'd have very
+poor loyalty.  Now, sometimes you won't have a choice as to who will
+succeed, because there will be only one clear choice, but if there is
+a decision to make, try to keep compatibility in mind.  Either way,
+replacing your ruler makes you loyalties plummet and, depending on how
+large your empire is, it may take years to recover them.
+
+3. Take advantage of the fact that you can cancel alliances and attack
+in the same turn.
+
+4. A good way to get your trust up without actually getting the
+hereditary seal is to ally with a weak province and continually help it
+repel invasions.  I played as Liu Bei once and defended Hain Fu
+from Cao Cao several times and got my trust up into the 70s.  Having
+very high trust early in the game makes a huge difference, trust me.
+
+5. If you are playing as a weak ruler with fairly neutral compatibility
+(like Li Jue, for example) you are going to have a hard time recruiting
+generals.  A good method is to watch who nearby rulers recruit and then
+try and get these officers before the computer has a chance to reward
+them.  This works especially well if the ruler and the officer have a
+poor compatibility.
+
+6. If possible try to eliminate Cao Cao and Liu Biao early, especially
+in scenarios one and two.  Cao Cao becomes very powerful very quickly
+and Liu Biao almost never leaves province 20. If you leave Liu Biao alone
+all game by the time you get to attacking him he'll have more than 1000
+soldiers, and it will be a pain to take the castle.
+
+7.  When giving an item to an officer, there are a few things that you
+should consider before selecting him.  The first of these is whether or
+not giving him the item is going to actually make him better.  Obviously
+do not waste your time trying to turn Cao Bao into the ultimate fighting
+machine, you'll just end up wasting all of your items (and he'll still
+stink).  Also, keep in mind that most of the items raise a specific
+ability by a random number between 7 and 14.  This means you probably
+shouldn't give someone an item if the ability in question is already
+in the high 90s (he's already good enough and no ability can raise past
+100).  Ideally, you want to use an item to make a good general great.
+Officers with their war ablity in the high 80s, then, become excellent
+people to give swords to, as it can raise their war to 100, making them
+really valuable.  If you raise an advisor's intel to 100 they *will* get
+Zhuge Liang's special ability of never giving incorrect advice. (thanks
+to Mark Liu for correcting me on this point).
+
+8. For creating a new ruler:
+
+8a. As far as abilities go, intel is more or less pointless for a ruler,
+so you should concentrate on war ability and charm.  Usually I max out
+charm rather than war ability, but this is just a matter of personal
+preference.  Definitely max out war ability if you are choosing a
+province that will be difficult to defend.
+
+8b. Your follower will always be average.  I generally just assign all
+the points to war ability, as if you are only going to have one follower,
+it makes more sense to have him good at war.  Again, I wouldn't bother
+assigning the points to intel, as the highest you can get it will be 80,
+barely enough to become an advisor (and a really crummy one at that).
+
+8c. If you are going to be a new ruler, it is obviously better to choose
+one of the earlier scenarios as they provide more of an even playing
+field for a less powerful ruler.  If you choose scenario 1, pick province
+17, even though it is right next to Dong Zhuo and Cao Cao's capitals; it
+is literally full of officers you can recruit easily by searching. Just
+make sure to build your army up quickly so you don't get smashed.
+
+9.  In scenario 1 Lu Bu starts with 50 troops assigned to him, and a low
+loyalty to Dong Zhuo.  Recruit him the first turn of the game and you'll
+gain these soldiers (reassign them to someone else).  Incidentally, Lu
+Bu's compatibility alignment is fairly strongly Shu, although this
+doesn't matter much as he will still betray anyone quite willingly.
+
+10. Use the plague to your advantage.  When a province is hit by the
+plague, many of their officers will become injured and unable to take the
+field in battle.  This gives you a good opportunity to attack and fight
+about half of the province's army, capturing the other half.  Definitely
+worth it.
+
+11. I've said this before, but the most important thing to do is keep
+your loyalties high.  Don't trust delegated provinces to do this for you,
+because very often they will not (of course, if your trust is high enough
+it won't matter because your loyalties won't go down).  Generally, always
+reward if you have followers in your province whose loyalty is not 100.
+
+12. Province 29 really stinks.  Locusts hit it almost every year in some
+scenarios.  This makes it very hard to play as Zhang Lu.
+
+13. You'll probably catch on to this fairly quickly, but surnames in this
+game precede the name.  Thus Cao Cao and Cao Ang are related. Not all the
+officers in the game who have the same surname are related, however; Cao
+Cao and Cao Bao, for example, have no relation.  Officers that are related
+to their ruler almost always have 100 loyalty, and it usually won't go
+down (unless their ruler has _very_ low trust).
+
+14. From TheCount:
+"When making a custom leader and getting a follower, that follower will
+always have 100 loyalty while that leader is still ruling the clan. But,
+if you choose to have no follower, the first person you recruit will have
+those loyalty benefits. This becomes very useful when recruiting Lu Bu, as
+it can terminate the betrayal issues."
+
+******************************************************************
+
+VI. Credits
+
+Thanks to bgardn7, DragonAtma, and tcs5384@aol.com for the information
+on trust.  I had never known that not reading a letter would raise trust.
+
+Thanks to Mark Liu for correcting me about increasing intelligence.
+
+Thanks to Nicole Xhilone (pronounced X-ill-on) for being the only person
+i know who will read this without making fun of me in some way.
+(she's cute too).
+
+Thanks to Wendy "action" Jackson for bugging me about the phoney word
+"playability."
+
+Thanks to ProZe for the email about Liu Bei surrendering.
+
+Thanks to TheCount for the information about not choosing to have a
+created follower.
+
+And, finally, thanks to the people who have sent me emails and im's about
+this guide. I have been very pleasantly surprised with the amount of
+feedback I've been given for this guide, especially considering the age
+of the game.

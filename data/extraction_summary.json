@@ -1,0 +1,12 @@
+{
+  "extraction_date": "2026-04-01",
+  "total_officers": 255,
+  "total_provinces": 41,
+  "total_rulers": 16,
+  "terrain_provinces": 41,
+  "notes": [
+    "English names need to be filled in manually",
+    "Some officer data may be missing or corrupted",
+    "Terrain data extracted from hex maps"
+  ]
+}

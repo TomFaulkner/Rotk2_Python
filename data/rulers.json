@@ -1,0 +1,450 @@
+[
+  {
+    "id": 0,
+    "offset": 11060,
+    "name": "$274$$346$",
+    "leader": {
+      "ruler_offset": 88,
+      "ruler_name": "$274$$346$"
+    },
+    "advisor": {
+      "advisor_offset": null,
+      "advisor_name": null
+    },
+    "provinces": {
+      "capital_offset": null,
+      "province_count": 0,
+      "province_offsets": []
+    },
+    "diplomacy": {
+      "trust_levels": [],
+      "hostility_levels": [],
+      "alliances": []
+    },
+    "status": {
+      "magic": 0,
+      "marriage": 0,
+      "is_wandering": false
+    }
+  },
+  {
+    "id": 1,
+    "offset": 11101,
+    "name": "$251$$347$",
+    "leader": {
+      "ruler_offset": 131,
+      "ruler_name": "$251$$347$"
+    },
+    "advisor": {
+      "advisor_offset": null,
+      "advisor_name": null
+    },
+    "provinces": {
+      "capital_offset": null,
+      "province_count": 0,
+      "province_offsets": []
+    },
+    "diplomacy": {
+      "trust_levels": [],
+      "hostility_levels": [],
+      "alliances": []
+    },
+    "status": {
+      "magic": 0,
+      "marriage": 0,
+      "is_wandering": false
+    }
+  },
+  {
+    "id": 2,
+    "offset": 11142,
+    "name": "$331$$716$",
+    "leader": {
+      "ruler_offset": 174,
+      "ruler_name": "$331$$716$"
+    },
+    "advisor": {
+      "advisor_offset": null,
+      "advisor_name": null
+    },
+    "provinces": {
+      "capital_offset": null,
+      "province_count": 0,
+      "province_offsets": []
+    },
+    "diplomacy": {
+      "trust_levels": [],
+      "hostility_levels": [],
+      "alliances": []
+    },
+    "status": {
+      "magic": 0,
+      "marriage": 0,
+      "is_wandering": false
+    }
+  },
+  {
+    "id": 3,
+    "offset": 11183,
+    "name": "$587$$588$",
+    "leader": {
+      "ruler_offset": 217,
+      "ruler_name": "$587$$588$"
+    },
+    "advisor": {
+      "advisor_offset": null,
+      "advisor_name": null
+    },
+    "provinces": {
+      "capital_offset": null,
+      "province_count": 0,
+      "province_offsets": []
+    },
+    "diplomacy": {
+      "trust_levels": [],
+      "hostility_levels": [],
+      "alliances": []
+    },
+    "status": {
+      "magic": 0,
+      "marriage": 0,
+      "is_wandering": false
+    }
+  },
+  {
+    "id": 4,
+    "offset": 11224,
+    "name": "$587$$589$",
+    "leader": {
+      "ruler_offset": 260,
+      "ruler_name": "$587$$589$"
+    },
+    "advisor": {
+      "advisor_offset": null,
+      "advisor_name": null
+    },
+    "provinces": {
+      "capital_offset": null,
+      "province_count": 0,
+      "province_offsets": []
+    },
+    "diplomacy": {
+      "trust_levels": [],
+      "hostility_levels": [],
+      "alliances": []
+    },
+    "status": {
+      "magic": 0,
+      "marriage": 0,
+      "is_wandering": false
+    }
+  },
+  {
+    "id": 5,
+    "offset": 11265,
+    "name": "$271$$349$",
+    "leader": {
+      "ruler_offset": 303,
+      "ruler_name": "$271$$349$"
+    },
+    "advisor": {
+      "advisor_offset": null,
+      "advisor_name": null
+    },
+    "provinces": {
+      "capital_offset": null,
+      "province_count": 0,
+      "province_offsets": []
+    },
+    "diplomacy": {
+      "trust_levels": [],
+      "hostility_levels": [],
+      "alliances": []
+    },
+    "status": {
+      "magic": 0,
+      "marriage": 0,
+      "is_wandering": false
+    }
+  },
+  {
+    "id": 6,
+    "offset": 11306,
+    "name": "$251$$717$",
+    "leader": {
+      "ruler_offset": 346,
+      "ruler_name": "$251$$717$"
+    },
+    "advisor": {
+      "advisor_offset": null,
+      "advisor_name": null
+    },
+    "provinces": {
+      "capital_offset": null,
+      "province_count": 0,
+      "province_offsets": []
+    },
+    "diplomacy": {
+      "trust_levels": [],
+      "hostility_levels": [],
+      "alliances": []
+    },
+    "status": {
+      "magic": 0,
+      "marriage": 0,
+      "is_wandering": false
+    }
+  },
+  {
+    "id": 7,
+    "offset": 11347,
+    "name": "$251$$590$",
+    "leader": {
+      "ruler_offset": 389,
+      "ruler_name": "$251$$590$"
+    },
+    "advisor": {
+      "advisor_offset": null,
+      "advisor_name": null
+    },
+    "provinces": {
+      "capital_offset": null,
+      "province_count": 0,
+      "province_offsets": []
+    },
+    "diplomacy": {
+      "trust_levels": [],
+      "hostility_levels": [],
+      "alliances": []
+    },
+    "status": {
+      "magic": 0,
+      "marriage": 0,
+      "is_wandering": false
+    }
+  },
+  {
+    "id": 8,
+    "offset": 11388,
+    "name": "$309$$718$",
+    "leader": {
+      "ruler_offset": 432,
+      "ruler_name": "$309$$718$"
+    },
+    "advisor": {
+      "advisor_offset": null,
+      "advisor_name": null
+    },
+    "provinces": {
+      "capital_offset": null,
+      "province_count": 0,
+      "province_offsets": []
+    },
+    "diplomacy": {
+      "trust_levels": [],
+      "hostility_levels": [],
+      "alliances": []
+    },
+    "status": {
+      "magic": 0,
+      "marriage": 0,
+      "is_wandering": false
+    }
+  },
+  {
+    "id": 9,
+    "offset": 11429,
+    "name": "$330$$331$$591$",
+    "leader": {
+      "ruler_offset": 475,
+      "ruler_name": "$330$$331$$591$"
+    },
+    "advisor": {
+      "advisor_offset": null,
+      "advisor_name": null
+    },
+    "provinces": {
+      "capital_offset": null,
+      "province_count": 0,
+      "province_offsets": []
+    },
+    "diplomacy": {
+      "trust_levels": [],
+      "hostility_levels": [],
+      "alliances": []
+    },
+    "status": {
+      "magic": 0,
+      "marriage": 0,
+      "is_wandering": false
+    }
+  },
+  {
+    "id": 10,
+    "offset": 11470,
+    "name": "$719$$437$",
+    "leader": {
+      "ruler_offset": 518,
+      "ruler_name": "$719$$437$"
+    },
+    "advisor": {
+      "advisor_offset": null,
+      "advisor_name": null
+    },
+    "provinces": {
+      "capital_offset": null,
+      "province_count": 0,
+      "province_offsets": []
+    },
+    "diplomacy": {
+      "trust_levels": [],
+      "hostility_levels": [],
+      "alliances": []
+    },
+    "status": {
+      "magic": 0,
+      "marriage": 0,
+      "is_wandering": false
+    }
+  },
+  {
+    "id": 11,
+    "offset": 11511,
+    "name": "$351$$720$",
+    "leader": {
+      "ruler_offset": 561,
+      "ruler_name": "$351$$720$"
+    },
+    "advisor": {
+      "advisor_offset": null,
+      "advisor_name": null
+    },
+    "provinces": {
+      "capital_offset": null,
+      "province_count": 0,
+      "province_offsets": []
+    },
+    "diplomacy": {
+      "trust_levels": [],
+      "hostility_levels": [],
+      "alliances": []
+    },
+    "status": {
+      "magic": 0,
+      "marriage": 0,
+      "is_wandering": false
+    }
+  },
+  {
+    "id": 12,
+    "offset": 11552,
+    "name": "$150$$423$",
+    "leader": {
+      "ruler_offset": 604,
+      "ruler_name": "$150$$423$"
+    },
+    "advisor": {
+      "advisor_offset": null,
+      "advisor_name": null
+    },
+    "provinces": {
+      "capital_offset": null,
+      "province_count": 0,
+      "province_offsets": []
+    },
+    "diplomacy": {
+      "trust_levels": [],
+      "hostility_levels": [],
+      "alliances": []
+    },
+    "status": {
+      "magic": 0,
+      "marriage": 0,
+      "is_wandering": false
+    }
+  },
+  {
+    "id": 13,
+    "offset": 11593,
+    "name": "$247$$721$",
+    "leader": {
+      "ruler_offset": 647,
+      "ruler_name": "$247$$721$"
+    },
+    "advisor": {
+      "advisor_offset": null,
+      "advisor_name": null
+    },
+    "provinces": {
+      "capital_offset": null,
+      "province_count": 0,
+      "province_offsets": []
+    },
+    "diplomacy": {
+      "trust_levels": [],
+      "hostility_levels": [],
+      "alliances": []
+    },
+    "status": {
+      "magic": 0,
+      "marriage": 0,
+      "is_wandering": false
+    }
+  },
+  {
+    "id": 14,
+    "offset": 11634,
+    "name": "$251$$446$",
+    "leader": {
+      "ruler_offset": 690,
+      "ruler_name": "$251$$446$"
+    },
+    "advisor": {
+      "advisor_offset": null,
+      "advisor_name": null
+    },
+    "provinces": {
+      "capital_offset": null,
+      "province_count": 0,
+      "province_offsets": []
+    },
+    "diplomacy": {
+      "trust_levels": [],
+      "hostility_levels": [],
+      "alliances": []
+    },
+    "status": {
+      "magic": 0,
+      "marriage": 0,
+      "is_wandering": false
+    }
+  },
+  {
+    "id": 15,
+    "offset": 11675,
+    "name": "$55536$$55537$$55538$",
+    "leader": {
+      "ruler_offset": 11010,
+      "ruler_name": "$55536$$55537$$55538$"
+    },
+    "advisor": {
+      "advisor_offset": null,
+      "advisor_name": null
+    },
+    "provinces": {
+      "capital_offset": null,
+      "province_count": 0,
+      "province_offsets": []
+    },
+    "diplomacy": {
+      "trust_levels": [],
+      "hostility_levels": [],
+      "alliances": []
+    },
+    "status": {
+      "magic": 0,
+      "marriage": 0,
+      "is_wandering": false
+    }
+  }
+]

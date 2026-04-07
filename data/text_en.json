@@ -1,0 +1,33 @@
+{
+  "officer_names": {},
+  "commands": {
+    "command_1": "Move",
+    "command_2": "Transport",
+    "command_3": "War",
+    "command_4": "Recruit",
+    "command_5": "Personnel",
+    "command_6": "Council",
+    "command_7": "Strategy",
+    "command_8": "Intelligence",
+    "command_9": "View",
+    "command_10": "View2",
+    "command_11": "Orders",
+    "command_12": "View3",
+    "command_13": "Diplomacy",
+    "command_14": "Delegate",
+    "command_15": "Market",
+    "command_16": "Territory",
+    "command_17": "Save",
+    "command_18": "Map",
+    "command_19": "End"
+  },
+  "ui_text": {},
+  "tactics": {
+    "fire": "Fire Attack",
+    "ambush": "Ambush",
+    "duel": "Duel",
+    "rally": "Rally",
+    "defend": "Defend",
+    "retreat": "Retreat"
+  }
+}

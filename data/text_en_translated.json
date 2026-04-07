@@ -1,0 +1,4033 @@
+{
+  "metadata": {
+    "game": "Romance of the Three Kingdoms II (PC)",
+    "source": "DSBUF.DAT",
+    "total_entries": 327,
+    "created_date": "2026-04-01",
+    "translation_status": "pending"
+  },
+  "glossary": {
+    "commands": {
+      "command_1": "Move",
+      "command_2": "Send",
+      "command_3": "War",
+      "command_4": "Recruit",
+      "command_5": "Personnel",
+      "command_8": "Intelligence",
+      "command_13": "Diplomatic Negotiations",
+      "command_14": "Authorization",
+      "command_15": "Trade",
+      "command_16": "Territory",
+      "command_18": "Map",
+      "command_19": "Pass"
+    },
+    "tactics": {
+      "fire": "Fire Attack",
+      "ambush": "Ambush",
+      "duel": "Duel",
+      "rally": "Rally",
+      "defend": "Defend",
+      "retreat": "Retreat"
+    },
+    "provinces": {
+      "1": "Youzhou",
+      "2": "Youzhou",
+      "3": "Youzhou",
+      "4": "Bingzhou",
+      "5": "Bingzhou",
+      "6": "Jizhou",
+      "7": "Jizhou",
+      "8": "Qingzhou",
+      "9": "Yanzhou",
+      "10": "Sili",
+      "11": "Sili",
+      "12": "Sili",
+      "13": "Liangzhou",
+      "14": "Liangzhou",
+      "15": "Liangzhou",
+      "16": "Xuzhou",
+      "17": "Yuzhou",
+      "18": "Yangzhou",
+      "19": "Jingzhou",
+      "20": "Jingzhou",
+      "21": "Jingzhou",
+      "22": "Jingzhou",
+      "23": "Jingzhou",
+      "24": "Yangzhou",
+      "25": "Yangzhou",
+      "26": "Yangzhou",
+      "27": "Yangzhou",
+      "28": "Yangzhou",
+      "29": "Yizhou",
+      "30": "Yizhou",
+      "31": "Yizhou",
+      "32": "Yizhou",
+      "33": "Yizhou",
+      "34": "Jiaozhou",
+      "35": "Jiaozhou",
+      "36": "Jiaozhou",
+      "37": "Jiaozhou",
+      "38": "Jiaozhou",
+      "39": "Jiaozhou",
+      "40": "Jiaozhou",
+      "41": "Jiaozhou"
+    },
+    "officers_sample": {
+      "0": "Cao Cao",
+      "1": "Liu Bei",
+      "2": "Sun Jian",
+      "3": "Yuan Shao",
+      "4": "Yuan Shu",
+      "5": "Ma Teng",
+      "6": "Liu Yan",
+      "7": "Liu Biao",
+      "8": "Dong Zhuo",
+      "9": "Gongsun Zan"
+    }
+  },
+  "translations": [
+    {
+      "text_id": "0x3D7D",
+      "offset": 15741,
+      "category": "prompts",
+      "chinese": "$37802$$37769$$41561$",
+      "english": "Yes",
+      "context": "unknown",
+      "length": 6,
+      "files": [
+        "Command4.py",
+        "MainMenu.py",
+        "Command16.py",
+        "Command5.py"
+      ]
+    },
+    {
+      "text_id": "0x3F75",
+      "offset": 16245,
+      "category": "prompts",
+      "chinese": "%s, $43000$$38381$$38648$$40648$%2d$40148$$37706$$38039$",
+      "english": "%s, %s Year %d Ruler %s (%d-%d)?",
+      "context": "unknown",
+      "length": 21,
+      "files": [
+        "Command1.py",
+        "Command5.py"
+      ]
+    },
+    {
+      "text_id": "0x5290",
+      "offset": 21136,
+      "category": "prompts",
+      "chinese": "$37872$$40956$$37544$$38897$",
+      "english": "Players",
+      "context": "def SelectPlayers(self, bmp):",
+      "length": 8,
+      "files": [
+        "MainMenu.py"
+      ]
+    },
+    {
+      "text_id": "0x5299",
+      "offset": 21145,
+      "category": "prompts",
+      "chinese": "$42049$$43650$$38981$%d, $43480$$43001$$39053$(%d-%d)? ",
+      "english": "Player %d Ruler (%d-%d)?",
+      "context": "def SelectPlayers(self, bmp):",
+      "length": 25,
+      "files": [
+        "MainMenu.py"
+      ]
+    },
+    {
+      "text_id": "0x52A3",
+      "offset": 21155,
+      "category": "prompts",
+      "chinese": "$43480$$43001$$39053$(%d-%d)? ",
+      "english": "Ruler (%d-%d)?",
+      "context": "def SelectPlayers(self, bmp):",
+      "length": 15,
+      "files": [
+        "MainMenu.py"
+      ]
+    },
+    {
+      "text_id": "0x52B3",
+      "offset": 21171,
+      "category": "prompts",
+      "chinese": "[0A](0: $39391$$37557$$37536$$39576$)",
+      "english": "\n(0: %s)",
+      "context": "def SelectPlayers(self, bmp):",
+      "length": 14,
+      "files": [
+        "MainMenu.py"
+      ]
+    },
+    {
+      "text_id": "0x52FC",
+      "offset": 21244,
+      "category": "prompts",
+      "chinese": "$43480$$39820$$41095$$41919$",
+      "english": "Scenario",
+      "context": "def SelectScenario(self):",
+      "length": 8,
+      "files": [
+        "MainMenu.py"
+      ]
+    },
+    {
+      "text_id": "0x5342",
+      "offset": 21314,
+      "category": "prompts",
+      "chinese": "$43000$$43480$$43236$",
+      "english": "Start",
+      "context": "def Start(self, province_no):",
+      "length": 6,
+      "files": [
+        "Command18.py",
+        "Command19.py",
+        "MainMenu.py"
+      ]
+    },
+    {
+      "text_id": "0x534D",
+      "offset": 21325,
+      "category": "prompts",
+      "chinese": "$38991$$38648$$41561$",
+      "english": "End",
+      "context": "def EndGame(self):",
+      "length": 6,
+      "files": [
+        "MainMenu.py"
+      ]
+    },
+    {
+      "text_id": "0x536E",
+      "offset": 21358,
+      "category": "prompts",
+      "chinese": "$38468$$38760$",
+      "english": "Male",
+      "context": "def NewRuler_GetSex(self,age):",
+      "length": 4,
+      "files": [
+        "MainMenu.py"
+      ]
+    },
+    {
+      "text_id": "0x5373",
+      "offset": 21363,
+      "category": "prompts",
+      "chinese": "$37579$$38760$",
+      "english": "Female",
+      "context": "def NewRuler_GetSex(self,age):",
+      "length": 4,
+      "files": [
+        "MainMenu.py"
+      ]
+    },
+    {
+      "text_id": "0x5387",
+      "offset": 21383,
+      "category": "prompts",
+      "chinese": "$38194$$39278$$38131$$37736$$37785$$37868$",
+      "english": "Birth Month",
+      "context": "def NewRuler_GetBirthday(self):",
+      "length": 12,
+      "files": [
+        "MainMenu.py"
+      ]
+    },
+    {
+      "text_id": "0x53B0",
+      "offset": 21424,
+      "category": "prompts",
+      "chinese": "$38194$$39278$$38131$$37734$$37785$$37868$",
+      "english": "Birth Day",
+      "context": "def NewRuler_GetBirthday(self):",
+      "length": 12,
+      "files": [
+        "MainMenu.py"
+      ]
+    },
+    {
+      "text_id": "0x53BD",
+      "offset": 21437,
+      "category": "prompts",
+      "chinese": "$38048$$39416$$38026$$37578$",
+      "english": "Age",
+      "context": "def NewRuler_GetBirthday(self):",
+      "length": 8,
+      "files": [
+        "MainMenu.py"
+      ]
+    },
+    {
+      "text_id": "0x53DB",
+      "offset": 21467,
+      "category": "prompts",
+      "chinese": "$38760$$38215$",
+      "english": "Sex",
+      "context": "def NewRuler_GetSex(self,age):",
+      "length": 4,
+      "files": [
+        "MainMenu.py"
+      ]
+    },
+    {
+      "text_id": "0x5409",
+      "offset": 21513,
+      "category": "prompts",
+      "chinese": " 4 - 6:$40069$$37551$$43480$$43236$    8:$37788$    2:$41140$",
+      "english": "4-6: Medium Province 8: Small 2: Large",
+      "context": "unknown",
+      "length": 31,
+      "files": [
+        "MainMenu.py"
+      ]
+    },
+    {
+      "text_id": "0x5464",
+      "offset": 21604,
+      "category": "prompts",
+      "chinese": "$38519$$42652$",
+      "english": "Fail",
+      "context": "unknown",
+      "length": 4,
+      "files": [
+        "MainMenu.py"
+      ]
+    },
+    {
+      "text_id": "0x548F",
+      "offset": 21647,
+      "category": "prompts",
+      "chinese": "$40152$$40875$$40838$$37557$$41561$",
+      "english": "Confirm Assign",
+      "context": "def NewRuler_AddFollower(self):",
+      "length": 10,
+      "files": [
+        "MainMenu.py"
+      ]
+    },
+    {
+      "text_id": "0x54A8",
+      "offset": 21672,
+      "category": "prompts",
+      "chinese": "$43480$$43236$$40658$$38872$$40148$",
+      "english": "Province",
+      "context": "def NewRuler_GetRuledProvince(self):",
+      "length": 10,
+      "files": [
+        "MainMenu.py"
+      ]
+    },
+    {
+      "text_id": "0x54B3",
+      "offset": 21683,
+      "category": "prompts",
+      "chinese": "$37769$$37559$$37802$$37769$$41561$",
+      "english": "Yes No",
+      "context": "unknown",
+      "length": 10,
+      "files": [
+        "MainMenu.py"
+      ]
+    },
+    {
+      "text_id": "0x54BE",
+      "offset": 21694,
+      "category": "prompts",
+      "chinese": "$39609$$38352$$38131$$41465$",
+      "english": "Assign",
+      "context": "unknown",
+      "length": 8,
+      "files": [
+        "MainMenu.py"
+      ]
+    },
+    {
+      "text_id": "0x5530",
+      "offset": 21808,
+      "category": "prompts",
+      "chinese": "$39019$$40036$",
+      "english": "Easy",
+      "context": "def ShowLevel(self,bmp):",
+      "length": 4,
+      "files": [
+        "MainMenu.py"
+      ]
+    },
+    {
+      "text_id": "0x5535",
+      "offset": 21813,
+      "category": "prompts",
+      "chinese": "$37602$$40036$",
+      "english": "Normal",
+      "context": "def ShowLevel(self,bmp):",
+      "length": 4,
+      "files": [
+        "MainMenu.py"
+      ]
+    },
+    {
+      "text_id": "0x553A",
+      "offset": 21818,
+      "category": "prompts",
+      "chinese": "$40172$$40036$",
+      "english": "Hard",
+      "context": "def ShowLevel(self,bmp):",
+      "length": 4,
+      "files": [
+        "MainMenu.py"
+      ]
+    },
+    {
+      "text_id": "0x553F",
+      "offset": 21823,
+      "category": "prompts",
+      "chinese": "$37815$$42193$$37733$$38049$",
+      "english": "Scenario 1",
+      "context": "def ShowHistory(self,bmp):",
+      "length": 8,
+      "files": [
+        "MainMenu.py"
+      ]
+    },
+    {
+      "text_id": "0x5548",
+      "offset": 21832,
+      "category": "prompts",
+      "chinese": "$41361$$41655$$37733$$38049$",
+      "english": "Scenario 2",
+      "context": "def ShowHistory(self,bmp):",
+      "length": 8,
+      "files": [
+        "MainMenu.py"
+      ]
+    },
+    {
+      "text_id": "0x558C",
+      "offset": 21900,
+      "category": "prompts",
+      "chinese": "$37536$$37681$",
+      "english": "Confirm",
+      "context": "def NewGame(self):",
+      "length": 4,
+      "files": [
+        "MainMenu.py"
+      ]
+    },
+    {
+      "text_id": "0x55C0",
+      "offset": 21952,
+      "category": "prompts",
+      "chinese": "$43480$$43236$$38131$$42400$$42049$$43650$$41281$$40036$",
+      "english": "Level",
+      "context": "def SelectLevel(self,bmp):",
+      "length": 16,
+      "files": [
+        "MainMenu.py"
+      ]
+    },
+    {
+      "text_id": "0x561F",
+      "offset": 22047,
+      "category": "prompts",
+      "chinese": "$43480$$43236$$38131$$42400$$42049$$43650$$44391$$39117$",
+      "english": "History",
+      "context": "def SelectHistory(self,bmp):",
+      "length": 16,
+      "files": [
+        "MainMenu.py"
+      ]
+    },
+    {
+      "text_id": "0x57B4",
+      "offset": 22452,
+      "category": "prompts",
+      "chinese": "$40838$$37557$",
+      "english": "Follower",
+      "context": "def NewRuler_AddFollower(self):",
+      "length": 4,
+      "files": [
+        "MainMenu.py"
+      ]
+    },
+    {
+      "text_id": "0x57B9",
+      "offset": 22457,
+      "category": "prompts",
+      "chinese": "$43001$$39053$",
+      "english": "Name",
+      "context": "def NewRuler_GetName(self):",
+      "length": 4,
+      "files": [
+        "MainMenu.py"
+      ]
+    },
+    {
+      "text_id": "0x57BE",
+      "offset": 22462,
+      "category": "prompts",
+      "chinese": "$43480$%s$38004$.",
+      "english": "Ruler %s.",
+      "context": "def NewRuler_GetName(self):",
+      "length": 7,
+      "files": [
+        "MainMenu.py"
+      ]
+    },
+    {
+      "text_id": "0x57C2",
+      "offset": 22466,
+      "category": "prompts",
+      "chinese": "$38004$.",
+      "english": ".",
+      "context": "def NewRuler_GetName(self):",
+      "length": 3,
+      "files": [
+        "MainMenu.py"
+      ]
+    },
+    {
+      "text_id": "0x57C6",
+      "offset": 22470,
+      "category": "prompts",
+      "chinese": "[0A]1.$39511$$42546$    2.$37602$$37730$    ",
+      "english": "\n1.Choose    2.Cancel",
+      "context": "def NewRuler_GetName(self):",
+      "length": 21,
+      "files": [
+        "MainMenu.py"
+      ]
+    },
+    {
+      "text_id": "0x57DC",
+      "offset": 22492,
+      "category": "prompts",
+      "chinese": "$38194$$38906$$43480$$43236$",
+      "english": "New Ruler",
+      "context": "def NewRuler_GetName(self):",
+      "length": 8,
+      "files": [
+        "MainMenu.py"
+      ]
+    },
+    {
+      "text_id": "0x57F9",
+      "offset": 22521,
+      "category": "prompts",
+      "chinese": "$40817$$42827$",
+      "english": "New",
+      "context": "def NewRuler_GetName(self):",
+      "length": 4,
+      "files": [
+        "MainMenu.py"
+      ]
+    },
+    {
+      "text_id": "0x588A",
+      "offset": 22666,
+      "category": "prompts",
+      "chinese": "$40408$$41346$$43920$$37546$.",
+      "english": "Invalid.",
+      "context": "unknown",
+      "length": 9,
+      "files": [
+        "Command18.py",
+        "Command8.py"
+      ]
+    },
+    {
+      "text_id": "0x590C",
+      "offset": 22796,
+      "category": "prompts",
+      "chinese": "$41945$$41978$$39766$$38004$$37601$$38037$$38020$! ",
+      "english": "Not Enough Gold!",
+      "context": "unknown",
+      "length": 16,
+      "files": [
+        "MainMenu.py"
+      ]
+    },
+    {
+      "text_id": "0x5CEB",
+      "offset": 23787,
+      "category": "prompts",
+      "chinese": "%s, $38003$$40648$%d$40148$$37557$$42052$$38611$$37776$(%d-%d)? ",
+      "english": "%s, Year %d Ruler %s Train (%d-%d)?",
+      "context": "def Start(self):",
+      "length": 29,
+      "files": [
+        "Main.py"
+      ]
+    },
+    {
+      "text_id": "0x63EF",
+      "offset": 25583,
+      "category": "prompts",
+      "chinese": "$37769$$39648$$37536$$42822$$43234$$39346$$42832$$41708$",
+      "english": "Allied Province",
+      "context": "def Command8_6(self,province_no):",
+      "length": 16,
+      "files": [
+        "Command8.py"
+      ]
+    },
+    {
+      "text_id": "0x650A",
+      "offset": 25866,
+      "category": "prompts",
+      "chinese": "$43480$$43056$",
+      "english": "Ruler",
+      "context": "unknown",
+      "length": 4,
+      "files": [
+        "Command8.py"
+      ]
+    },
+    {
+      "text_id": "0x6685",
+      "offset": 26245,
+      "category": "prompts",
+      "chinese": "$39391$$37557$$37536$$39605$",
+      "english": "Allied",
+      "context": "unknown",
+      "length": 8,
+      "files": [
+        "Command8.py"
+      ]
+    },
+    {
+      "text_id": "0x6896",
+      "offset": 26774,
+      "category": "prompts",
+      "chinese": "$37872$$43056$$40189$$42197$",
+      "english": "Allied Army",
+      "context": "unknown",
+      "length": 8,
+      "files": [
+        "Command8.py"
+      ]
+    },
+    {
+      "text_id": "0x689F",
+      "offset": 26783,
+      "category": "prompts",
+      "chinese": "$39648$$37536$$40148$",
+      "english": "Allied Force",
+      "context": "unknown",
+      "length": 6,
+      "files": [
+        "Command8.py"
+      ]
+    },
+    {
+      "text_id": "0x6933",
+      "offset": 26931,
+      "category": "prompts",
+      "chinese": "$41945$$41978$$39766$$37591$$38037$$38020$,$38356$$41658$$41561$",
+      "english": "Not Enough Gold, Troops Low",
+      "context": "unknown",
+      "length": 19,
+      "files": [
+        "Command19.py"
+      ]
+    },
+    {
+      "text_id": "0x695C",
+      "offset": 26972,
+      "category": "prompts",
+      "chinese": "$44776$$43056$$44135$$40642$",
+      "english": "Ruler Skill",
+      "context": "unknown",
+      "length": 8,
+      "files": [
+        "Command1.py"
+      ]
+    },
+    {
+      "text_id": "0x6965",
+      "offset": 26981,
+      "category": "prompts",
+      "chinese": "[0A]$42041$$38504$$38026$$37709$$41526$$39030$",
+      "english": "\nResource Trade",
+      "context": "unknown",
+      "length": 13,
+      "files": [
+        "Command1.py"
+      ]
+    },
+    {
+      "text_id": "0x6974",
+      "offset": 26996,
+      "category": "prompts",
+      "chinese": "$42041$$38504$$38026$$37709$$44028$$39579$(0-%lu)? ",
+      "english": "Resource Buy (0-%lu)?",
+      "context": "unknown",
+      "length": 21,
+      "files": [
+        "Command1.py"
+      ]
+    },
+    {
+      "text_id": "0x698A",
+      "offset": 27018,
+      "category": "prompts",
+      "chinese": "[0A]$38804$$40527$$40817$$39605$$40148$$41561$",
+      "english": "\nGold Send %s",
+      "context": "unknown",
+      "length": 13,
+      "files": [
+        "Command1.py"
+      ]
+    },
+    {
+      "text_id": "0x6998",
+      "offset": 27032,
+      "category": "prompts",
+      "chinese": "$38003$$38131$$40759$$43115$$40642$",
+      "english": "Gold Command",
+      "context": "def Start(self,province_no):",
+      "length": 10,
+      "files": [
+        "Command1.py"
+      ]
+    },
+    {
+      "text_id": "0x69EF",
+      "offset": 27119,
+      "category": "prompts",
+      "chinese": "$41935$$41301$$38026$$37709$$41526$$39030$",
+      "english": "Resources Trade",
+      "context": "unknown",
+      "length": 12,
+      "files": [
+        "Command2.py"
+      ]
+    },
+    {
+      "text_id": "0x69FC",
+      "offset": 27132,
+      "category": "prompts",
+      "chinese": "[0A]$41935$$41301$$38026$$37709$$44028$$39579$(0-%lu)? ",
+      "english": "\nResources Buy (0-%lu)?",
+      "context": "unknown",
+      "length": 22,
+      "files": [
+        "Command2.py"
+      ]
+    },
+    {
+      "text_id": "0x6A18",
+      "offset": 27160,
+      "category": "prompts",
+      "chinese": "$42041$$40137$$38574$$38131$$38019$",
+      "english": "Gold Resources",
+      "context": "def Start(self,province_no):",
+      "length": 10,
+      "files": [
+        "Command2.py"
+      ]
+    },
+    {
+      "text_id": "0x6A23",
+      "offset": 27171,
+      "category": "prompts",
+      "chinese": "$39333$$43056$$42041$$40137$",
+      "english": "Gold Gold",
+      "context": "def Start(self,province_no):",
+      "length": 8,
+      "files": [
+        "Command2.py"
+      ]
+    },
+    {
+      "text_id": "0x6BB9",
+      "offset": 27577,
+      "category": "prompts",
+      "chinese": "$41060$$40172$$37542$$40122$$42935$$37745$$41708$.",
+      "english": "Gold Province.",
+      "context": "unknown",
+      "length": 15,
+      "files": [
+        "Command4.py"
+      ]
+    },
+    {
+      "text_id": "0x6BE2",
+      "offset": 27618,
+      "category": "prompts",
+      "chinese": "[0A]$40358$$38026$$37709$$37576$$38212$",
+      "english": "\nGold Pop",
+      "context": "unknown",
+      "length": 11,
+      "files": [
+        "Command4.py"
+      ]
+    },
+    {
+      "text_id": "0x6C06",
+      "offset": 27654,
+      "category": "prompts",
+      "chinese": "$44743$$38356$$43056$$38608$",
+      "english": "Gold Command",
+      "context": "def AdjustSoldiers(self,soldiers_hired):",
+      "length": 8,
+      "files": [
+        "Command4.py"
+      ]
+    },
+    {
+      "text_id": "0x6C16",
+      "offset": 27670,
+      "category": "prompts",
+      "chinese": "%lu$37544$$41013$$39630$$39346$$38705$$37856$",
+      "english": "%lu Gold Soldiers",
+      "context": "def AdjustSoldiers(self,soldiers_hired):",
+      "length": 15,
+      "files": [
+        "Command4.py"
+      ]
+    },
+    {
+      "text_id": "0x6C2B",
+      "offset": 27691,
+      "category": "prompts",
+      "chinese": "$44776$$43056$$39565$$41658$$37680$$39333$",
+      "english": "Gold Transport",
+      "context": "def PaiBing(self):",
+      "length": 12,
+      "files": [
+        "Command4.py"
+      ]
+    },
+    {
+      "text_id": "0x6C38",
+      "offset": 27704,
+      "category": "prompts",
+      "chinese": "$39333$$43056$$41551$$38212$",
+      "english": "Gold Army",
+      "context": "def MuBing(self):",
+      "length": 8,
+      "files": [
+        "Command4.py"
+      ]
+    },
+    {
+      "text_id": "0x6C41",
+      "offset": 27713,
+      "category": "prompts",
+      "chinese": "$41551$$38212$$40956$$38090$$37544$",
+      "english": "Army Gold",
+      "context": "def MuBing(self):",
+      "length": 10,
+      "files": [
+        "Command4.py"
+      ]
+    },
+    {
+      "text_id": "0x6CEE",
+      "offset": 27886,
+      "category": "prompts",
+      "chinese": "$38339$$43056$$41943$$44089$",
+      "english": "Fire Officer",
+      "context": "def FireOfficer(self):",
+      "length": 8,
+      "files": [
+        "Command5.py"
+      ]
+    },
+    {
+      "text_id": "0x6D5C",
+      "offset": 27996,
+      "category": "prompts",
+      "chinese": "$39648$$37536$$40148$$38906$$40339$$42636$",
+      "english": "Province Troops",
+      "context": "def FireOfficer(self):",
+      "length": 12,
+      "files": [
+        "Command5.py"
+      ]
+    },
+    {
+      "text_id": "0x6D84",
+      "offset": 28036,
+      "category": "prompts",
+      "chinese": "$41943$$40165$$43056$$38906$$44089$$40259$",
+      "english": "Province Army",
+      "context": "def Fire(self, is_ruler):",
+      "length": 12,
+      "files": [
+        "Command5.py"
+      ]
+    },
+    {
+      "text_id": "0x6D9A",
+      "offset": 28058,
+      "category": "prompts",
+      "chinese": "$39254$$39333$$43056$$39346$$37706$$38039$",
+      "english": "Governor Assign",
+      "context": "def AssignGovernor(self):",
+      "length": 12,
+      "files": [
+        "Command5.py"
+      ]
+    },
+    {
+      "text_id": "0x6DA7",
+      "offset": 28071,
+      "category": "prompts",
+      "chinese": "$39254$$39333$$43056$$39346$$39543$$39760$",
+      "english": "Governor Ruler",
+      "context": "unknown",
+      "length": 12,
+      "files": [
+        "Command5.py"
+      ]
+    },
+    {
+      "text_id": "0x6E28",
+      "offset": 28200,
+      "category": "prompts",
+      "chinese": "$39254$$39333$$43056$",
+      "english": "Governor",
+      "context": "def Assign(self,is_ruler):",
+      "length": 6,
+      "files": [
+        "Command5.py"
+      ]
+    },
+    {
+      "text_id": "0x6E67",
+      "offset": 28263,
+      "category": "prompts",
+      "chinese": "$38131$$40148$$38906$$40339$$42636$",
+      "english": "Troops Province",
+      "context": "def AssignAdvisor(self):",
+      "length": 10,
+      "files": [
+        "Command5.py"
+      ]
+    },
+    {
+      "text_id": "0x6EA5",
+      "offset": 28325,
+      "category": "prompts",
+      "chinese": "$39333$$43056$$38341$$40945$",
+      "english": "Gold Province",
+      "context": "def Find(self, is_ruler):",
+      "length": 8,
+      "files": [
+        "Command5.py"
+      ]
+    },
+    {
+      "text_id": "0x6F27",
+      "offset": 28455,
+      "category": "prompts",
+      "chinese": "$43000$$43480$$43236$",
+      "english": "Start",
+      "context": "unknown",
+      "length": 6,
+      "files": [
+        "Command5.py"
+      ]
+    },
+    {
+      "text_id": "0x6F37",
+      "offset": 28471,
+      "category": "prompts",
+      "chinese": "$42721$$37805$",
+      "english": "Trade",
+      "context": "unknown",
+      "length": 4,
+      "files": [
+        "Command5.py"
+      ]
+    },
+    {
+      "text_id": "0x6F3E",
+      "offset": 28478,
+      "category": "prompts",
+      "chinese": "$39333$$43056$$41803$$39758$$38545$",
+      "english": "Gold Province",
+      "context": "unknown",
+      "length": 10,
+      "files": [
+        "Command5.py"
+      ]
+    },
+    {
+      "text_id": "0x6F49",
+      "offset": 28489,
+      "category": "prompts",
+      "chinese": "$39648$$37536$$40148$$38906$$40339$$42636$",
+      "english": "Province Troops",
+      "context": "def Hire(self, is_ruler):",
+      "length": 12,
+      "files": [
+        "Command5.py"
+      ]
+    },
+    {
+      "text_id": "0x6F63",
+      "offset": 28515,
+      "category": "prompts",
+      "chinese": "$38387$$38067$$37802$$42721$$37805$$40339$$42636$",
+      "english": "Troops Trade Province",
+      "context": "unknown",
+      "length": 14,
+      "files": [
+        "Command5.py"
+      ]
+    },
+    {
+      "text_id": "0x7B94",
+      "offset": 31636,
+      "category": "prompts",
+      "chinese": "$40137$$43056$$39828$",
+      "english": "Resources",
+      "context": "unknown",
+      "length": 6,
+      "files": [
+        "Command11.py"
+      ]
+    },
+    {
+      "text_id": "0x7B9B",
+      "offset": 31643,
+      "category": "prompts",
+      "chinese": "$40137$$39828$$41561$",
+      "english": "Resources",
+      "context": "unknown",
+      "length": 6,
+      "files": [
+        "Command11.py"
+      ]
+    },
+    {
+      "text_id": "0x7BEE",
+      "offset": 31726,
+      "category": "prompts",
+      "chinese": "$40137$$43056$$38486$$43165$",
+      "english": "Resource",
+      "context": "unknown",
+      "length": 8,
+      "files": [
+        "Command11.py"
+      ]
+    },
+    {
+      "text_id": "0x7C00",
+      "offset": 31744,
+      "category": "prompts",
+      "chinese": "$41301$$43056$$41526$$39030$",
+      "english": "Resources",
+      "context": "unknown",
+      "length": 8,
+      "files": [
+        "Command11.py"
+      ]
+    },
+    {
+      "text_id": "0x7C09",
+      "offset": 31753,
+      "category": "prompts",
+      "chinese": "$41301$$38026$$37709$$41526$$39030$",
+      "english": "Resource",
+      "context": "unknown",
+      "length": 10,
+      "files": [
+        "Command11.py"
+      ]
+    },
+    {
+      "text_id": "0x7D58",
+      "offset": 32088,
+      "category": "prompts",
+      "chinese": "[0A]$43889$$41400$$38026$$37709$$38844$$43201$",
+      "english": "\nHorse Buy",
+      "context": "def BuyWeapons(self, officer_no):",
+      "length": 13,
+      "files": [
+        "Command13.py"
+      ]
+    },
+    {
+      "text_id": "0x7D7A",
+      "offset": 32122,
+      "category": "prompts",
+      "chinese": "$43889$$41400$$38026$$37709$$37687$$40170$",
+      "english": "\nHorse Buy",
+      "context": "def BuyHorse(self, officer_no):",
+      "length": 12,
+      "files": [
+        "Command13.py"
+      ]
+    },
+    {
+      "text_id": "0x7DD1",
+      "offset": 32209,
+      "category": "prompts",
+      "chinese": "$41400$$38026$$37709$$44028$$39579$? (1-%lu) ",
+      "english": "Rice Price? (1-%lu)",
+      "context": "def BuyFood(self, officer_no):",
+      "length": 20,
+      "files": [
+        "Command13.py"
+      ]
+    },
+    {
+      "text_id": "0x7DE6",
+      "offset": 32230,
+      "category": "prompts",
+      "chinese": "$43079$$38026$$37709$$44028$$39579$(%lu-%lu)? ",
+      "english": "Sell Rice (%lu-%lu)?",
+      "context": "def SellFood(self, officer_no):",
+      "length": 21,
+      "files": [
+        "Command13.py"
+      ]
+    },
+    {
+      "text_id": "0x7E5C",
+      "offset": 32348,
+      "category": "prompts",
+      "chinese": "$43000$$43480$$43236$",
+      "english": "Start",
+      "context": "def Start(self, province_no):",
+      "length": 6,
+      "files": [
+        "Command4.py",
+        "Command13.py",
+        "Command5.py"
+      ]
+    },
+    {
+      "text_id": "0x7E63",
+      "offset": 32355,
+      "category": "prompts",
+      "chinese": "$39333$$43056$$37801$$41423$$38118$$37943$$38809$",
+      "english": "Gold Army",
+      "context": "unknown",
+      "length": 14,
+      "files": [
+        "Command13.py"
+      ]
+    },
+    {
+      "text_id": "0x7E82",
+      "offset": 32386,
+      "category": "prompts",
+      "chinese": "$38738$$41267$$41561$",
+      "english": "Trade",
+      "context": "def Start(self,province_no):",
+      "length": 6,
+      "files": [
+        "Command14.py"
+      ]
+    },
+    {
+      "text_id": "0x8394",
+      "offset": 33684,
+      "category": "prompts",
+      "chinese": "$40408$$41346$$43920$$37546$",
+      "english": "Invalid.",
+      "context": "unknown",
+      "length": 8,
+      "files": [
+        "Command15.py"
+      ]
+    },
+    {
+      "text_id": "0x83B2",
+      "offset": 33714,
+      "category": "prompts",
+      "chinese": "$41423$$38353$$38566$$37773$$40148$$41561$",
+      "english": "Confirm Province",
+      "context": "unknown",
+      "length": 12,
+      "files": [
+        "Command16.py"
+      ]
+    },
+    {
+      "text_id": "0x83CA",
+      "offset": 33738,
+      "category": "prompts",
+      "chinese": "$42041$$40137$$41526$$39030$$38606$$44028$$39579$$41561$",
+      "english": "Gold Resource Price",
+      "context": "unknown",
+      "length": 16,
+      "files": [
+        "Command16.py"
+      ]
+    },
+    {
+      "text_id": "0x83DB",
+      "offset": 33755,
+      "category": "prompts",
+      "chinese": "$42041$$40137$$38574$$39648$$37536$$40148$?",
+      "english": "Gold Resource?",
+      "context": "unknown",
+      "length": 13,
+      "files": [
+        "Command16.py"
+      ]
+    },
+    {
+      "text_id": "0x842D",
+      "offset": 33837,
+      "category": "prompts",
+      "chinese": "$40307$$37850$$37733$$40155$$39278$$37614$$42652$",
+      "english": "Gold Province",
+      "context": "unknown",
+      "length": 14,
+      "files": [
+        "Command16.py"
+      ]
+    },
+    {
+      "text_id": "0x84A5",
+      "offset": 33957,
+      "category": "prompts",
+      "chinese": "$38003$$39648$$37536$$40148$$37557$$42052$$39254$$37883$",
+      "english": "Gold Province Troops",
+      "context": "def Start(self, province_no):",
+      "length": 16,
+      "files": [
+        "Command16.py"
+      ]
+    },
+    {
+      "text_id": "0x8A0E",
+      "offset": 35342,
+      "category": "prompts",
+      "chinese": "<$42049$$43650$$41294$$38357$$41561$>[0A][1B]C7[01]",
+      "english": "<Province> Ruler",
+      "context": "unknown",
+      "length": 17,
+      "files": [
+        "Command19.py"
+      ]
+    },
+    {
+      "text_id": "0x8AA9",
+      "offset": 35497,
+      "category": "prompts",
+      "chinese": "1.On 2.Off",
+      "english": "1.On 2.Off",
+      "context": "unknown",
+      "length": 10,
+      "files": [
+        "Command19.py"
+      ]
+    },
+    {
+      "text_id": "0x8AF8",
+      "offset": 35576,
+      "category": "prompts",
+      "chinese": "$43480$$39648$$37536$$39605$",
+      "english": "Province Size",
+      "context": "unknown",
+      "length": 8,
+      "files": [
+        "Command19.py"
+      ]
+    },
+    {
+      "text_id": "0x8B52",
+      "offset": 35666,
+      "category": "prompts",
+      "chinese": "$43000$$43480$$43236$",
+      "english": "Start",
+      "context": "def Start(self,province_no):",
+      "length": 6,
+      "files": [
+        "Command19.py"
+      ]
+    },
+    {
+      "text_id": "0x9365",
+      "offset": 37733,
+      "category": "prompts",
+      "chinese": "$43000$$43480$$43236$",
+      "english": "Start",
+      "context": "def Start(self,province_no):",
+      "length": 6,
+      "files": [
+        "Command8.py"
+      ]
+    },
+    {
+      "text_id": "0x3FD0",
+      "offset": 16336,
+      "category": "labels",
+      "chinese": "$37598$$41090$",
+      "english": "Int",
+      "context": "def GetOfficerList(officer_list, show_flag: ShowOfficerFlag, page, multi_select, officer_status, can_action=True,",
+      "length": 4,
+      "files": [
+        "Helper.py"
+      ]
+    },
+    {
+      "text_id": "0x3FDA",
+      "offset": 16346,
+      "category": "labels",
+      "chinese": "$41919$$37805$",
+      "english": "Chm",
+      "context": "def GetOfficerList(officer_list, show_flag: ShowOfficerFlag, page, multi_select, officer_status, can_action=True,",
+      "length": 4,
+      "files": [
+        "Helper.py"
+      ]
+    },
+    {
+      "text_id": "0x3FDF",
+      "offset": 16351,
+      "category": "labels",
+      "chinese": "$37576$$38212$",
+      "english": "Soldiers",
+      "context": "def GetOfficerList(officer_list, show_flag: ShowOfficerFlag, page, multi_select, officer_status, can_action=True,",
+      "length": 4,
+      "files": [
+        "Helper.py"
+      ]
+    },
+    {
+      "text_id": "0x3FE4",
+      "offset": 16356,
+      "category": "labels",
+      "chinese": "$38742$$41953$",
+      "english": "Loyalty",
+      "context": "def GetOfficerList(officer_list, show_flag: ShowOfficerFlag, page, multi_select, officer_status, can_action=True,",
+      "length": 4,
+      "files": [
+        "Helper.py"
+      ]
+    },
+    {
+      "text_id": "0x3FE9",
+      "offset": 16361,
+      "category": "labels",
+      "chinese": "$38844$$43201$",
+      "english": "Weapons",
+      "context": "def GetOfficerList(officer_list, show_flag: ShowOfficerFlag, page, multi_select, officer_status, can_action=True,",
+      "length": 4,
+      "files": [
+        "Helper.py"
+      ]
+    },
+    {
+      "text_id": "0x3FF2",
+      "offset": 16370,
+      "category": "labels",
+      "chinese": "$41195$$41919$  $38844$$40339$$38004$  ",
+      "english": "Name   Officer",
+      "context": "def GetOfficerList(officer_list, show_flag: ShowOfficerFlag, page, multi_select, officer_status, can_action=True,",
+      "length": 14,
+      "files": [
+        "Helper.py"
+      ]
+    },
+    {
+      "text_id": "0x3FF9",
+      "offset": 16377,
+      "category": "labels",
+      "chinese": "$48285$$37780$t  ",
+      "english": "Command",
+      "context": "def GetOfficerList(officer_list, show_flag: ShowOfficerFlag, page, multi_select, officer_status, can_action=True,",
+      "length": 7,
+      "files": [
+        "Helper.py"
+      ]
+    },
+    {
+      "text_id": "0x621A",
+      "offset": 25114,
+      "category": "labels",
+      "chinese": "$37544$$37574$[1B]C7[01]%6d00  [1B]C6[01]$41526$$39030$[1B]C7[01]%8u [1B]C4[01]$37856$$38742$$41953$$39160$[1B]C7[01]%5d",
+      "english": "Gold [1B]C7[01]%6d Rice C6[01]%8u Pop C7[01]%5d",
+      "context": "def GetProvinceInformation(prov_no):",
+      "length": 50,
+      "files": [
+        "Helper.py"
+      ]
+    },
+    {
+      "text_id": "0x623F",
+      "offset": 25151,
+      "category": "labels",
+      "chinese": "$38742$$41953$$39160$[1B]C7[01]%5d",
+      "english": "Pop C7[01]%5d",
+      "context": "def DisplayProvinces(ruler_no, page):",
+      "length": 13,
+      "files": [
+        "Helper.py"
+      ]
+    },
+    {
+      "text_id": "0x6251",
+      "offset": 25169,
+      "category": "labels",
+      "chinese": "$37576$$38212$[1B]C7[01]%8lu  [1B]C6[01]$44028$$39579$[1B]C7[01]%8lu [1B]C4[01]$38019$$42659$    [1B]C7[01]%5d",
+      "english": "Rice C7[01]%8lu Gold C7[01]%8lu Pop %5d",
+      "context": "def GetProvinceInformation(prov_no):",
+      "length": 50,
+      "files": [
+        "Helper.py"
+      ]
+    },
+    {
+      "text_id": "0x6263",
+      "offset": 25187,
+      "category": "labels",
+      "chinese": "$44028$$39579$[1B]C7[01]%8lu [1B]C4[01]$38019$$42659$    [1B]C7[01]%5d",
+      "english": "Gold C7[01]%8lu Pop %5d",
+      "context": "unknown",
+      "length": 32,
+      "files": [
+        "Helper.py"
+      ]
+    },
+    {
+      "text_id": "0x6288",
+      "offset": 25224,
+      "category": "labels",
+      "chinese": "$38020$$44089$$40339$$42636$ [1B]C7[01]%3d  [1B]C6[01]$38092$$42659$ [1B]C7[01]%7d [1B]C4[01]$38872$$37745$$39160$   [1B]C7[01]%4d",
+      "english": "Army Troops C7[01]%3d Gold C7[01]%7d Pop %4d",
+      "context": "def GetProvinceInformation(prov_no):",
+      "length": 55,
+      "files": [
+        "Helper.py"
+      ]
+    },
+    {
+      "text_id": "0x62C4",
+      "offset": 25284,
+      "category": "labels",
+      "chinese": "$38020$$40842$$40339$$42636$ [1B]C7[01]%3d  [1B]C6[01]$38486$$43165$  [1B]C7[01]%6d [1B]C4[01]$39121$$40926$     [1B]C7[01]%4d",
+      "english": "Army Training C7[01]%3d Pop C7[01]%6d Land %4d",
+      "context": "def GetProvinceInformation(prov_no):",
+      "length": 56,
+      "files": [
+        "Helper.py"
+      ]
+    },
+    {
+      "text_id": "0x6310",
+      "offset": 25360,
+      "category": "labels",
+      "chinese": " ($38967$$38019$)",
+      "english": "(Pop)",
+      "context": "def GetGovernorInformation(prov_no):",
+      "length": 7,
+      "files": [
+        "Helper.py"
+      ]
+    },
+    {
+      "text_id": "0x6400",
+      "offset": 25600,
+      "category": "labels",
+      "chinese": "$43001$$39053$",
+      "english": "Name",
+      "context": "unknown",
+      "length": 4,
+      "files": [
+        "Command8.py",
+        "Helper.py"
+      ]
+    },
+    {
+      "text_id": "0x6405",
+      "offset": 25605,
+      "category": "labels",
+      "chinese": "$37706$$38039$",
+      "english": "Officer",
+      "context": "unknown",
+      "length": 4,
+      "files": [
+        "Command8.py",
+        "Helper.py"
+      ]
+    },
+    {
+      "text_id": "0x6422",
+      "offset": 25634,
+      "category": "labels",
+      "chinese": "$41169$",
+      "english": "Off",
+      "context": "def GetOfficerDetailedInformation(self,officer):",
+      "length": 2,
+      "files": [
+        "Command8.py"
+      ]
+    },
+    {
+      "text_id": "0x6528",
+      "offset": 25896,
+      "category": "labels",
+      "chinese": "$40339$ $42636$",
+      "english": "Officer",
+      "context": "def GetOfficersSummary(self,prov_no, page):",
+      "length": 5,
+      "files": [
+        "Command8.py",
+        "Helper.py"
+      ]
+    },
+    {
+      "text_id": "0x605C",
+      "offset": 24668,
+      "category": "messages",
+      "chinese": "$37601$$39278$$37850$$40299$",
+      "english": "Gold",
+      "context": "def Assign(self,is_ruler):",
+      "length": 8,
+      "files": [
+        "Command5.py"
+      ]
+    },
+    {
+      "text_id": "0x6070",
+      "offset": 24688,
+      "category": "messages",
+      "chinese": "$41526$$39030$$37601$$38505$      ",
+      "english": "Resources Gold",
+      "context": "def MerchantCheckResourceLimit(self, cmd):",
+      "length": 14,
+      "files": [
+        "Command4.py",
+        "Command13.py",
+        "Command5.py"
+      ]
+    },
+    {
+      "text_id": "0x6BCE",
+      "offset": 27598,
+      "category": "messages",
+      "chinese": "$40122$$42935$$37745$$41708$$37591$$41871$$40881$$40172$$37542$.",
+      "english": "Training Complete.",
+      "context": "def Training(self):",
+      "length": 19,
+      "files": [
+        "Command4.py"
+      ]
+    },
+    {
+      "text_id": "0x6C4C",
+      "offset": 27724,
+      "category": "messages",
+      "chinese": "$44028$$40088$$37601$$38505$",
+      "english": "Gold Enough",
+      "context": "def MuBing(self):",
+      "length": 8,
+      "files": [
+        "Command4.py"
+      ]
+    },
+    {
+      "text_id": "0x6C55",
+      "offset": 27733,
+      "category": "messages",
+      "chinese": "$41169$$38861$$37976$$41551$$38212$",
+      "english": "Army Officer",
+      "context": "def MuBing(self):",
+      "length": 10,
+      "files": [
+        "Command4.py"
+      ]
+    },
+    {
+      "text_id": "0x6D15",
+      "offset": 27925,
+      "category": "messages",
+      "chinese": "$40781$$41943$$44089$$37542$[1B]C7[01]",
+      "english": "Advisor",
+      "context": "unknown",
+      "length": 12,
+      "files": [
+        "Command5.py"
+      ]
+    },
+    {
+      "text_id": "0x6D22",
+      "offset": 27938,
+      "category": "messages",
+      "chinese": "$38387$$38067$$39543$$39760$",
+      "english": "Advisor Fire",
+      "context": "def FireAdvisor(self):",
+      "length": 8,
+      "files": [
+        "Command5.py"
+      ]
+    },
+    {
+      "text_id": "0x6D46",
+      "offset": 27974,
+      "category": "messages",
+      "chinese": "[0A]%s$37591$$40781$$41943$$40165$$39543$$39760$$38906$$44089$$40259$",
+      "english": "\nRuler Advisor",
+      "context": "unknown",
+      "length": 21,
+      "files": [
+        "Command5.py"
+      ]
+    },
+    {
+      "text_id": "0x6DB4",
+      "offset": 28084,
+      "category": "messages",
+      "chinese": "$37773$$37601$$40069$$38193$$39543$$39760$",
+      "english": "Ruler Advisor",
+      "context": "unknown",
+      "length": 12,
+      "files": [
+        "Command5.py"
+      ]
+    },
+    {
+      "text_id": "0x6DD0",
+      "offset": 28112,
+      "category": "messages",
+      "chinese": "$37706$$38039$",
+      "english": "Officer",
+      "context": "def Assign(self,is_ruler):",
+      "length": 4,
+      "files": [
+        "Command5.py"
+      ]
+    },
+    {
+      "text_id": "0x6DE4",
+      "offset": 28132,
+      "category": "messages",
+      "chinese": "$37591$$39278$%s",
+      "english": "\n%s",
+      "context": "unknown",
+      "length": 6,
+      "files": [
+        "Command5.py"
+      ]
+    },
+    {
+      "text_id": "0x6F2E",
+      "offset": 28462,
+      "category": "messages",
+      "chinese": "$38387$$38067$$38486$$43165$",
+      "english": "Troops Pop",
+      "context": "def ValidateResourceLimit(self, cmd):",
+      "length": 8,
+      "files": [
+        "Command5.py"
+      ]
+    },
+    {
+      "text_id": "0x6F56",
+      "offset": 28502,
+      "category": "messages",
+      "chinese": "$38387$$38067$$38020$$40842$$40339$$42636$",
+      "english": "Troops Army",
+      "context": "unknown",
+      "length": 12,
+      "files": [
+        "Command5.py"
+      ]
+    },
+    {
+      "text_id": "0x7BA6",
+      "offset": 31654,
+      "category": "messages",
+      "chinese": "[0A]$41060$$40172$$37542$%s$38906$$37598$$41090$",
+      "english": "\n%s Pop Int",
+      "context": "unknown",
+      "length": 15,
+      "files": [
+        "Command11.py"
+      ]
+    },
+    {
+      "text_id": "0x7BBA",
+      "offset": 31674,
+      "category": "messages",
+      "chinese": "[0A]$38387$$38067$$39815$$38825$",
+      "english": "\nTroops",
+      "context": "unknown",
+      "length": 9,
+      "files": [
+        "Command11.py"
+      ]
+    },
+    {
+      "text_id": "0x7BC9",
+      "offset": 31689,
+      "category": "messages",
+      "chinese": "%s$38906$$38742$$41953$$39160$$38056$$39346$%d",
+      "english": "%s Pop Loyalty %d",
+      "context": "def ShowRewardResult(self,officer,result):",
+      "length": 16,
+      "files": [
+        "Command11.py"
+      ]
+    },
+    {
+      "text_id": "0x7C55",
+      "offset": 31829,
+      "category": "messages",
+      "chinese": "$38387$$38067$$38486$$43165$!",
+      "english": "Troops Pop!",
+      "context": "unknown",
+      "length": 9,
+      "files": [
+        "Command11.py"
+      ]
+    },
+    {
+      "text_id": "0x7C63",
+      "offset": 31843,
+      "category": "messages",
+      "chinese": "$40817$$39605$$40299$$39732$$38387$$38067$$39543$$39760$!",
+      "english": "New %s Ruler",
+      "context": "unknown",
+      "length": 17,
+      "files": [
+        "Command11.py"
+      ]
+    },
+    {
+      "text_id": "0x7D46",
+      "offset": 32070,
+      "category": "messages",
+      "chinese": "$37601$$40069$$37976$$38026$$41400$$38844$$43201$$37542$.",
+      "english": "Gold Officer Weapons.",
+      "context": "def BuyWeapons(self, officer_no):",
+      "length": 17,
+      "files": [
+        "Command13.py"
+      ]
+    },
+    {
+      "text_id": "0x7D6B",
+      "offset": 32107,
+      "category": "messages",
+      "chinese": "%s$38906$$38844$$43201$$39346$ %d.",
+      "english": "%s Weapons %d.",
+      "context": "def BuyWeapons(self, officer_no):",
+      "length": 14,
+      "files": [
+        "Command13.py"
+      ]
+    },
+    {
+      "text_id": "0x7DFC",
+      "offset": 32252,
+      "category": "messages",
+      "chinese": "$44028$$39579$$37601$$43079$$40272$!",
+      "english": "Gold Rice Low!",
+      "context": "def MerchantCheckResourceLimit(self, cmd):",
+      "length": 11,
+      "files": [
+        "Command13.py"
+      ]
+    },
+    {
+      "text_id": "0x7E08",
+      "offset": 32264,
+      "category": "messages",
+      "chinese": "$37601$$40069$$37976$$43889$$41400$$40170$$40272$!",
+      "english": "Gold Horses Low!",
+      "context": "def MerchantCheckResourceLimit(self, cmd):",
+      "length": 15,
+      "files": [
+        "Command13.py"
+      ]
+    },
+    {
+      "text_id": "0x7E18",
+      "offset": 32280,
+      "category": "messages",
+      "chinese": "$37601$$41400$$44028$$39579$.",
+      "english": "Gold Rice.",
+      "context": "def MerchantCheckResourceLimit(self, cmd):",
+      "length": 9,
+      "files": [
+        "Command13.py"
+      ]
+    },
+    {
+      "text_id": "0x7E22",
+      "offset": 32290,
+      "category": "messages",
+      "chinese": "$38073$$38019$$38387$$38067$$40270$$37544$.",
+      "english": "Assign Troops Gold.",
+      "context": "def Start(self, province_no):",
+      "length": 13,
+      "files": [
+        "Command13.py"
+      ]
+    },
+    {
+      "text_id": "0x7EA6",
+      "offset": 32422,
+      "category": "messages",
+      "chinese": "$40817$$39605$$40148$$37591$$41871$$38738$$38060$$42058$.",
+      "english": "Gold Ruler %s.",
+      "context": "def Start(self,province_no):",
+      "length": 17,
+      "files": [
+        "Command14.py"
+      ]
+    },
+    {
+      "text_id": "0x8492",
+      "offset": 33938,
+      "category": "messages",
+      "chinese": "$59779$$62083$$63619$$64899$$38387$$38067$$38768$$44519$$40148$",
+      "english": "Gold Ruler Army",
+      "context": "def Start(self, province_no):",
+      "length": 18,
+      "files": [
+        "Command16.py"
+      ]
+    },
+    {
+      "text_id": "0x8502",
+      "offset": 34050,
+      "category": "messages",
+      "chinese": "$40648$%2d$40148$$41943$$40165$$37775$$40608$",
+      "english": "Year %2d Ruler Troops",
+      "context": "unknown",
+      "length": 15,
+      "files": [
+        "Command16.py"
+      ]
+    },
+    {
+      "text_id": "0x8779",
+      "offset": 34681,
+      "category": "messages",
+      "chinese": "$40299$$37624$$41169$$44140$$39760$",
+      "english": "No Army",
+      "context": "unknown",
+      "length": 10,
+      "files": [
+        "Command18.py"
+      ]
+    },
+    {
+      "text_id": "0x8830",
+      "offset": 34864,
+      "category": "messages",
+      "chinese": "$38387$$38067$$39819$$39145$.",
+      "english": "Troops Full.",
+      "context": "unknown",
+      "length": 9,
+      "files": [
+        "Command18.py"
+      ]
+    },
+    {
+      "text_id": "0x89BA",
+      "offset": 35258,
+      "category": "messages",
+      "chinese": "$40817$$41938$$38387$$38067$$39543$$39760$.",
+      "english": "No Ruler.",
+      "context": "unknown",
+      "length": 13,
+      "files": [
+        "Command18.py"
+      ]
+    },
+    {
+      "text_id": "0x3FD5",
+      "offset": 16341,
+      "category": "battle",
+      "chinese": "$43228$$37551$",
+      "english": "War",
+      "context": "def GetOfficerList(officer_list, show_flag: ShowOfficerFlag, page, multi_select, officer_status, can_action=True,",
+      "length": 4,
+      "files": [
+        "Helper.py"
+      ]
+    },
+    {
+      "text_id": "0x55E8",
+      "offset": 21992,
+      "category": "battle",
+      "chinese": "$39391$$38215$$40299$$43228$$38887$$41561$",
+      "english": "War View",
+      "context": "def SeeWar(self,bmp):",
+      "length": 12,
+      "files": [
+        "MainMenu.py"
+      ]
+    },
+    {
+      "text_id": "0x65A0",
+      "offset": 26016,
+      "category": "battle",
+      "chinese": "$44028$ $39579$",
+      "english": "Gold",
+      "context": "unknown",
+      "length": 5,
+      "files": [
+        "Command3.py"
+      ]
+    },
+    {
+      "text_id": "0x6BA0",
+      "offset": 27552,
+      "category": "battle",
+      "chinese": "$39333$$43056$$42935$$38212$",
+      "english": "Ruler Training",
+      "context": "def Training(self):",
+      "length": 8,
+      "files": [
+        "Command4.py"
+      ]
+    },
+    {
+      "text_id": "0x7C37",
+      "offset": 31799,
+      "category": "battle",
+      "chinese": "$41526$$39030$",
+      "english": "Gold",
+      "context": "def Start(self,province_no):",
+      "length": 4,
+      "files": [
+        "Command11.py",
+        "Command3.py",
+        "Helper.py"
+      ]
+    },
+    {
+      "text_id": "0x7C4A",
+      "offset": 31818,
+      "category": "battle",
+      "chinese": "$41301$$37614$$42652$",
+      "english": "Resources",
+      "context": "def Start(self,province_no):",
+      "length": 6,
+      "files": [
+        "Command11.py"
+      ]
+    },
+    {
+      "text_id": "0x83BF",
+      "offset": 33727,
+      "category": "battle",
+      "chinese": "$41423$$38353$$39648$$37536$$40148$",
+      "english": "Resources Army",
+      "context": "unknown",
+      "length": 10,
+      "files": [
+        "Command16.py"
+      ]
+    },
+    {
+      "text_id": "0x8460",
+      "offset": 33888,
+      "category": "battle",
+      "chinese": " $40648$%2d$40148$",
+      "english": "Year %2d Ruler",
+      "context": "unknown",
+      "length": 8,
+      "files": [
+        "Command16.py"
+      ]
+    },
+    {
+      "text_id": "0x896F",
+      "offset": 35183,
+      "category": "battle",
+      "chinese": "$40648$",
+      "english": "Year",
+      "context": "unknown",
+      "length": 2,
+      "files": [
+        "Command18.py"
+      ]
+    },
+    {
+      "text_id": "0x8A89",
+      "offset": 35465,
+      "category": "battle",
+      "chinese": "<On>",
+      "english": "On",
+      "context": "unknown",
+      "length": 4,
+      "files": [
+        "Command19.py"
+      ]
+    },
+    {
+      "text_id": "0x8A8E",
+      "offset": 35470,
+      "category": "battle",
+      "chinese": "<Off>",
+      "english": "Off",
+      "context": "unknown",
+      "length": 5,
+      "files": [
+        "Command19.py"
+      ]
+    },
+    {
+      "text_id": "0x9C45",
+      "offset": 40005,
+      "category": "battle",
+      "chinese": "$37576$$38212$$42822$[1B]B0[1B]C7[01]%8lu",
+      "english": "Rice C7[01]%8lu",
+      "context": "unknown",
+      "length": 17,
+      "files": [
+        "Command3.py"
+      ]
+    },
+    {
+      "text_id": "0x9C6D",
+      "offset": 40045,
+      "category": "battle",
+      "chinese": "$40339$$42636$$42822$   [1B]C7[01]%5d",
+      "english": "Army C7[01]%5d",
+      "context": "unknown",
+      "length": 16,
+      "files": [
+        "Command3.py"
+      ]
+    },
+    {
+      "text_id": "0x9D00",
+      "offset": 40192,
+      "category": "battle",
+      "chinese": "$42198$%s",
+      "english": "Ruler %s",
+      "context": "unknown",
+      "length": 4,
+      "files": [
+        "Command3.py"
+      ]
+    },
+    {
+      "text_id": "0x9D05",
+      "offset": 40197,
+      "category": "battle",
+      "chinese": "$37557$$38611$$37776$",
+      "english": "Train",
+      "context": "unknown",
+      "length": 6,
+      "files": [
+        "Command3.py"
+      ]
+    },
+    {
+      "text_id": "0x5849",
+      "offset": 22601,
+      "category": "time",
+      "chinese": "$37736$",
+      "english": "Month",
+      "context": "unknown",
+      "length": 2,
+      "files": [
+        "Command3.py",
+        "MainMenu.py"
+      ]
+    },
+    {
+      "text_id": "0x584E",
+      "offset": 22606,
+      "category": "time",
+      "chinese": "$37734$",
+      "english": "Day",
+      "context": "unknown",
+      "length": 2,
+      "files": [
+        "Command3.py",
+        "MainMenu.py"
+      ]
+    },
+    {
+      "text_id": "0x5854",
+      "offset": 22612,
+      "category": "time",
+      "chinese": "$41688$",
+      "english": "Year",
+      "context": "def NewRuler_GetBirthday(self):",
+      "length": 2,
+      "files": [
+        "MainMenu.py"
+      ]
+    },
+    {
+      "text_id": "0x3DD2",
+      "offset": 15826,
+      "category": "misc",
+      "chinese": "$38048$%2s$37736$ %s",
+      "english": "Year %2s %s",
+      "context": "def SelectScenario(self):",
+      "length": 10,
+      "files": [
+        "MainMenu.py"
+      ]
+    },
+    {
+      "text_id": "0x4F9E",
+      "offset": 20382,
+      "category": "misc",
+      "chinese": "$41913$$38582$$41423$$39335$$41451$   ",
+      "english": "Yellow River",
+      "context": "def __init__(self):",
+      "length": 13,
+      "files": [
+        "MainMenu.py"
+      ]
+    },
+    {
+      "text_id": "0x4FAC",
+      "offset": 20396,
+      "category": "misc",
+      "chinese": "$42179$$44675$$44450$$38887$     ",
+      "english": "Battle of Red Cliffs",
+      "context": "def __init__(self):",
+      "length": 13,
+      "files": [
+        "MainMenu.py"
+      ]
+    },
+    {
+      "text_id": "0x4FBA",
+      "offset": 20410,
+      "category": "misc",
+      "chinese": "$42667$$40875$$39820$$41095$     ",
+      "english": "Three Kingdoms",
+      "context": "def __init__(self):",
+      "length": 13,
+      "files": [
+        "MainMenu.py"
+      ]
+    },
+    {
+      "text_id": "0x4FC8",
+      "offset": 20424,
+      "category": "misc",
+      "chinese": "$40505$$43238$$43396$$38124$     ",
+      "english": "Warlords",
+      "context": "def __init__(self):",
+      "length": 13,
+      "files": [
+        "MainMenu.py"
+      ]
+    },
+    {
+      "text_id": "0x4FD6",
+      "offset": 20438,
+      "category": "misc",
+      "chinese": "$37556$$40299$$42128$$37936$     ",
+      "english": "Battle of Guandu",
+      "context": "def __init__(self):",
+      "length": 13,
+      "files": [
+        "MainMenu.py"
+      ]
+    },
+    {
+      "text_id": "0x4FE4",
+      "offset": 20452,
+      "category": "misc",
+      "chinese": "$37556$$37733$$44450$$38887$     ",
+      "english": "Fall of Cao Cao",
+      "context": "def __init__(self):",
+      "length": 13,
+      "files": [
+        "MainMenu.py"
+      ]
+    },
+    {
+      "text_id": "0x5114",
+      "offset": 20756,
+      "category": "misc",
+      "chinese": "$41658$$43001$$39053$",
+      "english": "Ruler Name",
+      "context": "def NewRuler(self):",
+      "length": 6,
+      "files": [
+        "MainMenu.py"
+      ]
+    },
+    {
+      "text_id": "0x51E4",
+      "offset": 20964,
+      "category": "misc",
+      "chinese": "1.$39820$    $41095$: [1B]C7[01]%d.%s",
+      "english": "1.Scenario %d.%s",
+      "context": "def ShowScenario(self, bmp):",
+      "length": 21,
+      "files": [
+        "MainMenu.py"
+      ]
+    },
+    {
+      "text_id": "0x51FE",
+      "offset": 20990,
+      "category": "misc",
+      "chinese": "2.$43480$$43236$$43001$$39053$:",
+      "english": "2.Province Ruler:",
+      "context": "def ShowPlayers(self,bmp):",
+      "length": 11,
+      "files": [
+        "MainMenu.py"
+      ]
+    },
+    {
+      "text_id": "0x531D",
+      "offset": 21277,
+      "category": "misc",
+      "chinese": "1.$40437$$40261$$41658$$42049$$43650$[0A][0A]2.$41937$$37546$$42822$$43234$[0A][0A]3.$41294$$38357$",
+      "english": "1.New Game\n2.Load Game\n3.Command",
+      "context": "def show(self):",
+      "length": 32,
+      "files": [
+        "MainMenu.py"
+      ]
+    },
+    {
+      "text_id": "0x5378",
+      "offset": 21368,
+      "category": "misc",
+      "chinese": "$37598$$41090$",
+      "english": "Int",
+      "context": "def show_values(self,index,values,award):",
+      "length": 4,
+      "files": [
+        "MainMenu.py"
+      ]
+    },
+    {
+      "text_id": "0x537D",
+      "offset": 21373,
+      "category": "misc",
+      "chinese": "$43228$$37551$",
+      "english": "War",
+      "context": "def show_values(self,index,values,award):",
+      "length": 4,
+      "files": [
+        "MainMenu.py"
+      ]
+    },
+    {
+      "text_id": "0x5382",
+      "offset": 21378,
+      "category": "misc",
+      "chinese": "$41919$$37805$",
+      "english": "Chm",
+      "context": "def show_values(self,index,values,award):",
+      "length": 4,
+      "files": [
+        "MainMenu.py"
+      ]
+    },
+    {
+      "text_id": "0x53FB",
+      "offset": 21499,
+      "category": "misc",
+      "chinese": "$38381$$38648$$38002$$41465$$40069$$37551$.[0A] 4 - 6:$40069$$37551$$43480$$43236$    8:$37788$    2:$41140$",
+      "english": "Stats.\n4-6:Medium Province 8:Small 2:Large",
+      "context": "def NewRuler_GetAbility(self,sex,age_index):",
+      "length": 45,
+      "files": [
+        "MainMenu.py"
+      ]
+    },
+    {
+      "text_id": "0x542D",
+      "offset": 21549,
+      "category": "misc",
+      "chinese": "$42885$$43073$[1B]=+g50",
+      "english": "Value=+50",
+      "context": "def show_values(self,index,values,award):",
+      "length": 10,
+      "files": [
+        "MainMenu.py"
+      ]
+    },
+    {
+      "text_id": "0x5469",
+      "offset": 21609,
+      "category": "misc",
+      "chinese": "$44458$$44540$$39609$$38352$.[0A] 4 - 6:$40069$$37551$$43480$$43236$  8:$37788$  2:$41140$",
+      "english": "Stats.\n4-6:Medium 8:Small 2:Large",
+      "context": "unknown",
+      "length": 37,
+      "files": [
+        "MainMenu.py"
+      ]
+    },
+    {
+      "text_id": "0x54A4",
+      "offset": 21668,
+      "category": "misc",
+      "chinese": " $41169$",
+      "english": "Off",
+      "context": "unknown",
+      "length": 3,
+      "files": [
+        "MainMenu.py"
+      ]
+    },
+    {
+      "text_id": "0x54EB",
+      "offset": 21739,
+      "category": "misc",
+      "chinese": "1.$43001$$39053$$38004$:[0A]2.$42999$$37868$$37734$:[0A]3.$38638$$38215$:[0A]4.$40069$$37551$:",
+      "english": "1.Name:\n2.Birth:\n3.Sex:\n4.Province:",
+      "context": "def NewRuler(self):",
+      "length": 35,
+      "files": [
+        "MainMenu.py"
+      ]
+    },
+    {
+      "text_id": "0x550F",
+      "offset": 21775,
+      "category": "misc",
+      "chinese": "5.$40658$$38872$$40148$:[0A]6.$40838$$37557$:[1B]C7[01]",
+      "english": "5.Troops:\n6.Follower:",
+      "context": "def NewRuler(self):",
+      "length": 21,
+      "files": [
+        "MainMenu.py"
+      ]
+    },
+    {
+      "text_id": "0x5526",
+      "offset": 21798,
+      "category": "misc",
+      "chinese": "$39391$  ",
+      "english": "War",
+      "context": "def ShowWar(self,bmp):",
+      "length": 4,
+      "files": [
+        "MainMenu.py"
+      ]
+    },
+    {
+      "text_id": "0x552B",
+      "offset": 21803,
+      "category": "misc",
+      "chinese": "$37601$$39391$",
+      "english": "Gold War",
+      "context": "def ShowWar(self,bmp):",
+      "length": 4,
+      "files": [
+        "MainMenu.py"
+      ]
+    },
+    {
+      "text_id": "0x5559",
+      "offset": 21849,
+      "category": "misc",
+      "chinese": "$39019$$38637$$40793$$38648$",
+      "english": "Level Select",
+      "context": "def SelectPlayers(self, bmp):",
+      "length": 8,
+      "files": [
+        "MainMenu.py"
+      ]
+    },
+    {
+      "text_id": "0x5597",
+      "offset": 21911,
+      "category": "misc",
+      "chinese": "$42049$$43650$$41281$$40036$: [1B]C7[01]%s",
+      "english": "Player Level: %s",
+      "context": "def ShowLevel(self,bmp):",
+      "length": 16,
+      "files": [
+        "MainMenu.py"
+      ]
+    },
+    {
+      "text_id": "0x55D7",
+      "offset": 21975,
+      "category": "misc",
+      "chinese": "$38215$$40299$$43228$$38887$: [1B]C7[01]%s",
+      "english": "Battle: %s",
+      "context": "def ShowWar(self,bmp):",
+      "length": 16,
+      "files": [
+        "MainMenu.py"
+      ]
+    },
+    {
+      "text_id": "0x55F9",
+      "offset": 22009,
+      "category": "misc",
+      "chinese": "5.$42049$$43650$$44391$$39117$: [1B]C7[01]%s",
+      "english": "5.History: %s",
+      "context": "def ShowHistory(self,bmp):",
+      "length": 18,
+      "files": [
+        "MainMenu.py"
+      ]
+    },
+    {
+      "text_id": "0x58E8",
+      "offset": 22760,
+      "category": "misc",
+      "chinese": "$43000$$43474$$37546$$42822$$43234$$38298$$43243$$41978$$39766$$38004$.",
+      "english": "Load Game\nLoad Data.",
+      "context": "def LoadGame(self):",
+      "length": 21,
+      "files": [
+        "MainMenu.py"
+      ]
+    },
+    {
+      "text_id": "0x6189",
+      "offset": 24969,
+      "category": "misc",
+      "chinese": "$42049$$39145$: %s",
+      "english": "Ruler: %s",
+      "context": "def ShowTalk(self, passenger_no, talk):",
+      "length": 8,
+      "files": [
+        "Command18.py"
+      ]
+    },
+    {
+      "text_id": "0x6192",
+      "offset": 24978,
+      "category": "misc",
+      "chinese": "$44140$$39760$: %s",
+      "english": "Ruler: %s",
+      "context": "def ShowTalk(self, passenger_no, talk):",
+      "length": 8,
+      "files": [
+        "Command18.py"
+      ]
+    },
+    {
+      "text_id": "0x619B",
+      "offset": 24987,
+      "category": "misc",
+      "chinese": "$39543$$39760$: %s",
+      "english": "Ruler: %s",
+      "context": "def ShowTalk(self, passenger_no, talk):",
+      "length": 8,
+      "files": [
+        "Command18.py"
+      ]
+    },
+    {
+      "text_id": "0x623D",
+      "offset": 25149,
+      "category": "misc",
+      "chinese": "$37856$$38742$$41953$$39160$[1B]C7[01]%5d",
+      "english": "Pop C7[01]%5d",
+      "context": "unknown",
+      "length": 15,
+      "files": [
+        "Helper.py"
+      ]
+    },
+    {
+      "text_id": "0x6274",
+      "offset": 25204,
+      "category": "misc",
+      "chinese": "$38019$$42659$    [1B]C7[01]%5d",
+      "english": "Pop",
+      "context": "unknown",
+      "length": 15,
+      "files": [
+        "Helper.py"
+      ]
+    },
+    {
+      "text_id": "0x629E",
+      "offset": 25246,
+      "category": "misc",
+      "chinese": "$38092$$42659$ [1B]C7[01]%7d [1B]C4[01]$38872$$37745$$39160$   [1B]C7[01]%4d",
+      "english": "Gold Pop",
+      "context": "unknown",
+      "length": 33,
+      "files": [
+        "Helper.py"
+      ]
+    },
+    {
+      "text_id": "0x62AF",
+      "offset": 25263,
+      "category": "misc",
+      "chinese": "$38872$$37745$$39160$   [1B]C7[01]%4d",
+      "english": "Pop",
+      "context": "unknown",
+      "length": 16,
+      "files": [
+        "Helper.py"
+      ]
+    },
+    {
+      "text_id": "0x62DA",
+      "offset": 25306,
+      "category": "misc",
+      "chinese": "$38486$$43165$  [1B]C7[01]%6d [1B]C4[01]$39121$$40926$     [1B]C7[01]%4d",
+      "english": "Training Pop",
+      "context": "unknown",
+      "length": 34,
+      "files": [
+        "Helper.py"
+      ]
+    },
+    {
+      "text_id": "0x62EC",
+      "offset": 25324,
+      "category": "misc",
+      "chinese": "$39121$$40926$     [1B]C7[01]%4d",
+      "english": "Training",
+      "context": "unknown",
+      "length": 16,
+      "files": [
+        "Helper.py"
+      ]
+    },
+    {
+      "text_id": "0x6309",
+      "offset": 25353,
+      "category": "misc",
+      "chinese": "$38045$-%2d",
+      "english": "Province-%2d",
+      "context": "def GetProvinceName(prov_no, without_no=False):",
+      "length": 6,
+      "files": [
+        "Helper.py"
+      ]
+    },
+    {
+      "text_id": "0x6393",
+      "offset": 25491,
+      "category": "misc",
+      "chinese": "(0: $39391$$37557$$37536$$39576$)",
+      "english": "(0: War)",
+      "context": "unknown",
+      "length": 13,
+      "files": [
+        "Helper.py"
+      ]
+    },
+    {
+      "text_id": "0x63B6",
+      "offset": 25526,
+      "category": "misc",
+      "chinese": "$37598$$41090$      2.$43228$$40173$$37551$    3.$41919$$37805$$37551$[0A]4.$37576$$38212$$42822$    5.$38742$$41953$$39160$[0A][1B]C7[01][0A]$37769$$39648$$37536$$42822$$43234$$39346$$42832$$41708$",
+      "english": "Int 2.War 3.Chm\n4.Soldiers 5.Loyalty\nArmy Province",
+      "context": "def ShowCommand8_Sort(self):",
+      "length": 73,
+      "files": [
+        "Command8.py"
+      ]
+    },
+    {
+      "text_id": "0x63C2",
+      "offset": 25538,
+      "category": "misc",
+      "chinese": "$43228$$40173$$37551$    3.$41919$$37805$$37551$[0A]4.$37576$$38212$$42822$    5.$38742$$41953$$39160$[0A][1B]C7[01][0A]$37769$$39648$$37536$$42822$$43234$$39346$$42832$$41708$",
+      "english": "War Int 3.Chm\n4.Soldiers 5.Loyalty\nArmy Province",
+      "context": "def ShowCommand8_Sort(self):",
+      "length": 61,
+      "files": [
+        "Command8.py"
+      ]
+    },
+    {
+      "text_id": "0x63CE",
+      "offset": 25550,
+      "category": "misc",
+      "chinese": "$41919$$37805$$37551$[0A]4.$37576$$38212$$42822$    5.$38742$$41953$$39160$[0A][1B]C7[01][0A]$37769$$39648$$37536$$42822$$43234$$39346$$42832$$41708$",
+      "english": "Chm 4.Soldiers 5.Loyalty\nArmy Province",
+      "context": "def ShowCommand8_Sort(self):",
+      "length": 49,
+      "files": [
+        "Command8.py"
+      ]
+    },
+    {
+      "text_id": "0x63D7",
+      "offset": 25559,
+      "category": "misc",
+      "chinese": "$37576$$38212$$42822$    5.$38742$$41953$$39160$[0A][1B]C7[01][0A]$37769$$39648$$37536$$42822$$43234$$39346$$42832$$41708$",
+      "english": "Soldiers 5.Loyalty\nArmy Province",
+      "context": "def ShowCommand8_Sort(self):",
+      "length": 40,
+      "files": [
+        "Command8.py"
+      ]
+    },
+    {
+      "text_id": "0x63E3",
+      "offset": 25571,
+      "category": "misc",
+      "chinese": "$38742$$41953$$39160$[0A][1B]C7[01][0A]$37769$$39648$$37536$$42822$$43234$$39346$$42832$$41708$",
+      "english": "Loyalty\nArmy Province",
+      "context": "def ShowCommand8_Sort(self):",
+      "length": 28,
+      "files": [
+        "Command8.py"
+      ]
+    },
+    {
+      "text_id": "0x640A",
+      "offset": 25610,
+      "category": "misc",
+      "chinese": "$39543$$39760$",
+      "english": "Ruler",
+      "context": "unknown",
+      "length": 4,
+      "files": [
+        "Command8.py",
+        "Helper.py"
+      ]
+    },
+    {
+      "text_id": "0x640F",
+      "offset": 25615,
+      "category": "misc",
+      "chinese": "$38020$$44089$",
+      "english": "Army",
+      "context": "unknown",
+      "length": 4,
+      "files": [
+        "Command8.py"
+      ]
+    },
+    {
+      "text_id": "0x6414",
+      "offset": 25620,
+      "category": "misc",
+      "chinese": "$38020$$40842$",
+      "english": "Army Assign",
+      "context": "unknown",
+      "length": 4,
+      "files": [
+        "Command8.py"
+      ]
+    },
+    {
+      "text_id": "0x6425",
+      "offset": 25637,
+      "category": "misc",
+      "chinese": "($39140$$43444$: %s)",
+      "english": "(Gold: %s)",
+      "context": "unknown",
+      "length": 10,
+      "files": [
+        "Command8.py"
+      ]
+    },
+    {
+      "text_id": "0x6439",
+      "offset": 25657,
+      "category": "misc",
+      "chinese": "$38020$$40842$$37605$$37576$",
+      "english": "Army Rice",
+      "context": "unknown",
+      "length": 8,
+      "files": [
+        "Command8.py"
+      ]
+    },
+    {
+      "text_id": "0x6448",
+      "offset": 25672,
+      "category": "misc",
+      "chinese": "$40838$$37557$",
+      "english": "Follower",
+      "context": "unknown",
+      "length": 4,
+      "files": [
+        "Command8.py"
+      ]
+    },
+    {
+      "text_id": "0x648F",
+      "offset": 25743,
+      "category": "misc",
+      "chinese": "$43705$$38124$[0A]$38543$$42987$[0A]$38048$$44512$[1B]C7[01][1B]=+_[1B]R_",
+      "english": "History\nDate\nYear",
+      "context": "unknown",
+      "length": 25,
+      "files": [
+        "Command8.py"
+      ]
+    },
+    {
+      "text_id": "0x6494",
+      "offset": 25748,
+      "category": "misc",
+      "chinese": "$38543$$42987$[0A]$38048$$44512$[1B]C7[01][1B]=+_[1B]R_",
+      "english": "Date\nYear",
+      "context": "unknown",
+      "length": 20,
+      "files": [
+        "Command8.py"
+      ]
+    },
+    {
+      "text_id": "0x6499",
+      "offset": 25753,
+      "category": "misc",
+      "chinese": "$38048$$44512$[1B]C7[01][1B]=+_[1B]R_",
+      "english": "Year",
+      "context": "unknown",
+      "length": 15,
+      "files": [
+        "Command8.py"
+      ]
+    },
+    {
+      "text_id": "0x651F",
+      "offset": 25887,
+      "category": "misc",
+      "chinese": "$38649$$41449$",
+      "english": "List",
+      "context": "def GetOfficersSummary(self,prov_no, page):",
+      "length": 4,
+      "files": [
+        "Command8.py"
+      ]
+    },
+    {
+      "text_id": "0x6532",
+      "offset": 25906,
+      "category": "misc",
+      "chinese": "$38742$$41953$",
+      "english": "Loyalty",
+      "context": "def GetOfficersSummary(self,prov_no, page):",
+      "length": 4,
+      "files": [
+        "Command8.py"
+      ]
+    },
+    {
+      "text_id": "0x653B",
+      "offset": 25915,
+      "category": "misc",
+      "chinese": "$37598$$41090$",
+      "english": "Int",
+      "context": "def GetOfficersSummary(self,prov_no, page):",
+      "length": 4,
+      "files": [
+        "Command8.py"
+      ]
+    },
+    {
+      "text_id": "0x6540",
+      "offset": 25920,
+      "category": "misc",
+      "chinese": "$43228$$37551$",
+      "english": "War",
+      "context": "def GetOfficersSummary(self,prov_no, page):",
+      "length": 4,
+      "files": [
+        "Command8.py"
+      ]
+    },
+    {
+      "text_id": "0x6545",
+      "offset": 25925,
+      "category": "misc",
+      "chinese": "$41919$$37805$",
+      "english": "Chm",
+      "context": "def GetOfficersSummary(self,prov_no, page):",
+      "length": 4,
+      "files": [
+        "Command8.py"
+      ]
+    },
+    {
+      "text_id": "0x654E",
+      "offset": 25934,
+      "category": "misc",
+      "chinese": "$37576$ $38212$",
+      "english": "Soldiers",
+      "context": "def GetOfficersSummary(self,prov_no, page):",
+      "length": 5,
+      "files": [
+        "Command8.py"
+      ]
+    },
+    {
+      "text_id": "0x6567",
+      "offset": 25959,
+      "category": "misc",
+      "chinese": "$38543$$42987$",
+      "english": "Date",
+      "context": "def GetOfficersSummary2(self,prov_no, page):",
+      "length": 4,
+      "files": [
+        "Command8.py"
+      ]
+    },
+    {
+      "text_id": "0x6570",
+      "offset": 25968,
+      "category": "misc",
+      "chinese": "$40122$$42935$",
+      "english": "Level",
+      "context": "def GetOfficersSummary2(self,prov_no, page):",
+      "length": 4,
+      "files": [
+        "Command8.py"
+      ]
+    },
+    {
+      "text_id": "0x6575",
+      "offset": 25973,
+      "category": "misc",
+      "chinese": "$38844$$41937$",
+      "english": "War",
+      "context": "def GetOfficersSummary2(self,prov_no, page):",
+      "length": 4,
+      "files": [
+        "Command8.py"
+      ]
+    },
+    {
+      "text_id": "0x657A",
+      "offset": 25978,
+      "category": "misc",
+      "chinese": "$38844$$43201$",
+      "english": "Weapons",
+      "context": "def GetOfficersSummary2(self,prov_no, page):",
+      "length": 4,
+      "files": [
+        "Command8.py"
+      ]
+    },
+    {
+      "text_id": "0x6583",
+      "offset": 25987,
+      "category": "misc",
+      "chinese": "$37576$ $38212$",
+      "english": "Soldiers",
+      "context": "def GetOfficersSummary2(self,prov_no, page):",
+      "length": 5,
+      "files": [
+        "Command8.py"
+      ]
+    },
+    {
+      "text_id": "0x67D2",
+      "offset": 26578,
+      "category": "misc",
+      "chinese": "($39051$$37964$$39160$ %3d)",
+      "english": "(Trust %3d)",
+      "context": "unknown",
+      "length": 12,
+      "files": [
+        "Helper.py"
+      ]
+    },
+    {
+      "text_id": "0x6919",
+      "offset": 26905,
+      "category": "misc",
+      "chinese": "$43000$$43474$$37546$$39058$$38037$$42822$$43234$$41978$$39766$$38004$.",
+      "english": "Load Game\nData.",
+      "context": "unknown",
+      "length": 21,
+      "files": [
+        "Command19.py"
+      ]
+    },
+    {
+      "text_id": "0x6BF2",
+      "offset": 27634,
+      "category": "misc",
+      "chinese": "$40886$$38198$$37576$$38212$$42822$:%lu[0A][1B]C7[01]",
+      "english": "Troops Soldiers %lu",
+      "context": "def AdjustSoldiers(self,soldiers_hired):",
+      "length": 19,
+      "files": [
+        "Command4.py"
+      ]
+    },
+    {
+      "text_id": "0x6C66",
+      "offset": 27750,
+      "category": "misc",
+      "chinese": "$41551$$38212$  2.$39333$$38212$  3.$42935$$38212$[1B]C7[01][0A]$43000$$43480$$43236$",
+      "english": "Soldiers 2.Ruler 3.Level",
+      "context": "def Start(self,province_no):",
+      "length": 31,
+      "files": [
+        "Command4.py"
+      ]
+    },
+    {
+      "text_id": "0x6C6E",
+      "offset": 27758,
+      "category": "misc",
+      "chinese": "$39333$$38212$  3.$42935$$38212$[1B]C7[01][0A]$43000$$43480$$43236$",
+      "english": "Ruler 3.Level",
+      "context": "def Start(self,province_no):",
+      "length": 23,
+      "files": [
+        "Command4.py"
+      ]
+    },
+    {
+      "text_id": "0x6C76",
+      "offset": 27766,
+      "category": "misc",
+      "chinese": "$42935$$38212$[1B]C7[01][0A]$43000$$43480$$43236$",
+      "english": "Level",
+      "context": "def Start(self,province_no):",
+      "length": 15,
+      "files": [
+        "Command4.py"
+      ]
+    },
+    {
+      "text_id": "0x6CF7",
+      "offset": 27895,
+      "category": "misc",
+      "chinese": "$39927$$39533$$38339$[1B]C3[01]%s[1B]C7[01]$41943$$44089$$41561$",
+      "english": "Fire Officer %s Army",
+      "context": "def ConfirmFireOfficer(self,province,officer_no):",
+      "length": 22,
+      "files": [
+        "Command5.py"
+      ]
+    },
+    {
+      "text_id": "0x6D2B",
+      "offset": 27947,
+      "category": "misc",
+      "chinese": "$41943$$40165$[1B]C4[01]%s[1B]C7[01]$39543$$39760$$38906$$44089$$40259$$41561$",
+      "english": "Fire Army %s Ruler",
+      "context": "def FireAdvisor(self):",
+      "length": 26,
+      "files": [
+        "Command5.py"
+      ]
+    },
+    {
+      "text_id": "0x6D6F",
+      "offset": 28015,
+      "category": "misc",
+      "chinese": "$38020$$44089$$40339$$42636$  2.$39543$$39760$[1B]C7[01][0A]$41943$$40165$$43056$$38906$$44089$$40259$",
+      "english": "Army 2.Ruler Army\nFire Ruler",
+      "context": "def Fire(self, is_ruler):",
+      "length": 33,
+      "files": [
+        "Command5.py"
+      ]
+    },
+    {
+      "text_id": "0x6D7B",
+      "offset": 28027,
+      "category": "misc",
+      "chinese": "$39543$$39760$[1B]C7[01][0A]$41943$$40165$$43056$$38906$$44089$$40259$",
+      "english": "Ruler\nFire Ruler",
+      "context": "def Fire(self, is_ruler):",
+      "length": 21,
+      "files": [
+        "Command5.py"
+      ]
+    },
+    {
+      "text_id": "0x6DD5",
+      "offset": 28117,
+      "category": "misc",
+      "chinese": "$39543$$39760$",
+      "english": "Ruler",
+      "context": "def Assign(self,is_ruler):",
+      "length": 4,
+      "files": [
+        "Command5.py"
+      ]
+    },
+    {
+      "text_id": "0x6DDA",
+      "offset": 28122,
+      "category": "misc",
+      "chinese": "[1B]C6[01]%s[1B]C7[01]$37591$$39278$%s",
+      "english": "%s %s",
+      "context": "unknown",
+      "length": 16,
+      "files": [
+        "Command5.py"
+      ]
+    },
+    {
+      "text_id": "0x6E3D",
+      "offset": 28221,
+      "category": "misc",
+      "chinese": "$40609$$38020$[1B]C4[01]%s[1B]C7[01]$43241$$37964$$39543$$39760$[0A]",
+      "english": "Assign %s Ruler",
+      "context": "def AssignAdvisor(self):",
+      "length": 23,
+      "files": [
+        "Command5.py"
+      ]
+    },
+    {
+      "text_id": "0x6E55",
+      "offset": 28245,
+      "category": "misc",
+      "chinese": "$39543$$39760$$38906$$44089$$40259$$43909$$38967$$40041$[0A]",
+      "english": "Ruler Fire",
+      "context": "def AssignAdvisor(self):",
+      "length": 17,
+      "files": [
+        "Command5.py"
+      ]
+    },
+    {
+      "text_id": "0x6E72",
+      "offset": 28274,
+      "category": "misc",
+      "chinese": "$38056$$37789$! ",
+      "english": "Fire!",
+      "context": "unknown",
+      "length": 6,
+      "files": [
+        "Command5.py"
+      ]
+    },
+    {
+      "text_id": "0x6E79",
+      "offset": 28281,
+      "category": "misc",
+      "chinese": "$38056$$39346$$38194$$38906$$40838$$37557$",
+      "english": "Fire Follower",
+      "context": "unknown",
+      "length": 12,
+      "files": [
+        "Command5.py"
+      ]
+    },
+    {
+      "text_id": "0x6E93",
+      "offset": 28307,
+      "category": "misc",
+      "chinese": "$37601$$42214$$43640$$37805$",
+      "english": "Gold Command",
+      "context": "unknown",
+      "length": 8,
+      "files": [
+        "Command5.py"
+      ]
+    },
+    {
+      "text_id": "0x6EB5",
+      "offset": 28341,
+      "category": "misc",
+      "chinese": "$38140$$38020$$38331$$39598$$40817$$41938$",
+      "english": "Gold Low",
+      "context": "unknown",
+      "length": 12,
+      "files": [
+        "Command5.py"
+      ]
+    },
+    {
+      "text_id": "0x6ECF",
+      "offset": 28367,
+      "category": "misc",
+      "chinese": "$37802$$40391$, $37614$$42652$$37544$$37565$$37851$$38341$$38574$",
+      "english": "Resources Gold Rice",
+      "context": "unknown",
+      "length": 20,
+      "files": [
+        "Command5.py"
+      ]
+    },
+    {
+      "text_id": "0x6EFF",
+      "offset": 28415,
+      "category": "misc",
+      "chinese": "$37556$$44631$$37605$$44016$   2.$38486$$43165$   3.$41526$$39030$   4.$39828$$39051$[0A][1B]C7[01]$43000$$43480$$43236$",
+      "english": "Rice 2.Training 3.Gold 4.End",
+      "context": "unknown",
+      "length": 46,
+      "files": [
+        "Command5.py"
+      ]
+    },
+    {
+      "text_id": "0x6F0C",
+      "offset": 28428,
+      "category": "misc",
+      "chinese": "$38486$$43165$   3.$41526$$39030$   4.$39828$$39051$[0A][1B]C7[01]$43000$$43480$$43236$",
+      "english": "Training 3.Gold 4.End",
+      "context": "unknown",
+      "length": 33,
+      "files": [
+        "Command5.py"
+      ]
+    },
+    {
+      "text_id": "0x6F15",
+      "offset": 28437,
+      "category": "misc",
+      "chinese": "$41526$$39030$   4.$39828$$39051$[0A][1B]C7[01]$43000$$43480$$43236$",
+      "english": "Gold 4.End",
+      "context": "unknown",
+      "length": 24,
+      "files": [
+        "Command5.py"
+      ]
+    },
+    {
+      "text_id": "0x6F1E",
+      "offset": 28446,
+      "category": "misc",
+      "chinese": "$39828$$39051$[0A][1B]C7[01]$43000$$43480$$43236$",
+      "english": "End",
+      "context": "unknown",
+      "length": 15,
+      "files": [
+        "Command5.py"
+      ]
+    },
+    {
+      "text_id": "0x6F78",
+      "offset": 28536,
+      "category": "misc",
+      "chinese": "$42721$$37805$   2.$38341$$40945$   3.$39254$$39333$   4.$41943$$44089$[1B]C7[01][0A]$43000$$43480$$43236$",
+      "english": "Trade 2.Transport 3.Ruler 4.Fire",
+      "context": "def Start(self, province_no):",
+      "length": 42,
+      "files": [
+        "Command5.py"
+      ]
+    },
+    {
+      "text_id": "0x6F81",
+      "offset": 28545,
+      "category": "misc",
+      "chinese": "$38341$$40945$   3.$39254$$39333$   4.$41943$$44089$[1B]C7[01][0A]$43000$$43480$$43236$",
+      "english": "Transport 3.Ruler 4.Fire",
+      "context": "def Start(self, province_no):",
+      "length": 33,
+      "files": [
+        "Command5.py"
+      ]
+    },
+    {
+      "text_id": "0x6F8A",
+      "offset": 28554,
+      "category": "misc",
+      "chinese": "$39254$$39333$   4.$41943$$44089$[1B]C7[01][0A]$43000$$43480$$43236$",
+      "english": "Ruler 4.Fire",
+      "context": "def Start(self, province_no):",
+      "length": 24,
+      "files": [
+        "Command5.py"
+      ]
+    },
+    {
+      "text_id": "0x6F93",
+      "offset": 28563,
+      "category": "misc",
+      "chinese": "$41943$$44089$[1B]C7[01][0A]$43000$$43480$$43236$",
+      "english": "Fire",
+      "context": "def Start(self, province_no):",
+      "length": 15,
+      "files": [
+        "Command5.py"
+      ]
+    },
+    {
+      "text_id": "0x7978",
+      "offset": 31096,
+      "category": "misc",
+      "chinese": "$38566$$37773$$40148$   2.$40339$$42636$   3.$43753$$41294$ 1[0A][09][09][09]4.$43753$$41294$ 2   5.$42636$$38019$   6.$41968$$39817$$41466$$38312$[1B]C7[01][0A]$43000$$43480$$43236$",
+      "english": "Trade Army 3.Shop 1\n4.Shop 2 5.Troops 6.Store",
+      "context": "def __init__(self):",
+      "length": 71,
+      "files": [
+        "Command8.py"
+      ]
+    },
+    {
+      "text_id": "0x7983",
+      "offset": 31107,
+      "category": "misc",
+      "chinese": "$40339$$42636$   3.$43753$$41294$ 1[0A][09][09][09]4.$43753$$41294$ 2   5.$42636$$38019$   6.$41968$$39817$$41466$$38312$[1B]C7[01][0A]$43000$$43480$$43236$",
+      "english": "Army 3.Shop 1\n4.Shop 2 5.Troops 6.Store",
+      "context": "def __init__(self):",
+      "length": 60,
+      "files": [
+        "Command8.py"
+      ]
+    },
+    {
+      "text_id": "0x798C",
+      "offset": 31116,
+      "category": "misc",
+      "chinese": "$43753$$41294$ 1[0A][09][09][09]4.$43753$$41294$ 2   5.$42636$$38019$   6.$41968$$39817$$41466$$38312$[1B]C7[01][0A]$43000$$43480$$43236$",
+      "english": "Shop 1\n4.Shop 2 5.Troops 6.Store",
+      "context": "def __init__(self):",
+      "length": 51,
+      "files": [
+        "Command8.py"
+      ]
+    },
+    {
+      "text_id": "0x7998",
+      "offset": 31128,
+      "category": "misc",
+      "chinese": "$43753$$41294$ 2   5.$42636$$38019$   6.$41968$$39817$$41466$$38312$[1B]C7[01][0A]$43000$$43480$$43236$",
+      "english": "Shop 2 5.Troops 6.Store",
+      "context": "def __init__(self):",
+      "length": 39,
+      "files": [
+        "Command8.py"
+      ]
+    },
+    {
+      "text_id": "0x79A3",
+      "offset": 31139,
+      "category": "misc",
+      "chinese": "$42636$$38019$   6.$41968$$39817$$41466$$38312$[1B]C7[01][0A]$43000$$43480$$43236$",
+      "english": "Troops 6.Store",
+      "context": "def __init__(self):",
+      "length": 28,
+      "files": [
+        "Command8.py"
+      ]
+    },
+    {
+      "text_id": "0x79AC",
+      "offset": 31148,
+      "category": "misc",
+      "chinese": "$41968$$39817$$41466$$38312$[1B]C7[01][0A]$43000$$43480$$43236$",
+      "english": "Store",
+      "context": "def __init__(self):",
+      "length": 19,
+      "files": [
+        "Command8.py"
+      ]
+    },
+    {
+      "text_id": "0x7A41",
+      "offset": 31297,
+      "category": "misc",
+      "chinese": "$39333$$43056$$41443$$43209$$37575$$38019$",
+      "english": "Ruler Training Soldiers",
+      "context": "def __init__(self):",
+      "length": 12,
+      "files": [
+        "Command9_10_12.py"
+      ]
+    },
+    {
+      "text_id": "0x7A4F",
+      "offset": 31311,
+      "category": "misc",
+      "chinese": "$42631$$39533$$38026$$37709$$41526$$39030$",
+      "english": "Gold Year",
+      "context": "def __init__(self):",
+      "length": 12,
+      "files": [
+        "Command9_10_12.py"
+      ]
+    },
+    {
+      "text_id": "0x7A6C",
+      "offset": 31340,
+      "category": "misc",
+      "chinese": "$37575$$38019$$42659$$39849$$42688$$37788$$38574$%d",
+      "english": "Pop Gold",
+      "context": "def __init__(self):",
+      "length": 16,
+      "files": [
+        "Command9_10_12.py"
+      ]
+    },
+    {
+      "text_id": "0x7A82",
+      "offset": 31362,
+      "category": "misc",
+      "chinese": "$38387$$38067$$39815$$38825$",
+      "english": "Troops",
+      "context": "unknown",
+      "length": 8,
+      "files": [
+        "Command9_10_12.py"
+      ]
+    },
+    {
+      "text_id": "0x7A90",
+      "offset": 31376,
+      "category": "misc",
+      "chinese": "$41526$$39030$$37601$$38505$!",
+      "english": "Gold Enough!",
+      "context": "def Start(self,province_no):",
+      "length": 9,
+      "files": [
+        "Command9_10_12.py"
+      ]
+    },
+    {
+      "text_id": "0x7AD0",
+      "offset": 31440,
+      "category": "misc",
+      "chinese": "$39333$$43056$$38872$$37745$",
+      "english": "Ruler Gold",
+      "context": "def __init__(self):",
+      "length": 8,
+      "files": [
+        "Command9_10_12.py"
+      ]
+    },
+    {
+      "text_id": "0x7AFB",
+      "offset": 31483,
+      "category": "misc",
+      "chinese": "$39324$$37745$$38872$$40608$$37591$$42052$ %d.",
+      "english": "Gold Pop",
+      "context": "def __init__(self):",
+      "length": 16,
+      "files": [
+        "Command9_10_12.py"
+      ]
+    },
+    {
+      "text_id": "0x7BDF",
+      "offset": 31711,
+      "category": "misc",
+      "chinese": "%s$38906$$38742$$41953$$39160$$38352$$44743$",
+      "english": "%s Pop Loyalty",
+      "context": "def ShowRewardResult(self,officer,result):",
+      "length": 14,
+      "files": [
+        "Command11.py"
+      ]
+    },
+    {
+      "text_id": "0x7C3C",
+      "offset": 31804,
+      "category": "misc",
+      "chinese": "$38486$$43165$",
+      "english": "Training",
+      "context": "def Start(self,province_no):",
+      "length": 4,
+      "files": [
+        "Command11.py"
+      ]
+    },
+    {
+      "text_id": "0x7C41",
+      "offset": 31809,
+      "category": "misc",
+      "chinese": "$38036$$39828$",
+      "english": "End",
+      "context": "def Start(self,province_no):",
+      "length": 4,
+      "files": [
+        "Command11.py"
+      ]
+    },
+    {
+      "text_id": "0x7CEB",
+      "offset": 31979,
+      "category": "misc",
+      "chinese": "$38387$$38067$$44028$$39579$!",
+      "english": "Troops Gold!",
+      "context": "def Start(self,province_no):",
+      "length": 9,
+      "files": [
+        "Command9_10_12.py"
+      ]
+    },
+    {
+      "text_id": "0x7CF5",
+      "offset": 31989,
+      "category": "misc",
+      "chinese": "$39333$$43056$$40310$$38118$",
+      "english": "Ruler Gold",
+      "context": "def __init__(self):",
+      "length": 8,
+      "files": [
+        "Command9_10_12.py"
+      ]
+    },
+    {
+      "text_id": "0x7CFF",
+      "offset": 31999,
+      "category": "misc",
+      "chinese": "$41301$$38026$$37709$$44028$$39579$",
+      "english": "Gold Year",
+      "context": "def __init__(self):",
+      "length": 10,
+      "files": [
+        "Command9_10_12.py"
+      ]
+    },
+    {
+      "text_id": "0x7D14",
+      "offset": 32020,
+      "category": "misc",
+      "chinese": "$37544$$37856$$38742$$41953$$39160$$39346$ %d.",
+      "english": "Gold Pop %d.",
+      "context": "def __init__(self):",
+      "length": 16,
+      "files": [
+        "Command9_10_12.py"
+      ]
+    },
+    {
+      "text_id": "0x7D2A",
+      "offset": 32042,
+      "category": "misc",
+      "chinese": "$37544$$37856$$38742$$41953$$39160$$38387$$38067$$38352$$44743$.",
+      "english": "Gold Pop Loyalty.",
+      "context": "unknown",
+      "length": 19,
+      "files": [
+        "Command9_10_12.py"
+      ]
+    },
+    {
+      "text_id": "0x7D8C",
+      "offset": 32140,
+      "category": "misc",
+      "chinese": "$38486$$43165$$37591$$42052$$38574$ %d$37687$[1B]C7[01]",
+      "english": "Training Pop",
+      "context": "def BuyHorse(self, officer_no):",
+      "length": 19,
+      "files": [
+        "Command13.py"
+      ]
+    },
+    {
+      "text_id": "0x7DAD",
+      "offset": 32173,
+      "category": "misc",
+      "chinese": "$40609$$38067$$41526$$39030$: %u $44028$$39579$: %lu[1B]C7[01]",
+      "english": "Gold Gold: %u Rice: %lu",
+      "context": "def SellFood(self, officer_no):",
+      "length": 26,
+      "files": [
+        "Command13.py"
+      ]
+    },
+    {
+      "text_id": "0x7E36",
+      "offset": 32310,
+      "category": "misc",
+      "chinese": "$43079$$44028$   2.$41400$$44028$   3.$41400$$40170$   4.$41400$$38844$$43201$[1B]C7[01][0A]$43000$$43480$$43236$",
+      "english": "Gold 2.Gold Rice 3.Horse 4.Weapons",
+      "context": "def Start(self, province_no):",
+      "length": 44,
+      "files": [
+        "Command13.py"
+      ]
+    },
+    {
+      "text_id": "0x7E3F",
+      "offset": 32319,
+      "category": "misc",
+      "chinese": "$41400$$44028$   3.$41400$$40170$   4.$41400$$38844$$43201$[1B]C7[01][0A]$43000$$43480$$43236$",
+      "english": "Gold Rice 3.Horse 4.Weapons",
+      "context": "def Start(self, province_no):",
+      "length": 35,
+      "files": [
+        "Command13.py"
+      ]
+    },
+    {
+      "text_id": "0x7E48",
+      "offset": 32328,
+      "category": "misc",
+      "chinese": "$41400$$40170$   4.$41400$$38844$$43201$[1B]C7[01][0A]$43000$$43480$$43236$",
+      "english": "Horse 4.Weapons",
+      "context": "def Start(self, province_no):",
+      "length": 26,
+      "files": [
+        "Command13.py"
+      ]
+    },
+    {
+      "text_id": "0x7E51",
+      "offset": 32337,
+      "category": "misc",
+      "chinese": "$41400$$38844$$43201$[1B]C7[01][0A]$43000$$43480$$43236$",
+      "english": "Weapons",
+      "context": "def Start(self, province_no):",
+      "length": 17,
+      "files": [
+        "Command13.py"
+      ]
+    },
+    {
+      "text_id": "0x7E8E",
+      "offset": 32398,
+      "category": "misc",
+      "chinese": "$38738$$38060$$41526$$39030$ %u $44028$$39579$ %u[1B]C7[01]",
+      "english": "Gold Gold %u Rice %u",
+      "context": "unknown",
+      "length": 23,
+      "files": [
+        "Command14.py"
+      ]
+    },
+    {
+      "text_id": "0x83E9",
+      "offset": 33769,
+      "category": "misc",
+      "chinese": "$37974$$44675$$37775$$40608$",
+      "english": "Large Date",
+      "context": "unknown",
+      "length": 8,
+      "files": [
+        "Command16.py"
+      ]
+    },
+    {
+      "text_id": "0x83F2",
+      "offset": 33778,
+      "category": "misc",
+      "chinese": "$37624$$39269$ ",
+      "english": "Large",
+      "context": "unknown",
+      "length": 5,
+      "files": [
+        "Command16.py"
+      ]
+    },
+    {
+      "text_id": "0x83F8",
+      "offset": 33784,
+      "category": "misc",
+      "chinese": "$39543$$38536$",
+      "english": "Date",
+      "context": "unknown",
+      "length": 4,
+      "files": [
+        "Command16.py"
+      ]
+    },
+    {
+      "text_id": "0x83FD",
+      "offset": 33789,
+      "category": "misc",
+      "chinese": "$37544$$38536$",
+      "english": "Gold Date",
+      "context": "unknown",
+      "length": 4,
+      "files": [
+        "Command16.py"
+      ]
+    },
+    {
+      "text_id": "0x843C",
+      "offset": 33852,
+      "category": "misc",
+      "chinese": "$37557$$42052$$39254$$37883$:[1B]C6[01]%s[0A][1B]C7[01]$42041$$40137$$40148$:[1B]C4[01]",
+      "english": "Train Ruler:C6[01]%s\nC7[01]Province:C4[01]",
+      "context": "unknown",
+      "length": 31,
+      "files": [
+        "Command16.py"
+      ]
+    },
+    {
+      "text_id": "0x8450",
+      "offset": 33872,
+      "category": "misc",
+      "chinese": "$42041$$40137$$40148$:[1B]C4[01]",
+      "english": "Province:C4[01]",
+      "context": "unknown",
+      "length": 11,
+      "files": [
+        "Command16.py"
+      ]
+    },
+    {
+      "text_id": "0x845C",
+      "offset": 33884,
+      "category": "misc",
+      "chinese": " $41169$",
+      "english": "Off",
+      "context": "unknown",
+      "length": 3,
+      "files": [
+        "Command16.py"
+      ]
+    },
+    {
+      "text_id": "0x8472",
+      "offset": 33906,
+      "category": "misc",
+      "chinese": "$43228$$38887$$40148$:[1B]C2[01]",
+      "english": "Battle",
+      "context": "unknown",
+      "length": 11,
+      "files": [
+        "Command16.py"
+      ]
+    },
+    {
+      "text_id": "0x84B6",
+      "offset": 33974,
+      "category": "misc",
+      "chinese": "$37775$$40608$",
+      "english": "Date",
+      "context": "unknown",
+      "length": 4,
+      "files": [
+        "Command16.py"
+      ]
+    },
+    {
+      "text_id": "0x84BB",
+      "offset": 33979,
+      "category": "misc",
+      "chinese": "$38387$$38067$$37775$$40608$",
+      "english": "Troops Date",
+      "context": "unknown",
+      "length": 8,
+      "files": [
+        "Command16.py"
+      ]
+    },
+    {
+      "text_id": "0x84C4",
+      "offset": 33988,
+      "category": "misc",
+      "chinese": "$40648$%2d$40148$$40609$$38020$[1B]C6[01]%s[1B]C7[01][0A]",
+      "english": "Year %2d Ruler",
+      "context": "unknown",
+      "length": 22,
+      "files": [
+        "Command16.py"
+      ]
+    },
+    {
+      "text_id": "0x84DB",
+      "offset": 34011,
+      "category": "misc",
+      "chinese": "1.$37775$$40608$   2.$41943$$40165$$37775$$40608$[0A]$43000$$43480$$43236$",
+      "english": "1.Date 2.Battle Date",
+      "context": "unknown",
+      "length": 26,
+      "files": [
+        "Command16.py"
+      ]
+    },
+    {
+      "text_id": "0x87F0",
+      "offset": 34800,
+      "category": "misc",
+      "chinese": "$37578$$43078$$37544$$43234$$42552$$38020$$38073$$38045$$37624$",
+      "english": "Date Large Fire",
+      "context": "unknown",
+      "length": 18,
+      "files": [
+        "Command18.py"
+      ]
+    },
+    {
+      "text_id": "0x8803",
+      "offset": 34819,
+      "category": "misc",
+      "chinese": "$38992$$43604$$37973$$37868$",
+      "english": "Small",
+      "context": "unknown",
+      "length": 8,
+      "files": [
+        "Command18.py"
+      ]
+    },
+    {
+      "text_id": "0x880C",
+      "offset": 34828,
+      "category": "misc",
+      "chinese": "$40946$$38020$$38073$$38045$$37624$",
+      "english": "Fire Fire",
+      "context": "unknown",
+      "length": 10,
+      "files": [
+        "Command18.py"
+      ]
+    },
+    {
+      "text_id": "0x8817",
+      "offset": 34839,
+      "category": "misc",
+      "chinese": "$37968$$42166$$41423$$38353$",
+      "english": "Gold",
+      "context": "unknown",
+      "length": 8,
+      "files": [
+        "Command18.py"
+      ]
+    },
+    {
+      "text_id": "0x8820",
+      "offset": 34848,
+      "category": "misc",
+      "chinese": "$37802$$40069$$40881$$39024$$40781$$41423$$38353$",
+      "english": "Gold Gold",
+      "context": "unknown",
+      "length": 14,
+      "files": [
+        "Command18.py"
+      ]
+    },
+    {
+      "text_id": "0x895A",
+      "offset": 35162,
+      "category": "misc",
+      "chinese": "$41406$$43313$$41423$$38353$",
+      "english": "Gold Large",
+      "context": "unknown",
+      "length": 8,
+      "files": [
+        "Command18.py"
+      ]
+    },
+    {
+      "text_id": "0x8963",
+      "offset": 35171,
+      "category": "misc",
+      "chinese": "$37854$$38777$$41551$$37544$$38360$.",
+      "english": "Gold Gold.",
+      "context": "unknown",
+      "length": 11,
+      "files": [
+        "Command18.py"
+      ]
+    },
+    {
+      "text_id": "0x89DE",
+      "offset": 35294,
+      "category": "misc",
+      "chinese": "$39161$$38498$   [1B]C%d2.$43880$$38498$   [1B]C%d3.$38872$$43714$[1B]C7[01][0A]",
+      "english": "Officer %d2.Rank %d3.Land",
+      "context": "def __init__(self):",
+      "length": 35,
+      "files": [
+        "Command18.py"
+      ]
+    },
+    {
+      "text_id": "0x89EB",
+      "offset": 35307,
+      "category": "misc",
+      "chinese": "$43880$$38498$   [1B]C%d3.$38872$$43714$[1B]C7[01][0A]",
+      "english": "Rank %d3.Land",
+      "context": "def __init__(self):",
+      "length": 22,
+      "files": [
+        "Command18.py"
+      ]
+    },
+    {
+      "text_id": "0x89F8",
+      "offset": 35320,
+      "category": "misc",
+      "chinese": "$38872$$43714$[1B]C7[01][0A]",
+      "english": "Land",
+      "context": "def __init__(self):",
+      "length": 9,
+      "files": [
+        "Command18.py"
+      ]
+    },
+    {
+      "text_id": "0x8A7A",
+      "offset": 35450,
+      "category": "misc",
+      "chinese": "$42166$$37883$",
+      "english": "Gold",
+      "context": "unknown",
+      "length": 4,
+      "files": [
+        "Command19.py"
+      ]
+    },
+    {
+      "text_id": "0x8A7F",
+      "offset": 35455,
+      "category": "misc",
+      "chinese": "$39575$$42838$",
+      "english": "Gold",
+      "context": "unknown",
+      "length": 4,
+      "files": [
+        "Command19.py"
+      ]
+    },
+    {
+      "text_id": "0x8A84",
+      "offset": 35460,
+      "category": "misc",
+      "chinese": "$39575$$39815$",
+      "english": "Land",
+      "context": "unknown",
+      "length": 4,
+      "files": [
+        "Command19.py"
+      ]
+    },
+    {
+      "text_id": "0x8A94",
+      "offset": 35476,
+      "category": "misc",
+      "chinese": "$40609$$38020$%s$39278$[1B]C4[01]%s [1B]C7[01][0A]",
+      "english": "Assign %s %s",
+      "context": "unknown",
+      "length": 20,
+      "files": [
+        "Command19.py"
+      ]
+    },
+    {
+      "text_id": "0x8ABA",
+      "offset": 35514,
+      "category": "misc",
+      "chinese": "$41169$$44750$$37883$",
+      "english": "Army Gold",
+      "context": "unknown",
+      "length": 6,
+      "files": [
+        "Command19.py"
+      ]
+    },
+    {
+      "text_id": "0x8AC1",
+      "offset": 35521,
+      "category": "misc",
+      "chinese": "$40172$$40822$",
+      "english": "Gold",
+      "context": "unknown",
+      "length": 4,
+      "files": [
+        "Command19.py"
+      ]
+    },
+    {
+      "text_id": "0x8AC6",
+      "offset": 35526,
+      "category": "misc",
+      "chinese": "$42832$$41708$",
+      "english": "Gold",
+      "context": "unknown",
+      "length": 4,
+      "files": [
+        "Command19.py"
+      ]
+    },
+    {
+      "text_id": "0x8ACB",
+      "offset": 35531,
+      "category": "misc",
+      "chinese": "$38196$$40822$",
+      "english": "Gold",
+      "context": "unknown",
+      "length": 4,
+      "files": [
+        "Command19.py"
+      ]
+    },
+    {
+      "text_id": "0x8AD0",
+      "offset": 35536,
+      "category": "misc",
+      "chinese": "$40609$$38020$$38545$$38981$$39346$[1B]C4[01]<%s>[1B]C7[01][0A][1B]C6[01]",
+      "english": "Assign",
+      "context": "unknown",
+      "length": 27,
+      "files": [
+        "Command19.py"
+      ]
+    },
+    {
+      "text_id": "0x8B02",
+      "offset": 35586,
+      "category": "misc",
+      "chinese": "$47754$$49546$$50826$$52106$$39051$$39781$$41281$$39216$$39820$$41445$$39346$[1B]C4[01]%d[1B]C7[01][0A][1B]C7[01]",
+      "english": "End",
+      "context": "def Start(self,province_no):",
+      "length": 37,
+      "files": [
+        "Command19.py"
+      ]
+    },
+    {
+      "text_id": "0x8B37",
+      "offset": 35639,
+      "category": "misc",
+      "chinese": "$39051$$39781$$40822$$39160$    2.$39758$$38545$$40822$$39160$[0A][1B]C7[01]$43000$$43480$$43236$",
+      "english": "End 1.End\n2.Large",
+      "context": "def Start(self,province_no):",
+      "length": 33,
+      "files": [
+        "Command19.py"
+      ]
+    },
+    {
+      "text_id": "0x8B45",
+      "offset": 35653,
+      "category": "misc",
+      "chinese": "$39758$$38545$$40822$$39160$[0A][1B]C7[01]$43000$$43480$$43236$",
+      "english": "Large",
+      "context": "def Start(self,province_no):",
+      "length": 19,
+      "files": [
+        "Command19.py"
+      ]
+    },
+    {
+      "text_id": "0x8B64",
+      "offset": 35684,
+      "category": "misc",
+      "chinese": "$43228$$38887$$41194$$39571$$39346$[1B]C4[01]%s[1B]C7[01][0A]",
+      "english": "Battle Fire",
+      "context": "unknown",
+      "length": 21,
+      "files": [
+        "Command19.py"
+      ]
+    },
+    {
+      "text_id": "0x8BFC",
+      "offset": 35836,
+      "category": "misc",
+      "chinese": "$41281$$39216$   2.$42166$$37883$   [1B]C13.$39575$$42838$   [1B]C74.$39575$$39815$[0A][09][09][09]5.$42824$$38037$   6.$44855$$43228$   [1B]C%d7.$40179$$37739$   8.$40667$$37542$[0A]",
+      "english": "Gold 2.Gold C13.Land C74.Land\n5.End 6.Battle C7.Date 8.Trade",
+      "context": "def __init__(self):",
+      "length": 79,
+      "files": [
+        "Command19.py"
+      ]
+    },
+    {
+      "text_id": "0x8C05",
+      "offset": 35845,
+      "category": "misc",
+      "chinese": "$42166$$37883$   [1B]C13.$39575$$42838$   [1B]C74.$39575$$39815$[0A][09][09][09]5.$42824$$38037$   6.$44855$$43228$   [1B]C%d7.$40179$$37739$   8.$40667$$37542$[0A]",
+      "english": "Gold C13.Land C74.Land\n5.End 6.Battle C7.Date 8.Trade",
+      "context": "def __init__(self):",
+      "length": 70,
+      "files": [
+        "Command19.py"
+      ]
+    },
+    {
+      "text_id": "0x8C11",
+      "offset": 35857,
+      "category": "misc",
+      "chinese": "$39575$$42838$   [1B]C74.$39575$$39815$[0A][09][09][09]5.$42824$$38037$   6.$44855$$43228$   [1B]C%d7.$40179$$37739$   8.$40667$$37542$[0A]",
+      "english": "Land C74.Land\n5.End 6.Battle C7.Date 8.Trade",
+      "context": "def __init__(self):",
+      "length": 58,
+      "files": [
+        "Command19.py"
+      ]
+    },
+    {
+      "text_id": "0x8C1D",
+      "offset": 35869,
+      "category": "misc",
+      "chinese": "$39575$$39815$[0A][09][09][09]5.$42824$$38037$   6.$44855$$43228$   [1B]C%d7.$40179$$37739$   8.$40667$$37542$[0A]",
+      "english": "Land\n5.End 6.Battle C7.Date 8.Trade",
+      "context": "def __init__(self):",
+      "length": 46,
+      "files": [
+        "Command19.py"
+      ]
+    },
+    {
+      "text_id": "0x8C27",
+      "offset": 35879,
+      "category": "misc",
+      "chinese": "$42824$$38037$   6.$44855$$43228$   [1B]C%d7.$40179$$37739$   8.$40667$$37542$[0A]",
+      "english": "End 6.Battle C7.Date 8.Trade",
+      "context": "def __init__(self):",
+      "length": 36,
+      "files": [
+        "Command19.py"
+      ]
+    },
+    {
+      "text_id": "0x8C30",
+      "offset": 35888,
+      "category": "misc",
+      "chinese": "$44855$$43228$   [1B]C%d7.$40179$$37739$   8.$40667$$37542$[0A]",
+      "english": "Battle C7.Date 8.Trade",
+      "context": "def __init__(self):",
+      "length": 27,
+      "files": [
+        "Command19.py"
+      ]
+    },
+    {
+      "text_id": "0x8C3D",
+      "offset": 35901,
+      "category": "misc",
+      "chinese": "$40179$$37739$   8.$40667$$37542$[0A]",
+      "english": "Date 8.Trade",
+      "context": "def __init__(self):",
+      "length": 14,
+      "files": [
+        "Command19.py"
+      ]
+    },
+    {
+      "text_id": "0x8C46",
+      "offset": 35910,
+      "category": "misc",
+      "chinese": "$40667$$37542$[0A]",
+      "english": "Trade",
+      "context": "def __init__(self):",
+      "length": 5,
+      "files": [
+        "Command19.py"
+      ]
+    },
+    {
+      "text_id": "0x9BD1",
+      "offset": 39889,
+      "category": "misc",
+      "chinese": "$39577$$38003$",
+      "english": "Gold",
+      "context": "unknown",
+      "length": 4,
+      "files": [
+        "Command3.py"
+      ]
+    },
+    {
+      "text_id": "0x9BDF",
+      "offset": 39903,
+      "category": "misc",
+      "chinese": "$41169$$39577$",
+      "english": "Gold Gold",
+      "context": "unknown",
+      "length": 4,
+      "files": [
+        "Command3.py"
+      ]
+    },
+    {
+      "text_id": "0x9CC4",
+      "offset": 40132,
+      "category": "misc",
+      "chinese": "1.$38118$$39543$  2.$38353$$43653$  3.$43514$$39216$[0A]4.$44855$$39391$  5.$41282$$40616$  6.$44135$$41423$ ",
+      "english": "1.Gold 2.Trade 3.Gold\n4.War 5.End 6.Large",
+      "context": "unknown",
+      "length": 46,
+      "files": [
+        "Command3.py"
+      ]
+    }
+  ]
+}
