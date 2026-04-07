@@ -243,11 +243,19 @@ class BattleUnit:
         Get officer name.
 
         Returns:
-            Officer name string
+            Officer name string (English if available)
         """
-        if hasattr(self.officer, "GetName"):
-            return self.officer.GetName()
-        return getattr(self.officer, "name", "Unknown")
+        # Import here to avoid circular imports
+        try:
+            from .officer_names import get_officer_name_cached
+
+            officer_id = getattr(self.officer, "Id", 0)
+            return get_officer_name_cached(officer_id)
+        except:
+            # Fallback to original method
+            if hasattr(self.officer, "GetName"):
+                return self.officer.GetName()
+            return getattr(self.officer, "name", "Unknown")
 
     def get_officer_id(self) -> int:
         """
@@ -274,6 +282,21 @@ class BattleUnit:
         Returns:
             Intelligence stat (0-100)
         """
+        return getattr(self.officer, "Int", 50)
+
+    def get_tiger_wolf_susceptibility(self) -> int:
+        """
+        Get Tiger-Wolf susceptibility (ambition - honor).
+
+        Higher value = easier to convince to rebel via Tiger-Wolf tactics.
+        Range: roughly -100 to +100
+
+        Returns:
+            Susceptibility score
+        """
+        ambition = getattr(self.officer, "yewang", 50)
+        honor = getattr(self.officer, "yili", 50)
+        return ambition - honor
         return getattr(self.officer, "Int", 50)
 
     def get_charm(self) -> int:
