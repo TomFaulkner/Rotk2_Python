@@ -41,18 +41,19 @@ class BattleRenderer:
         "text": (255, 255, 255),
     }
 
-    def __init__(self, screen: pygame.Surface, hex_size: int = 24):
+    def __init__(self, screen: pygame.Surface, tile_size: int = 32):
         """
         Initialize battle renderer.
 
         Args:
             screen: Pygame surface to render to
-            hex_size: Size of hexes in pixels (radius)
+            tile_size: Size of tiles in pixels (default 32 for original ROTK2)
         """
         self.screen = screen
-        self.hex_size = hex_size
-        self.hex_width = hex_size * 2
-        self.hex_height = int(hex_size * 1.732)  # sqrt(3)
+        self.tile_size = tile_size
+        self.tile_width = tile_size
+        self.tile_height = tile_size
+        self.stagger_offset = tile_size // 2  # 50% offset for odd columns
 
         # Fonts
         self.font = pygame.font.SysFont(None, 20)
@@ -62,12 +63,22 @@ class BattleRenderer:
         self.offset_x = 50
         self.offset_y = 50
 
-        # Cache for hex polygons
-        self._hex_cache: Dict[Tuple[int, int], List[Tuple[int, int]]] = {}
-
         # Load portrait mapping
         self.portrait_mapping = self._load_portrait_mapping()
         self.portrait_cache: Dict[str, pygame.Surface] = {}
+
+        # Load terrain images
+        self.terrain_images = self._load_terrain_images()
+
+        # Terrain type to image index mapping
+        self.terrain_image_map = {
+            TerrainType.PLAINS: 0,  # hex00.jpg
+            TerrainType.FOREST: 1,  # hex01.jpg
+            TerrainType.HILLS: 2,  # hex02.jpg
+            TerrainType.WATER: 3,  # hex03.jpg
+            TerrainType.CASTLE: 4,  # hex04.jpg
+            TerrainType.MOUNTAIN: 5,  # hex05.jpg
+        }
 
     def _load_portrait_mapping(self) -> Dict:
         """Load officer ID to portrait file mapping."""
@@ -87,6 +98,35 @@ class BattleRenderer:
         except Exception as e:
             print(f"Failed to load portrait mapping: {e}")
         return {}
+
+    def _load_terrain_images(self) -> Dict[int, pygame.Surface]:
+        """Load terrain hex images."""
+        images = {}
+        try:
+            # Try multiple possible paths for terrain images
+            possible_paths = [
+                Path("Resources"),  # From project root
+                Path("../Resources"),  # From Src/
+            ]
+
+            for base_path in possible_paths:
+                if base_path.exists():
+                    # Load all hex images (hex00.jpg through hex06.jpg, hex09.jpg, hex99.jpg)
+                    for i in range(0, 10):  # 0-9
+                        img_path = base_path / f"hex{i:02d}.jpg"
+                        if img_path.exists():
+                            img = pygame.image.load(str(img_path))
+                            images[i] = img
+                    # Also load special hex types
+                    for special in [99]:
+                        img_path = base_path / f"hex{special:02d}.jpg"
+                        if img_path.exists():
+                            img = pygame.image.load(str(img_path))
+                            images[special] = img
+                    break
+        except Exception as e:
+            print(f"Failed to load terrain images: {e}")
+        return images
 
     def _get_officer_portrait(self, officer_id: int) -> Optional[pygame.Surface]:
         """Load officer portrait by ID."""
@@ -121,12 +161,12 @@ class BattleRenderer:
             pass
         return None
 
-    def hex_to_pixel(self, coord: HexCoord) -> Tuple[int, int]:
+    def coord_to_pixel(self, coord: HexCoord) -> Tuple[int, int]:
         """
-        Convert hex coordinate to pixel position.
+        Convert grid coordinate to pixel position (staggered square tiles).
 
         Args:
-            coord: Hex coordinate
+            coord: Grid coordinate
 
         Returns:
             (x, y) pixel position
@@ -134,57 +174,24 @@ class BattleRenderer:
         col = coord.col
         row = coord.row
 
-        # Staggered grid: odd columns are offset
-        x = col * (self.hex_width * 0.75)
-        y = row * self.hex_height
-
-        if col % 2 == 1:
-            y += self.hex_height / 2
+        # Staggered square grid: odd columns are offset by 50%
+        x = col * self.tile_width
+        y = row * self.tile_height + (col % 2) * self.stagger_offset
 
         return int(x + self.offset_x), int(y + self.offset_y)
 
-    def get_hex_polygon(self, coord: HexCoord) -> List[Tuple[int, int]]:
+    def get_tile_rect(self, coord: HexCoord) -> Tuple[int, int, int, int]:
         """
-        Get the polygon points for a hex.
+        Get the rectangle for a tile.
 
         Args:
-            coord: Hex coordinate
+            coord: Grid coordinate
 
         Returns:
-            List of (x, y) points
+            (x, y, width, height) rectangle
         """
-        cache_key = (coord.row, coord.col)
-        if cache_key in self._hex_cache:
-            return self._hex_cache[cache_key]
-
-        cx, cy = self.hex_to_pixel(coord)
-
-        points = []
-        for i in range(6):
-            angle_deg = 60 * i - 30
-            angle_rad = 3.14159 / 180 * angle_deg
-            x = (
-                cx
-                + self.hex_size
-                * 0.9
-                * pygame.math.Vector2(pygame.math.Vector2(1, 0).rotate(angle_deg)).x
-            )
-            y = (
-                cy
-                + self.hex_size
-                * 0.9
-                * pygame.math.Vector2(pygame.math.Vector2(1, 0).rotate(angle_deg)).y
-            )
-
-            # Manual calculation for reliability
-            import math
-
-            x = cx + self.hex_size * 0.9 * math.cos(angle_rad)
-            y = cy + self.hex_size * 0.9 * math.sin(angle_rad)
-            points.append((int(x), int(y)))
-
-        self._hex_cache[cache_key] = points
-        return points
+        x, y = self.coord_to_pixel(coord)
+        return (x, y, self.tile_width, self.tile_height)
 
     def get_terrain_color(self, terrain: TerrainType) -> Tuple[int, int, int]:
         """
@@ -210,7 +217,7 @@ class BattleRenderer:
         self, grid: HexGrid, highlight_hexes: Optional[List[HexCoord]] = None
     ):
         """
-        Render the hex grid.
+        Render the grid using terrain images (staggered square tiles).
 
         Args:
             grid: HexGrid to render
@@ -219,32 +226,33 @@ class BattleRenderer:
         highlight_set = set(highlight_hexes) if highlight_hexes else set()
 
         for coord, hex_obj in grid.hexes.items():
-            points = self.get_hex_polygon(coord)
+            x, y = self.coord_to_pixel(coord)
 
-            # Get terrain color
-            color = self.get_terrain_color(hex_obj.terrain)
+            # Get terrain image
+            img_idx = self.terrain_image_map.get(hex_obj.terrain, 0)
+            terrain_img = self.terrain_images.get(img_idx)
+
+            if terrain_img:
+                # Blit terrain image
+                self.screen.blit(terrain_img, (x, y))
+            else:
+                # Fallback to colored rectangle
+                color = self.get_terrain_color(hex_obj.terrain)
+                pygame.draw.rect(
+                    self.screen, color, (x, y, self.tile_width, self.tile_height)
+                )
 
             # Highlight if needed
             if coord in highlight_set:
-                # Blend with highlight color
-                color = (
-                    min(255, color[0] + 50),
-                    min(255, color[1] + 50),
-                    min(255, color[2] + 50),
-                )
-
-            # Draw hex
-            pygame.draw.polygon(self.screen, color, points)
-            pygame.draw.polygon(self.screen, self.COLORS["grid_line"], points, 1)
-
-            # Draw castle symbol if castle
-            if hex_obj.terrain == TerrainType.CASTLE or hex_obj.is_castle:
-                cx, cy = self.hex_to_pixel(coord)
-                pygame.draw.rect(self.screen, (0, 0, 0), (cx - 5, cy - 5, 10, 10))
+                # Draw semi-transparent highlight overlay
+                highlight_surface = pygame.Surface((self.tile_width, self.tile_height))
+                highlight_surface.set_alpha(100)
+                highlight_surface.fill((255, 255, 0))
+                self.screen.blit(highlight_surface, (x, y))
 
             # Draw fire if burning
             if hex_obj.is_burning:
-                cx, cy = self.hex_to_pixel(coord)
+                cx, cy = x + self.tile_width // 2, y + self.tile_height // 2
                 # Draw flame effect (orange circle with red center)
                 pygame.draw.circle(self.screen, self.COLORS["burning"], (cx, cy), 8)
                 pygame.draw.circle(self.screen, (255, 0, 0), (cx, cy), 4)
@@ -267,7 +275,9 @@ class BattleRenderer:
         if not unit.position:
             return
 
-        cx, cy = self.hex_to_pixel(unit.position)
+        x, y = self.coord_to_pixel(unit.position)
+        cx = x + self.tile_width // 2
+        cy = y + self.tile_height // 2
 
         # Determine color based on side and state
         if unit.is_attacker:
@@ -279,8 +289,9 @@ class BattleRenderer:
             color = (64, 64, 64)
 
         # Draw unit circle
-        pygame.draw.circle(self.screen, color, (cx, cy), self.hex_size // 2 - 2)
-        pygame.draw.circle(self.screen, (0, 0, 0), (cx, cy), self.hex_size // 2 - 2, 2)
+        radius = self.tile_width // 3
+        pygame.draw.circle(self.screen, color, (cx, cy), radius)
+        pygame.draw.circle(self.screen, (0, 0, 0), (cx, cy), radius, 2)
 
         # Draw soldier count
         soldiers_text = str(unit.soldiers)
@@ -290,20 +301,21 @@ class BattleRenderer:
 
         # Draw commander star
         if unit.is_commander:
+            star_size = 10
             pygame.draw.polygon(
                 self.screen,
                 (255, 215, 0),
                 [
-                    (cx, cy - 12),
-                    (cx + 3, cy - 6),
-                    (cx + 9, cy - 6),
+                    (cx, cy - star_size),
+                    (cx + 3, cy - star_size // 2),
+                    (cx + 9, cy - star_size // 2),
                     (cx + 4, cy - 2),
                     (cx + 6, cy + 4),
                     (cx, cy + 1),
                     (cx - 6, cy + 4),
                     (cx - 4, cy - 2),
-                    (cx - 9, cy - 6),
-                    (cx - 3, cy - 6),
+                    (cx - 9, cy - star_size // 2),
+                    (cx - 3, cy - star_size // 2),
                 ],
             )
 
@@ -338,13 +350,23 @@ class BattleRenderer:
             reachable_hexes: List of reachable coordinates
         """
         # Highlight start position
-        points = self.get_hex_polygon(start)
-        pygame.draw.polygon(self.screen, self.COLORS["selected"], points, 3)
+        x, y = self.coord_to_pixel(start)
+        pygame.draw.rect(
+            self.screen,
+            self.COLORS["selected"],
+            (x, y, self.tile_width, self.tile_height),
+            3,
+        )
 
         # Highlight reachable hexes
         for coord in reachable_hexes:
-            points = self.get_hex_polygon(coord)
-            pygame.draw.polygon(self.screen, self.COLORS["movable"], points, 2)
+            x, y = self.coord_to_pixel(coord)
+            pygame.draw.rect(
+                self.screen,
+                self.COLORS["movable"],
+                (x, y, self.tile_width, self.tile_height),
+                2,
+            )
 
     def render_ui(self, battle_engine: Any):
         """
@@ -511,11 +533,11 @@ class BattleRenderer:
                 self.screen.blit(surface, (x + 5, y_offset))
                 y_offset += 18
 
-    def get_hex_at_pixel(
+    def get_tile_at_pixel(
         self, grid: HexGrid, pixel_x: int, pixel_y: int
     ) -> Optional[HexCoord]:
         """
-        Find hex coordinate at pixel position.
+        Find tile coordinate at pixel position (for staggered square grid).
 
         Args:
             grid: HexGrid
@@ -525,12 +547,31 @@ class BattleRenderer:
         Returns:
             HexCoord or None
         """
-        # Simple distance check to all hex centers
-        for coord in grid.hexes.keys():
-            hx, hy = self.hex_to_pixel(coord)
-            dist = ((pixel_x - hx) ** 2 + (pixel_y - hy) ** 2) ** 0.5
-            if dist < self.hex_size:
-                return coord
+        # Adjust for offset
+        adj_x = pixel_x - self.offset_x
+        adj_y = pixel_y - self.offset_y
+
+        # Calculate column
+        col = int(adj_x // self.tile_width)
+        if col < 0 or col >= 13:  # 13 columns
+            return None
+
+        # Check if column is valid
+        if col not in range(13):
+            return None
+
+        # Calculate row accounting for stagger
+        stagger = (col % 2) * self.stagger_offset
+        row = int((adj_y - stagger) // self.tile_height)
+
+        # Verify the coordinate is within bounds
+        if row < 0 or row >= 12:  # 12 rows
+            return None
+
+        # Create coord and verify it exists in grid
+        coord = HexCoord(row, col)
+        if coord in grid.hexes:
+            return coord
 
         return None
 
@@ -586,7 +627,7 @@ if __name__ == "__main__":
     screen = pygame.display.set_mode((800, 600))
     pygame.display.set_caption("Battle Renderer Test")
 
-    renderer = BattleRenderer(screen, hex_size=24)
+    renderer = BattleRenderer(screen, tile_size=32)
 
     # Create grid
     grid = HexGrid()

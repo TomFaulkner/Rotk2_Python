@@ -73,8 +73,8 @@ class BattleUI:
         self.valid_placement_hexes = self.battle.get_valid_placement_hexes(is_attacker)
 
     def get_hex_at_pixel(self, x: int, y: int):
-        """Get hex coordinate at screen position."""
-        return self.renderer.get_hex_at_pixel(self.battle.grid, x, y)
+        """Get tile coordinate at screen position."""
+        return self.renderer.get_tile_at_pixel(self.battle.grid, x, y)
 
     def add_combat_message(self, message: str):
         """Add a message to the combat log."""
@@ -149,9 +149,9 @@ class BattleUI:
         if self.phase != BattlePhaseUI.PLACEMENT or not self.valid_placement_hexes:
             return
 
-        # Draw placement zones
+        # Draw placement zones (using rectangles for tiles)
         for coord in self.valid_placement_hexes:
-            points = self.renderer.get_hex_polygon(coord)
+            x, y, width, height = self.renderer.get_tile_rect(coord)
             s = pygame.Surface(
                 (self.screen.get_width(), self.screen.get_height()), pygame.SRCALPHA
             )
@@ -160,12 +160,12 @@ class BattleUI:
                 if self.placement_side == "attacker"
                 else (255, 255, 0, 64)
             )
-            pygame.draw.polygon(s, color, points)
+            pygame.draw.rect(s, color, (x, y, width, height))
             self.screen.blit(s, (0, 0))
-            pygame.draw.polygon(
+            pygame.draw.rect(
                 self.screen,
                 (0, 200, 0) if self.placement_side == "attacker" else (200, 200, 0),
-                points,
+                (x, y, width, height),
                 2,
             )
 
@@ -319,7 +319,9 @@ class BattleUI:
         if self.adjacent_enemies:
             for enemy in self.adjacent_enemies:
                 if enemy.position:
-                    cx, cy = self.renderer.hex_to_pixel(enemy.position)
+                    x, y = self.renderer.coord_to_pixel(enemy.position)
+                    cx = x + self.renderer.tile_width // 2
+                    cy = y + self.renderer.tile_height // 2
                     pygame.draw.line(
                         self.screen, (255, 0, 0), (cx - 8, cy - 8), (cx + 8, cy + 8), 3
                     )

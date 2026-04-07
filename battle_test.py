@@ -125,7 +125,7 @@ class BattleTestGame(BattleGame):
 
         # Create test battle
         battle = create_test_battle(province_id=10)
-        renderer = BattleRenderer(screen, hex_size=28)
+        renderer = BattleRenderer(screen, tile_size=32)
 
         # Initialize base BattleGame
         super().__init__(screen, battle, renderer)
