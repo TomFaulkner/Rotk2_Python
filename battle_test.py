@@ -195,10 +195,10 @@ class BattleTestGame(BattleGame):
                 or self.phase == BattleGamePhase.PERSONAL_COMBAT_SELECT
             ):
                 self._handle_personal_combat_key(key)
+            elif self.phase == BattleGamePhase.BRIBE_SELECT:
+                self._handle_bribe_key(key)
             elif self.ui.attack_target:
                 self._handle_attack_key(key)
-            elif self.ui.bribe_mode:
-                self._handle_bribe_key(key)
 
 
 def main():

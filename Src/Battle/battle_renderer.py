@@ -65,6 +65,62 @@ class BattleRenderer:
         # Cache for hex polygons
         self._hex_cache: Dict[Tuple[int, int], List[Tuple[int, int]]] = {}
 
+        # Load portrait mapping
+        self.portrait_mapping = self._load_portrait_mapping()
+        self.portrait_cache: Dict[str, pygame.Surface] = {}
+
+    def _load_portrait_mapping(self) -> Dict:
+        """Load officer ID to portrait file mapping."""
+        import json
+
+        try:
+            # Try multiple possible paths for the mapping file
+            possible_paths = [
+                Path("Resources/portraits/portrait_mapping.json"),  # From project root
+                Path("../Resources/portraits/portrait_mapping.json"),  # From Src/
+            ]
+
+            for mapping_path in possible_paths:
+                if mapping_path.exists():
+                    with open(mapping_path, "r") as f:
+                        return json.load(f)
+        except Exception as e:
+            print(f"Failed to load portrait mapping: {e}")
+        return {}
+
+    def _get_officer_portrait(self, officer_id: int) -> Optional[pygame.Surface]:
+        """Load officer portrait by ID."""
+        if str(officer_id) not in self.portrait_mapping:
+            return None
+
+        mapping = self.portrait_mapping[str(officer_id)]
+        file_path = mapping.get("file", "")
+
+        # Check cache first
+        if file_path in self.portrait_cache:
+            return self.portrait_cache[file_path]
+
+        # Load portrait - handle relative paths from different working directories
+        try:
+            # Try the path as-is first (relative to current directory)
+            full_path = Path(file_path)
+            if not full_path.exists():
+                # Try from project root (remove ../ prefix if present)
+                if file_path.startswith("../"):
+                    full_path = Path(file_path[3:])  # Remove ../
+                else:
+                    full_path = Path("Resources/portraits/") / file_path
+
+            if full_path.exists():
+                portrait = pygame.image.load(str(full_path))
+                # Scale to fit panel (80x100)
+                portrait = pygame.transform.scale(portrait, (80, 100))
+                self.portrait_cache[file_path] = portrait
+                return portrait
+        except Exception:
+            pass
+        return None
+
     def hex_to_pixel(self, coord: HexCoord) -> Tuple[int, int]:
         """
         Convert hex coordinate to pixel position.
@@ -380,7 +436,7 @@ class BattleRenderer:
         self, unit: Optional[BattleUnit], x: int = 10, y: int = 10
     ):
         """
-        Render info for selected unit.
+        Render info for selected unit with portrait.
 
         Args:
             unit: Selected BattleUnit
@@ -390,35 +446,70 @@ class BattleRenderer:
         if not unit:
             return
 
-        # Draw panel
-        panel_width = 180
-        panel_height = 120
+        # Draw panel (taller to fit portrait and all stats)
+        panel_width = 200
+        panel_height = 220
         pygame.draw.rect(self.screen, (32, 32, 32), (x, y, panel_width, panel_height))
         pygame.draw.rect(
             self.screen, (100, 100, 100), (x, y, panel_width, panel_height), 2
         )
 
-        # Unit info
-        y_offset = y + 5
+        # Get officer ID for portrait
+        officer_id = getattr(unit.officer, "Id", None)
 
-        name_text = unit.get_officer_name()
-        surface = self.font.render(name_text, True, self.COLORS["text"])
-        self.screen.blit(surface, (x + 5, y_offset))
-        y_offset += 22
+        # Load and display portrait
+        portrait = None
+        if officer_id is not None:
+            portrait = self._get_officer_portrait(officer_id)
 
-        stats = [
-            f"Soldiers: {unit.soldiers}",
-            f"War: {unit.get_war_ability()}",
-            f"Int: {unit.get_intelligence()}",
-            f"Mobility: {unit.mobility}/{unit.MAX_MOBILITY}",
-            f"Training: {unit.training}",
-            f"Loyalty: {unit.loyalty}",
-        ]
+        if portrait:
+            # Portrait on the left side
+            portrait_x = x + 5
+            portrait_y = y + 5
+            self.screen.blit(portrait, (portrait_x, portrait_y))
 
-        for stat in stats:
-            surface = self.small_font.render(stat, True, (200, 200, 200))
+            # Name above stats
+            name_text = unit.get_officer_name()
+            surface = self.font.render(name_text, True, self.COLORS["text"])
+            self.screen.blit(surface, (portrait_x, portrait_y + 105))
+
+            # Stats on the right of portrait
+            y_offset = portrait_y
+            stats = [
+                f"Sold: {unit.soldiers}",
+                f"War: {unit.get_war_ability()}",
+                f"Int: {unit.get_intelligence()}",
+                f"Mob: {unit.mobility}/{unit.MAX_MOBILITY}",
+                f"Trn: {unit.training}",
+                f"Loy: {unit.loyalty}",
+            ]
+            stats_x = x + 90  # Right of portrait
+            for stat in stats:
+                surface = self.small_font.render(stat, True, (200, 200, 200))
+                self.screen.blit(surface, (stats_x, y_offset))
+                y_offset += 17
+        else:
+            # No portrait - text layout
+            y_offset = y + 5
+
+            name_text = unit.get_officer_name()
+            surface = self.font.render(name_text, True, self.COLORS["text"])
             self.screen.blit(surface, (x + 5, y_offset))
-            y_offset += 18
+            y_offset += 22
+
+            stats = [
+                f"Soldiers: {unit.soldiers}",
+                f"War: {unit.get_war_ability()}",
+                f"Int: {unit.get_intelligence()}",
+                f"Mobility: {unit.mobility}/{unit.MAX_MOBILITY}",
+                f"Training: {unit.training}",
+                f"Loyalty: {unit.loyalty}",
+            ]
+
+            for stat in stats:
+                surface = self.small_font.render(stat, True, (200, 200, 200))
+                self.screen.blit(surface, (x + 5, y_offset))
+                y_offset += 18
 
     def get_hex_at_pixel(
         self, grid: HexGrid, pixel_x: int, pixel_y: int
@@ -479,12 +570,12 @@ class BattleRenderer:
         # Render units
         self.render_units(units, selected_unit)
 
-        # Render UI
-        if battle_engine:
-            self.render_ui(battle_engine)
-
-        # Render selected unit info
-        self.render_selected_unit_info(selected_unit)
+        # Render selected unit info at top right (replacing the old battle info panel)
+        panel_width = 200  # Updated to match render_selected_unit_info
+        panel_height = 220  # Updated to fit portrait and all stats
+        panel_x = self.screen.get_width() - panel_width - 10  # Right side
+        panel_y = 10  # Top
+        self.render_selected_unit_info(selected_unit, x=panel_x, y=panel_y)
 
 
 if __name__ == "__main__":

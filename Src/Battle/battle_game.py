@@ -15,6 +15,7 @@ class BattleGamePhase(Enum):
     PLACEMENT = "placement"
     PERSONAL_COMBAT_OFFER = "personal_combat_offer"
     PERSONAL_COMBAT_SELECT = "personal_combat_select"
+    BRIBE_SELECT = "bribe_select"
     BATTLE = "battle"
     ENDED = "ended"
 
@@ -66,6 +67,11 @@ class BattleGame:
         self.personal_combat_attacker_general = None
         self.personal_combat_proposer = None
 
+        # Bribe state
+        self.bribe_target = None
+        self.bribe_amount = 0
+        self.bribe_step = "select_target"  # select_target, enter_amount, confirm
+
         print("\n=== BATTLE STARTED ===")
         print("Defender places commander, Attacker places all units")
         print("Controls: Click to place, SPACE to auto-place, ENTER to start")
@@ -106,10 +112,10 @@ class BattleGame:
                     or self.phase == BattleGamePhase.PERSONAL_COMBAT_SELECT
                 ):
                     self._handle_personal_combat_key(event.key)
+                elif self.phase == BattleGamePhase.BRIBE_SELECT:
+                    self._handle_bribe_key(event.key)
                 elif self.ui.attack_target:
                     self._handle_attack_key(event.key)
-                elif self.ui.bribe_mode:
-                    self._handle_bribe_key(event.key)
                 elif event.key == K_f:
                     self._toggle_fire_mode()
                 elif event.key == K_b:
@@ -276,7 +282,7 @@ class BattleGame:
                 print("Fire mode: Click adjacent hex")
 
     def _handle_bribe_key(self, key):
-        """Handle keys during bribe mode."""
+        """Handle keys during bribe modal."""
         from pygame.locals import (
             K_0,
             K_1,
@@ -290,18 +296,77 @@ class BattleGame:
             K_9,
             K_BACKSPACE,
             K_ESCAPE,
+            K_y,
+            K_n,
         )
 
-        if K_0 <= key <= K_9:
-            digit = key - K_0
-            self.ui.bribe_amount = self.ui.bribe_amount * 10 + digit
-            if self.ui.bribe_amount > 99:
-                self.ui.bribe_amount = 99
-        elif key == K_BACKSPACE:
-            self.ui.bribe_amount = self.ui.bribe_amount // 10
+        if self.bribe_step == "select_target":
+            # Map keys 1-9,0 to target selection
+            key_to_idx = {
+                K_1: 0,
+                K_2: 1,
+                K_3: 2,
+                K_4: 3,
+                K_5: 4,
+                K_6: 5,
+                K_7: 6,
+                K_8: 7,
+                K_9: 8,
+                K_0: 9,
+            }
+            if key in key_to_idx:
+                idx = key_to_idx[key]
+                # Get enemy units
+                if self.ui.selected_unit.is_attacker:
+                    enemies = [
+                        u
+                        for u in self.battle.defending_units
+                        if not u.is_defeated() and u.position
+                    ]
+                else:
+                    enemies = [
+                        u
+                        for u in self.battle.attacking_units
+                        if not u.is_defeated() and u.position
+                    ]
+
+                if idx < len(enemies):
+                    self.bribe_target = enemies[idx]
+                    self.bribe_step = "enter_amount"
+                    self.bribe_amount = 0
+                    print(f"\nTarget: {self.bribe_target.get_officer_name()}")
+                    print(
+                        "Enter bribe amount (1-99), then press Y to confirm or N to cancel"
+                    )
+
+        elif self.bribe_step == "enter_amount":
+            if K_0 <= key <= K_9:
+                digit = key - K_0
+                self.bribe_amount = self.bribe_amount * 10 + digit
+                if self.bribe_amount > 99:
+                    self.bribe_amount = 99
+                print(f"  Amount: {self.bribe_amount} gold")
+            elif key == K_BACKSPACE:
+                self.bribe_amount = self.bribe_amount // 10
+                print(f"  Amount: {self.bribe_amount} gold")
+            elif key == K_y:
+                if self.bribe_amount >= 1:
+                    self._execute_bribe()
+                else:
+                    print("Enter amount first!")
+            elif key == K_n:
+                self._cancel_bribe()
+
         elif key == K_ESCAPE:
-            self.ui.bribe_mode = False
-            print("Bribe cancelled")
+            self._cancel_bribe()
+
+    def _cancel_bribe(self):
+        """Cancel bribe mode."""
+        self.phase = BattleGamePhase.BATTLE
+        self.bribe_target = None
+        self.bribe_amount = 0
+        self.bribe_step = "select_target"
+        print("Bribe cancelled")
 
     def _handle_click(self, pos):
         """Handle mouse click."""
@@ -390,13 +455,6 @@ class BattleGame:
             # TODO: Implement fire attack
             print("Fire attack not fully implemented")
             self.ui.fire_mode = False
-            return
-
-        # Bribe mode
-        if self.ui.bribe_mode and self.ui.selected_unit:
-            hex_obj = self.battle.grid.get_hex(coord)
-            if hex_obj and hex_obj.unit:
-                self._execute_bribe(hex_obj.unit)
             return
 
         hex_obj = self.battle.grid.get_hex(coord)
@@ -619,37 +677,82 @@ class BattleGame:
                 unit, self.battle.grid, all_units
             )
 
-    def _execute_bribe(self, target):
-        """Execute bribe."""
-        if self.ui.bribe_amount < 1:
+    def _execute_bribe(self):
+        """Execute bribe with selected target and amount."""
+        if not self.bribe_target:
+            print("No target selected!")
+            return
+        if self.bribe_amount < 1:
             print("Enter bribe amount (1-99)")
             return
 
         briber = self.ui.selected_unit
         if not briber or not briber.is_commander:
             print("Only commander can bribe!")
+            self._cancel_bribe()
             return
 
+        target = self.bribe_target
         briber_charm = getattr(briber.officer, "Chm", 50)
         success, roll, defense = self.CombatSystem.calculate_bribe_success(
-            briber_charm, target, self.ui.bribe_amount
+            briber_charm, target, self.bribe_amount
         )
 
-        print(f"\nBribe {target.get_officer_name()}:")
-        print(f"  Amount: {self.ui.bribe_amount} gold")
-        print(f"  Defense: {defense}  Roll: {roll}")
+        print(f"\n=== BRIBE RESULT ===")
+        print(f"Target: {target.get_officer_name()}")
+        print(f"Amount: {self.bribe_amount} gold")
+        print(f"Defense: {defense}  Roll: {roll}")
 
         if success:
-            print(f"  SUCCESS! {target.get_officer_name()} defects!")
+            print(f"SUCCESS! {target.get_officer_name()} defects!")
             target.is_attacker = briber.is_attacker
             self.ui.add_combat_message(f"Bribe: {target.get_officer_name()} defected!")
+
+            # Check if bribed unit was a commander
+            if target.is_commander:
+                print(f"\n*** ENEMY COMMANDER BRIBED! ***")
+                print(">>> ALL ENEMY UNITS FLEE! <<<")
+
+                # Determine which side's commander was bribed
+                bribed_side_is_attacker = not briber.is_attacker
+
+                # Force all units on that side to flee
+                if bribed_side_is_attacker:
+                    units_to_flee = self.battle.get_attacking_units_on_map()
+                    for unit in units_to_flee:
+                        unit.state = self.UnitState.DEFEATED
+                        if unit.position:
+                            self.battle.grid.remove_unit(unit.position)
+                        print(f"  {unit.get_officer_name()} flees!")
+                else:
+                    units_to_flee = self.battle.get_defending_units_on_map()
+                    for unit in units_to_flee:
+                        unit.state = self.UnitState.CAPTURED
+                        if unit.position:
+                            self.battle.grid.remove_unit(unit.position)
+                        print(f"  {unit.get_officer_name()} flees!")
+
+                briber.has_attacked = True
+                briber.has_moved = True
+
+                # Exit bribe mode and end battle
+                self.phase = BattleGamePhase.ENDED
+                from Battle import BattlePhaseUI
+
+                self.ui.set_phase(BattlePhaseUI.ENDED)
+                print(f"\n*** BATTLE ENDED: BRIBER WINS ***")
+                return
         else:
-            print(f"  FAILED!")
+            print(f"FAILED! {target.get_officer_name()} refuses!")
 
         briber.has_attacked = True
         briber.has_moved = True
-        self.ui.bribe_mode = False
-        self.ui.bribe_amount = 0
+
+        # Exit bribe mode
+        self.phase = BattleGamePhase.BATTLE
+        self.bribe_target = None
+        self.bribe_amount = 0
+        self.bribe_step = "select_target"
 
     def _toggle_fire_mode(self):
         """Toggle fire attack mode."""
@@ -666,7 +769,7 @@ class BattleGame:
             print("Fire mode off")
 
     def _toggle_bribe_mode(self):
-        """Toggle bribe mode."""
+        """Enter bribe mode with modal selection."""
         if self.phase != BattleGamePhase.BATTLE:
             return
         if not self.ui.selected_unit:
@@ -679,12 +782,13 @@ class BattleGame:
             print("Commander has already acted!")
             return
 
-        self.ui.bribe_mode = not self.ui.bribe_mode
-        if self.ui.bribe_mode:
-            self.ui.bribe_amount = 0
-            print("Bribe mode: Click enemy, type amount (1-99)")
-        else:
-            print("Bribe mode off")
+        # Enter bribe selection phase
+        self.phase = BattleGamePhase.BRIBE_SELECT
+        self.bribe_step = "select_target"
+        self.bribe_target = None
+        self.bribe_amount = 0
+        print("\n=== BRIBE MODE ===")
+        print("Select enemy unit to bribe (1-9, 0 for 10th)")
 
     def _advance_placement(self):
         """Auto-place remaining units."""
@@ -812,6 +916,8 @@ class BattleGame:
             BattleGamePhase.PERSONAL_COMBAT_SELECT,
         ]:
             self._render_personal_combat_overlay()
+        elif self.phase == BattleGamePhase.BRIBE_SELECT:
+            self._render_bribe_overlay()
 
     def _render_personal_combat_overlay(self):
         """Render personal combat UI overlay."""
@@ -986,6 +1092,113 @@ class BattleGame:
             self.screen.blit(text, (x + 20, y + 140))
             text = small_font.render("[Y] Accept  [N] Refuse", True, (200, 200, 200))
             self.screen.blit(text, (x + 40, y + 165))
+
+    def _render_bribe_overlay(self):
+        """Render bribe selection modal."""
+        import pygame
+
+        # Darken screen
+        overlay = pygame.Surface((self.screen.get_width(), self.screen.get_height()))
+        overlay.set_alpha(150)
+        overlay.fill((0, 0, 0))
+        self.screen.blit(overlay, (0, 0))
+
+        # Dialog box
+        box_width = 550
+        box_height = 400 if self.bribe_step == "select_target" else 280
+        x = (self.screen.get_width() - box_width) // 2
+        y = (self.screen.get_height() - box_height) // 2
+
+        s = pygame.Surface((box_width, box_height))
+        s.set_alpha(240)
+        s.fill((40, 30, 10))  # Gold-ish dark background
+        self.screen.blit(s, (x, y))
+        pygame.draw.rect(
+            self.screen, (255, 215, 0), (x, y, box_width, box_height), 3
+        )  # Gold border
+
+        font = pygame.font.SysFont(None, 28)
+        small_font = pygame.font.SysFont(None, 20)
+
+        # Title
+        title = font.render("BRIBE ATTEMPT", True, (255, 215, 0))
+        self.screen.blit(title, (x + 20, y + 15))
+
+        if self.bribe_step == "select_target":
+            lines = ["Select enemy unit to bribe:"]
+            for i, line in enumerate(lines):
+                text = small_font.render(line, True, (220, 220, 200))
+                self.screen.blit(text, (x + 20, y + 50 + i * 18))
+
+            # Get enemy units
+            if self.ui.selected_unit.is_attacker:
+                enemies = [
+                    u
+                    for u in self.battle.defending_units
+                    if not u.is_defeated() and u.position
+                ]
+            else:
+                enemies = [
+                    u
+                    for u in self.battle.attacking_units
+                    if not u.is_defeated() and u.position
+                ]
+
+            # First column (1-5)
+            for i, unit in enumerate(enemies[:5]):
+                name = unit.get_officer_name()
+                war = unit.get_war_ability()
+                loyalty = getattr(unit.officer, "Loyalty", 50)
+                key_num = i + 1
+                text = small_font.render(
+                    f"[{key_num}] {name} (War {war}, Loy {loyalty})",
+                    True,
+                    (220, 220, 180),
+                )
+                self.screen.blit(text, (x + 40, y + 80 + i * 22))
+
+            # Second column (6-10)
+            for i, unit in enumerate(enemies[5:10]):
+                name = unit.get_officer_name()
+                war = unit.get_war_ability()
+                loyalty = getattr(unit.officer, "Loyalty", 50)
+                key_num = i + 6 if i < 4 else 0
+                key_display = "0" if key_num == 0 else str(key_num)
+                text = small_font.render(
+                    f"[{key_display}] {name} (War {war}, Loy {loyalty})",
+                    True,
+                    (220, 220, 180),
+                )
+                self.screen.blit(text, (x + 280, y + 80 + i * 22))
+
+            text = small_font.render("[ESC] Cancel", True, (200, 200, 200))
+            self.screen.blit(text, (x + 20, y + box_height - 30))
+
+        elif self.bribe_step == "enter_amount":
+            lines = [
+                f"Target: {self.bribe_target.get_officer_name()}",
+                f"Loyalty: {getattr(self.bribe_target.officer, 'Loyalty', 50)}",
+                "",
+                "Enter bribe amount (1-99 gold):",
+            ]
+            for i, line in enumerate(lines):
+                text = small_font.render(line, True, (220, 220, 200))
+                self.screen.blit(text, (x + 20, y + 50 + i * 20))
+
+            # Show entered amount
+            amount_text = font.render(
+                f"Amount: {self.bribe_amount} gold", True, (255, 255, 100)
+            )
+            self.screen.blit(amount_text, (x + 40, y + 140))
+
+            # Instructions
+            text = small_font.render(
+                "Type digits (1-9, 0), BACKSPACE to delete", True, (180, 180, 180)
+            )
+            self.screen.blit(text, (x + 40, y + 175))
+
+            text = small_font.render("[Y] Confirm  [N] Cancel", True, (200, 200, 200))
+            self.screen.blit(text, (x + 40, y + 200))
 
     def run(self):
         """Main game loop."""

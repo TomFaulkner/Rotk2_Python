@@ -59,8 +59,6 @@ class BattleUI:
 
         # Mode flags
         self.fire_mode = False
-        self.bribe_mode = False
-        self.bribe_amount = 0
 
     def set_phase(self, phase: BattlePhaseUI):
         """Set the current UI phase."""
@@ -131,12 +129,6 @@ class BattleUI:
         # Render mode indicators
         if self.fire_mode:
             self._render_fire_mode_indicator()
-        if self.bribe_mode:
-            self._render_bribe_mode_indicator()
-
-        # Render wind/weather
-        if self.phase == BattlePhaseUI.BATTLE:
-            self._render_weather_info()
 
         # Render combat log
         if self.combat_log:
@@ -272,30 +264,56 @@ class BattleUI:
             self.screen.blit(text, (20, y + 68 + i * 18))
 
     def _render_battle_ui(self):
-        """Render battle phase UI elements."""
+        """Render battle phase UI elements with integrated weather info."""
         import pygame
 
-        y = self.screen.get_height() - 120
-        s = pygame.Surface((400, 110))
+        y = self.screen.get_height() - 140
+        panel_width = 400
+        panel_height = 130
+
+        # Main battle status panel
+        s = pygame.Surface((panel_width, panel_height))
         s.set_alpha(200)
         s.fill((0, 0, 0))
         self.screen.blit(s, (10, y))
 
         font = pygame.font.SysFont(None, 20)
+        small_font = pygame.font.SysFont(None, 18)
 
         att_rice = self.battle.attacker_supplies.get("rice", 0)
         def_rice = self.battle.defender_supplies.get("rice", 0)
 
+        # Weather info integrated into battle status
+        weather_colors = {
+            "sunny": (255, 255, 100),
+            "light_clouds": (220, 220, 200),
+            "dark_clouds": (150, 150, 150),
+            "storm": (100, 100, 200),
+        }
+        weather_display = self.battle.weather.replace("_", " ").title()
+        weather_color = weather_colors.get(self.battle.weather, (200, 200, 200))
+
+        wind_text = (
+            f"Wind: {self.battle.wind_direction}"
+            if self.battle.wind_direction
+            else "Wind: Calm"
+        )
+
+        turn_text = "ATTACKER" if self.battle.turn == 0 else "DEFENDER"
+
         lines = [
-            f"BATTLE PHASE - Day {self.battle.day}",
-            "Click unit to select, click hex to move",
-            f"Rice: ATT {att_rice} | DEF {def_rice}",
+            f"BATTLE PHASE - DAY {self.battle.day} - {turn_text} TURN",
+            f"Rice: ATT {att_rice} | DEF {def_rice} | Weather: {weather_display} | {wind_text}",
+            "Click unit: Select | Click hex: Move | Adjacent: Attack",
             "ENTER: End | ESC: Exit | F: Fire | B: Bribe",
         ]
 
         for i, line in enumerate(lines):
-            text = font.render(line, True, (255, 255, 255))
-            self.screen.blit(text, (20, y + 10 + i * 18))
+            if i == 1 and "Weather" in line:  # Weather line gets special coloring
+                text = font.render(line, True, weather_color)
+            else:
+                text = font.render(line, True, (255, 255, 255))
+            self.screen.blit(text, (20, y + 8 + i * 22))
 
         # Render adjacent enemy markers
         if self.adjacent_enemies:
@@ -316,33 +334,6 @@ class BattleUI:
         # the game-specific UI code that knows about personal_combat_step, etc.
         pass
 
-    def _render_weather_info(self):
-        """Render weather and wind information."""
-        import pygame
-
-        font = pygame.font.SysFont(None, 20)
-
-        weather_colors = {
-            "sunny": (255, 255, 100),
-            "light_clouds": (220, 220, 200),
-            "dark_clouds": (150, 150, 150),
-            "storm": (100, 100, 200),
-        }
-
-        weather_display = self.battle.weather.replace("_", " ").title()
-        weather_text = f"Weather: {weather_display}"
-        weather_color = weather_colors.get(self.battle.weather, (200, 200, 200))
-        text = font.render(weather_text, True, weather_color)
-        self.screen.blit(text, (self.screen.get_width() - 150, 10))
-
-        if self.battle.wind_direction:
-            text = font.render(
-                f"Wind: {self.battle.wind_direction}", True, (200, 200, 255)
-            )
-        else:
-            text = font.render("Wind: Calm", True, (150, 150, 150))
-        self.screen.blit(text, (self.screen.get_width() - 150, 30))
-
     def _render_fire_mode_indicator(self):
         """Render fire mode indicator."""
         import pygame
@@ -351,23 +342,6 @@ class BattleUI:
         text = font.render("FIRE MODE - Click adjacent hex", True, (255, 100, 0))
         x = (self.screen.get_width() - text.get_width()) // 2
         self.screen.blit(text, (x, 50))
-
-    def _render_bribe_mode_indicator(self):
-        """Render bribe mode indicator."""
-        import pygame
-
-        font = pygame.font.SysFont(None, 28)
-        small_font = pygame.font.SysFont(None, 20)
-
-        text = font.render("BRIBE MODE - Click any enemy", True, (255, 215, 0))
-        x = (self.screen.get_width() - text.get_width()) // 2
-        self.screen.blit(text, (x, 50))
-
-        amount_text = small_font.render(
-            f"Amount: {self.bribe_amount} gold (type 1-99)", True, (255, 255, 200)
-        )
-        x2 = (self.screen.get_width() - amount_text.get_width()) // 2
-        self.screen.blit(amount_text, (x2, 80))
 
     def _render_combat_log(self):
         """Render recent combat messages."""
