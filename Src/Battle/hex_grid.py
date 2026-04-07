@@ -83,16 +83,25 @@ class Hex:
         TerrainType.EMPTY: float("inf"),
     }
 
-    def __init__(self, coord: HexCoord, terrain: TerrainType = TerrainType.PLAINS):
+    def __init__(
+        self,
+        coord: HexCoord,
+        terrain: TerrainType = TerrainType.PLAINS,
+        terrain_code: int = 0,
+    ):
         """
         Initialize a hex.
 
         Args:
             coord: Grid coordinate
             terrain: Terrain type
+            terrain_code: Original terrain code from game data
         """
         self.coord = coord
         self.terrain = terrain
+        self.terrain_code = (
+            terrain_code  # Store original code for castle/fort differentiation
+        )
         self.unit: Optional[Any] = None  # BattleUnit
         self.is_burning = False
         self.fire_age = 0  # Days the fire has been burning
@@ -259,6 +268,7 @@ class HexGrid:
                         terrain_code = cell_data.get("code", 0)
                         terrain = self._code_to_terrain(terrain_code)
                         self.hexes[coord].terrain = terrain
+                        self.hexes[coord].terrain_code = terrain_code
 
         except Exception as e:
             print(f"Error loading terrain data: {e}")
@@ -277,10 +287,10 @@ class HexGrid:
             0: TerrainType.PLAINS,
             1: TerrainType.FOREST,
             2: TerrainType.HILLS,
-            3: TerrainType.WATER,
-            4: TerrainType.CASTLE,
-            5: TerrainType.MOUNTAIN,
-            6: TerrainType.MOUNTAIN,  # Obstacle
+            3: TerrainType.MOUNTAIN,  # Code 3 is mountain
+            4: TerrainType.WATER,  # Code 4 is water
+            5: TerrainType.CASTLE,  # Code 5 is fort/mini-castle
+            6: TerrainType.CASTLE,  # Code 6 is main castle
             9: TerrainType.MOUNTAIN,  # Edge
             99: TerrainType.EMPTY,
         }

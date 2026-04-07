@@ -127,9 +127,18 @@ class BattleEngine:
         self._calculate_attacker_direction()
 
     def _find_castle(self):
-        """Find the castle hex and set as defender base."""
+        """Find the main castle hex (code 6) and set as defender base."""
         for coord, hex_obj in self.grid.hexes.items():
-            if hex_obj.terrain.name == "CASTLE" or hex_obj.is_castle:
+            # Code 6 is the main castle
+            if hex_obj.terrain_code == 6:
+                self.defender_castle_pos = coord
+                hex_obj.is_castle = True
+                return
+            # Fallback: check is_castle flag or CASTLE terrain name
+            elif hex_obj.is_castle or (
+                hex_obj.terrain.name == "CASTLE"
+                and not hasattr(hex_obj, "terrain_code")
+            ):
                 self.defender_castle_pos = coord
                 hex_obj.is_castle = True
                 return

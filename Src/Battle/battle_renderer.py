@@ -71,13 +71,15 @@ class BattleRenderer:
         self.terrain_images = self._load_terrain_images()
 
         # Terrain type to image index mapping
+        # Note: Image indices match the original game terrain codes, not our TerrainType enum
         self.terrain_image_map = {
-            TerrainType.PLAINS: 0,  # hex00.jpg
-            TerrainType.FOREST: 1,  # hex01.jpg
-            TerrainType.HILLS: 2,  # hex02.jpg
-            TerrainType.WATER: 3,  # hex03.jpg
-            TerrainType.CASTLE: 4,  # hex04.jpg
-            TerrainType.MOUNTAIN: 5,  # hex05.jpg
+            TerrainType.PLAINS: 0,  # hex00.jpg (code 0)
+            TerrainType.FOREST: 1,  # hex01.jpg (code 1)
+            TerrainType.HILLS: 2,  # hex02.jpg (code 2)
+            TerrainType.MOUNTAIN: 3,  # hex03.jpg (code 3) - mountain
+            TerrainType.WATER: 4,  # hex04.jpg (code 4) - water
+            TerrainType.CASTLE: 5,  # hex05.jpg (code 5) - fort/mini-castle
+            # Code 6 (main castle) also uses CASTLE type but is marked with is_castle flag
         }
 
     def _load_portrait_mapping(self) -> Dict:

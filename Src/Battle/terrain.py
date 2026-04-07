@@ -151,10 +151,10 @@ class TerrainType:
         0: PLAINS,
         1: FOREST,
         2: HILLS,
-        3: WATER,
-        4: CASTLE,
-        5: MOUNTAIN,
-        6: MOUNTAIN,  # Obstacle
+        3: MOUNTAIN,  # Code 3 is mountain
+        4: WATER,  # Code 4 is water
+        5: CASTLE,  # Code 5 is fort/mini-castle
+        6: CASTLE,  # Code 6 is main castle
         9: MOUNTAIN,  # Edge
         99: EMPTY,
     }

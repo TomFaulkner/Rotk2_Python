@@ -387,6 +387,13 @@ class BattleGame:
         is_attacker = self.placement_side == "attacker"
 
         if not self.battle.is_valid_placement(coord, is_attacker):
+            hex_obj = self.battle.grid.get_hex(coord)
+            if hex_obj:
+                print(
+                    f"DEBUG INVALID PLACEMENT: {coord}, terrain={hex_obj.terrain.name}, passable={hex_obj.is_passable()}, is_castle={hex_obj.is_castle}"
+                )
+            else:
+                print(f"DEBUG INVALID PLACEMENT: {coord}, no hex found")
             print("Invalid placement zone")
             return
 
@@ -481,17 +488,37 @@ class BattleGame:
                 self.ui.reachable_hexes = self.battle.grid.get_movement_range(
                     coord, unit.mobility
                 )
+                # Debug: count mountain hexes that would be reachable if not blocked
+                mountain_count = 0
+                for check_coord in self.ui.reachable_hexes:
+                    check_hex = self.battle.grid.get_hex(check_coord)
+                    if check_hex and check_hex.terrain.name == "MOUNTAIN":
+                        mountain_count += 1
+                if mountain_count > 0:
+                    print(
+                        f"  Warning: {mountain_count} mountain hexes in reachable_hexes!"
+                    )
 
             all_units = self.battle.get_all_units_on_map()
             self.ui.adjacent_enemies = self.CombatSystem.get_adjacent_enemies(
                 unit, self.battle.grid, all_units
             )
 
-            print(f"Selected: {unit.get_officer_name()}")
+            print(
+                f"Selected: {unit.get_officer_name()}, mobility: {unit.mobility}, reachable: {len(self.ui.reachable_hexes)}"
+            )
 
         elif self.ui.selected_unit and self.ui.selected_unit.can_move():
             if coord in self.ui.reachable_hexes:
                 self._execute_move(coord)
+            else:
+                # Log invalid tile selection
+                if hex_obj:
+                    print(
+                        f"DEBUG INVALID CLICK: Clicked {coord}, terrain={hex_obj.terrain.name}, passable={hex_obj.is_passable()}"
+                    )
+                else:
+                    print(f"DEBUG INVALID CLICK: Clicked {coord}, no hex found")
 
     def _select_general_for_duel(self, unit):
         """Select a general for personal combat."""
@@ -656,6 +683,20 @@ class BattleGame:
     def _execute_move(self, coord):
         """Execute unit movement."""
         unit = self.ui.selected_unit
+
+        # Check if destination is passable before attempting move
+        hex_obj = self.battle.grid.get_hex(coord)
+        if hex_obj:
+            print(
+                f"DEBUG MOVE: Moving to {coord}, terrain={hex_obj.terrain.name}, passable={hex_obj.is_passable()}"
+            )
+
+        if hex_obj and not hex_obj.is_passable():
+            print(
+                f"BLOCKED: Cannot move to {coord}: terrain is impassable ({hex_obj.terrain.name})"
+            )
+            return
+
         if self.battle.grid.place_unit(unit, coord):
             hex_obj = self.battle.grid.get_hex(coord)
             cost = hex_obj.get_movement_cost()
