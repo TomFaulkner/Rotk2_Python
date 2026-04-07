@@ -46,6 +46,34 @@ class BattleEngine:
     MAX_UNITS_ON_MAP = 10
     BATTLE_DAYS = 30
 
+    # Weather transition probabilities (ROTK2 accurate)
+    WEATHER_TRANSITIONS = {
+        "sunny": {
+            "sunny": 0.58,
+            "light_clouds": 0.38,
+            "dark_clouds": 0.04,
+            "storm": 0.00,
+        },
+        "light_clouds": {
+            "sunny": 0.04,
+            "light_clouds": 0.61,
+            "dark_clouds": 0.19,
+            "storm": 0.16,
+        },
+        "dark_clouds": {
+            "sunny": 0.00,
+            "light_clouds": 0.04,
+            "dark_clouds": 0.61,
+            "storm": 0.35,
+        },
+        "storm": {
+            "sunny": 0.19,
+            "light_clouds": 0.07,
+            "dark_clouds": 0.03,
+            "storm": 0.71,
+        },
+    }
+
     def __init__(self, province_id: int, is_attacker: bool = True):
         """
         Initialize battle engine.
@@ -81,7 +109,10 @@ class BattleEngine:
         self.defender_supplies = {"gold": 0, "rice": 0}
 
         # Wind (for fire attacks)
-        self.wind_direction = 0  # 0-5 representing hex directions
+        self.wind_direction: Optional[str] = None  # N, NE, SE, S, SW, NW or None
+
+        # Weather system
+        self.weather: str = "sunny"  # sunny, light_clouds, dark_clouds, storm
 
         # Battle log
         self.log: List[str] = []
@@ -605,6 +636,133 @@ class BattleEngine:
             unit.end_turn()
 
         return True
+
+    def transition_weather(self) -> str:
+        """
+        Transition weather based on ROTK2 probability matrix.
+        Called automatically at the start of each day.
+
+        Returns:
+            New weather state
+        """
+        import random
+
+        transitions = self.WEATHER_TRANSITIONS.get(
+            self.weather, self.WEATHER_TRANSITIONS["sunny"]
+        )
+
+        r = random.random()
+        cumulative = 0.0
+        new_weather = self.weather
+
+        for weather, prob in transitions.items():
+            cumulative += prob
+            if r <= cumulative:
+                new_weather = weather
+                break
+
+        # Check if storm (rain) just started - extinguishes all fires
+        if new_weather == "storm" and self.weather != "storm":
+            extinguished = []
+            for coord, hex_obj in self.grid.hexes.items():
+                if hex_obj.is_burning:
+                    hex_obj.extinguish()
+                    extinguished.append(coord)
+            if extinguished:
+                self.log.append(
+                    f">>> Storm extinguishes all {len(extinguished)} fires!"
+                )
+
+        self.weather = new_weather
+        return new_weather
+
+    def process_daily_fire_effects(self) -> dict:
+        """
+        Process fire effects at the start of each day.
+        - Spread/extinguish fires based on wind and weather
+        - Apply fire damage to units on burning hexes
+
+        Returns:
+            Dict with fire processing results
+        """
+        from .combat_system import CombatSystem
+        import random
+
+        result = {
+            "new_fires": [],
+            "extinguished": [],
+            "fire_damage": [],
+        }
+
+        # Process fire spread/extinguish
+        new_fires, extinguished = CombatSystem.process_fires(
+            self.grid, self.wind_direction, self.weather
+        )
+
+        result["new_fires"] = new_fires
+        result["extinguished"] = extinguished
+
+        # Units on burning hexes take damage
+        for unit in self.get_all_units_on_map():
+            if unit.position:
+                hex_obj = self.grid.get_hex(unit.position)
+                if hex_obj and hex_obj.is_burning:
+                    fire_damage = 10 + random.randint(0, 10)
+                    casualties = unit.take_damage(fire_damage)
+                    result["fire_damage"].append(
+                        {
+                            "unit": unit,
+                            "damage": fire_damage,
+                            "casualties": casualties,
+                            "defeated": unit.is_defeated(),
+                        }
+                    )
+                    if unit.is_defeated():
+                        self.grid.remove_unit(unit.position)
+
+        return result
+
+    def validate_placement_and_start(self) -> dict:
+        """
+        Validate placement requirements and start the battle if valid.
+
+        Requirements:
+        - Defender must have placed their commander
+        - Attacker must have placed ALL their units
+
+        Returns:
+            Dict with validation results:
+            - 'valid': True if can start battle
+            - 'error': Error message if invalid
+            - 'phase': New phase if valid ("personal_combat_offer")
+        """
+        result = {"valid": False, "error": None, "phase": None}
+
+        # Defender must have placed their commander
+        defender_units_on_map = self.get_defending_units_on_map()
+        defender_commander_placed = any(u.is_commander for u in defender_units_on_map)
+
+        if not defender_commander_placed:
+            result["error"] = "Defender must place their commander!"
+            return result
+
+        # Attacker must have placed ALL their units
+        attacker_units_on_map = self.get_attacking_units_on_map()
+        total_attacker_units = len(self.attacking_units)
+
+        if len(attacker_units_on_map) < total_attacker_units:
+            unplaced = total_attacker_units - len(attacker_units_on_map)
+            result["error"] = (
+                f"Attacker must place all {total_attacker_units} units! ({unplaced} remaining)"
+            )
+            return result
+
+        # All requirements met - start the battle
+        self.phase = BattlePhase.DUEL_OFFER
+        result["valid"] = True
+        result["phase"] = "personal_combat_offer"
+
+        return result
 
     def get_current_side_units(self) -> List[BattleUnit]:
         """

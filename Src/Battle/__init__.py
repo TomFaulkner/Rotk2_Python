@@ -9,6 +9,8 @@ from .battle_unit import BattleUnit, UnitState, ReservePool
 from .terrain import Terrain
 from .battle_engine import BattleEngine, BattlePhase, BattleResult
 from .turn_manager import TurnManager, TurnPhase
+from .battle_ui import BattleUI, BattlePhaseUI
+from .battle_game import BattleGame, BattleGamePhase
 
 __all__ = [
     "HexGrid",
@@ -23,4 +25,8 @@ __all__ = [
     "BattleResult",
     "TurnManager",
     "TurnPhase",
+    "BattleUI",
+    "BattlePhaseUI",
+    "BattleGame",
+    "BattleGamePhase",
 ]

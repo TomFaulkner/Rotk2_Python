@@ -839,6 +839,129 @@ class CombatSystem:
 
         return (success, roll, defense)
 
+    @staticmethod
+    def apply_refuse_penalty_to_side(units: List, side_name: str = "") -> dict:
+        """
+        Apply 8% desertion penalty to all units on one side for refusing personal combat.
+
+        Args:
+            units: List of units to apply penalty to
+            side_name: Name of the side (for logging)
+
+        Returns:
+            Dict with penalty results
+        """
+        total_deserted = 0
+        result = {"side": side_name, "desertions": [], "total_deserted": 0}
+
+        for unit in units:
+            if not unit.is_defeated():
+                deserted = CombatSystem.calculate_refuse_penalty(unit)
+                unit.soldiers -= deserted
+                total_deserted += deserted
+                result["desertions"].append(
+                    {
+                        "unit": unit,
+                        "deserted": deserted,
+                        "remaining": unit.soldiers,
+                    }
+                )
+
+        result["total_deserted"] = total_deserted
+        return result
+
+    @staticmethod
+    def resolve_personal_combat_with_consequences(
+        attacker,
+        defender,
+        battle_engine,
+    ) -> dict:
+        """
+        Resolve personal combat duel and apply all consequences including commander capture.
+
+        This handles the full personal combat resolution including:
+        - Duel resolution using resolve_duel()
+        - State updates for captured/defeated units
+        - Commander capture handling (all units retreat)
+        - Victory checking
+
+        Args:
+            attacker: Attacking unit (challenger)
+            defender: Defending unit (challenged)
+            battle_engine: The BattleEngine instance for grid/victory access
+
+        Returns:
+            Dict with full combat results:
+            - 'duel_result': Original duel result from resolve_duel()
+            - 'commander_captured': True if a commander was captured/defeated
+            - 'captured_side': "attacker", "defender", or None
+            - 'battle_ended': True if battle ended due to commander capture
+            - 'victor': "attacker" or "defender" if battle ended
+        """
+        from .battle_unit import UnitState
+
+        # Resolve the duel
+        duel_result = CombatSystem.resolve_duel(attacker, defender)
+
+        # Track results
+        result = {
+            "duel_result": duel_result,
+            "commander_captured": False,
+            "captured_side": None,
+            "battle_ended": False,
+            "victor": None,
+        }
+
+        # Apply consequences based on duel outcome
+        if duel_result["result"] == "win":
+            # Attacker wins - defender captured
+            defender.state = UnitState.CAPTURED
+            if defender.position:
+                battle_engine.grid.remove_unit(defender.position)
+
+            # Check if captured unit was the commander
+            if defender.is_commander:
+                result["commander_captured"] = True
+                result["captured_side"] = "defender"
+
+        elif duel_result["result"] == "loss":
+            # Defender wins - attacker defeated
+            attacker.state = UnitState.DEFEATED
+            if attacker.position:
+                battle_engine.grid.remove_unit(attacker.position)
+
+            # Check if defeated unit was the commander
+            if attacker.is_commander:
+                result["commander_captured"] = True
+                result["captured_side"] = "attacker"
+
+        # If commander was captured/defeated, force all units on that side to retreat
+        if result["commander_captured"]:
+            captured_side = result["captured_side"]
+
+            if captured_side == "attacker":
+                units_to_retreat = battle_engine.get_attacking_units_on_map()
+                for unit in units_to_retreat:
+                    unit.state = UnitState.DEFEATED
+                    if unit.position:
+                        battle_engine.grid.remove_unit(unit.position)
+            else:  # defender
+                units_to_retreat = battle_engine.get_defending_units_on_map()
+                for unit in units_to_retreat:
+                    unit.state = UnitState.CAPTURED
+                    if unit.position:
+                        battle_engine.grid.remove_unit(unit.position)
+
+            # Check if battle should end
+            victory = battle_engine.check_victory()
+            if victory:
+                result["battle_ended"] = True
+                result["victor"] = (
+                    "attacker" if captured_side == "defender" else "defender"
+                )
+
+        return result
+
 
 if __name__ == "__main__":
     # Test combat system
