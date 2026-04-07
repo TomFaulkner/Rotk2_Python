@@ -1,0 +1,20 @@
+Country Information
+
+0x0F: Number of rulers
+
+Start address: 0x2AFC, length: 0x29
+0x00~0x01: Minus 0x38 is ruler offset
+0x02~0x03: Minus 0x38 is province where ruler is located
+0x04~0x05: Minus 0x38 is strategist offset
+0x06~0x06: Trust level of each country toward me
+0x0A~0x0B: 0A bit0 = whether country 0 is allied with me; bit1 = country 1...bit7 = country 7; 0B bit0 = country 8...0B bit7 = country 15.
+0x0C~0x0D: magic
+calculate:
+magic = 0
+iterate ruler's every province:
+	a=int(troops/100), b=(num of officers)*10
+	magic = a+b
+
+0x0E~0x1C: Hostility level of each country toward me
+0x21~0x21: marriage
+0x22~0x22: FF=normal, 1E=wandering

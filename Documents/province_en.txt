@@ -1,0 +1,40 @@
+Province Information
+
+Total provinces: 41
+Province offset start address: 0x2D8C
+Each province size: 0x23
+0x00~0x01: Next province offset for same ruler
+0x02~0x03: This value minus 0x38 is the governor's offset
+0x04~0x05: This value minus 0x38 is the wandering officer offset
+0x06~0x07: This value minus 0x38 is the new officer offset
+0x08~0x09: Gold
+0x0A~0x0D: Rice
+0x0E~0x0F: This value multiplied by 100 is population
+0x10~0x10: Ruler number, if FF, province is empty. Ruler address is 0x2AFC + this value * 0x29
+0x11~0x11: Ruler number currently at war, if FF, no war. Otherwise ruler address is 0x2AFC + this value * 0x29
+0x12~0x15: 0x12: No delegate=0, Full delegate=4, Delegate internal=5, Delegate military=6, Delegate personnel=7; 0x13 if merchant exists; 0x14: War province, starting from 0; 0x15: Province number for transporting gold and rice, starting from 0
+0x16~0x16: Land price
+0x17~0x17: People's loyalty
+0x18~0x18: Flood control
+0x19~0x19: Horses
+0x1A~0x1A: Castle
+0x1B~0x1B: Rice price
+0x1C~0x1F: mini map width & height.
+0x20~0x20: Province X coordinate number
+0x21~0x21: Province Y coordinate number
+0x22~0x22: Province name number
+
+
+ 	 ０	　１	　２	　３	　４	　５	　６	　７
+０	 	 	 	 	 	　２	　１	 
+１	 	 	 	　４	　３	　６	 	 
+２	 	 	 	　５	　７	　９	　８	 
+３	１５	 	 	１１	１０	１７	１６	２４
+４	１４	１３	１２	２０	１９	２８	１８	２５
+５	 	３０	２９	３１	２１	２２	２７	２６
+６	 	３３	３２	４０	２３	３８	３７	 
+７	 	３５	３４	４１	３９	 	 	 
+８	 	 	３６	 	 	 	 	 
+
+Number	00	01	02	03	04	05	06	07	08	09	0A	0B	0C	0D
+州名	幽州	幷州	冀州	青州	兗州	司州	雍州	涼州	徐州	予州	荊州	揚州	益州	交州

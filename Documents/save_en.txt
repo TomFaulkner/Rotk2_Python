@@ -1,0 +1,13 @@
+Save Data Information
+
+0x335A~0x335A: The N-th ruler being operated on
+0x335C~0x335D: Address of current ruler info (-0x38)
+0x335E~0x335F: Ruler's own officer address (-0x38)
+0x3362~0x3363: Current command issuing city address (-0x38)
+0x3365~0x3365: birthday month
+0x3366~0x3366: birthday day
+0x337B~0x337B: 01=Easy, 02=Normal, 03=Hard difficulty
+0x337C~0x337C: Low 4 bits - bit3: spectate, bit2: show map, bit1: music, bit0: sound effects. High 4 bits - bit4: 0=Historical mode, =1=Custom mode.
+0x337D~0x337D: Message wait speed
+0x337E~0x337E: Courier speed. 0=no display; 2=fast, 4=normal, 6=slow.
+0x33B4~0x33B4: Treasure appearance count for province 10. If changed to 0, it appears constantly.

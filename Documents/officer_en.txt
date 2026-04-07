@@ -1,0 +1,43 @@
+Officer Information
+
+Total officers: up to 255
+Officer offset start address: 0x20
+Each officer size: 0x2B
+0x00~0x01: This value minus 0x38 is next officer offset in same city
+0x02~0x02: High 4 bits = whether dead, low 4 bits = whether can move
+0x03~0x03: High 4 bits = whether spy, low 4 bits = whether sick
+0x04~0x04: Intelligence
+0x05~0x05: War strength
+0x06~0x06: Charisma
+0x07~0x07: Honor
+0x08~0x08: Benevolence
+0x09~0x09: Ambition
+0x0A~0x0A: Ruler number, 0x20 + this value * 0x2B is ruler address
+0x0B~0x0B: Loyalty
+0x0C~0x0C: Bodyguards
+0x0D~0x0D: Ambush faction
+0x0E~0x0E: Ambush city
+0x0F~0x0F: Compatibility, after giving Diao Chan, compatibility changed from 0f to 08
+0x10~0x11: Bloodline
+0x12~0x13: Soldiers
+0x14~0x15: Weapons
+0x16~0x16: Training
+0x17~0x18: [Unknown] After giving Green Dragon Blade, 17 changed from 0 to 6, 18 changed from ff to 0. After giving Red Hare Horse, 18 changed from ff to 0, 17 unchanged. After giving book, 18 changed from ff to 7A, 17 changed from 6 to 2. After giving blade to 17, changed from 6 to 0? Contradicts previous?
+
+0x19~0x19: Birth year
+0x1A~0x1B: This value minus 1 is portrait offset. If less than 219, standard portrait; otherwise composite portrait
+0x1C~0x1D: First character of name index, if English then ASCII code
+0x1E~0x1F: Second character of name index, if English then ASCII code
+0x20~0x21: Third character of name index, if English then ASCII code
+0x22~0x23: Fourth character of name index, if English then ASCII code
+0x24~0x25: Fifth character of name index, if English then ASCII code
+0x26~0x27: Sixth character of name index, if English then ASCII code
+0x28~0x29: Seventh character of name index, if English then ASCII code
+0x2A~0x2A: [Unknown]
+
+taiki.dat
+Starting from 0x06, each officer length is 0x2E
+0x00~0x00: Birth year
+0x01~0x01: Bloodline
+0x02~0x02: Registered province
+0x03 and onwards: Same as officer data above.
