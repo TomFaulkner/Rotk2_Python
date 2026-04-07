@@ -347,6 +347,34 @@ class BattleRenderer:
         def_res_text = f"D Reserve: {len(battle_engine.defender_reserve)}"
         surface = self.small_font.render(def_res_text, True, (200, 200, 200))
         self.screen.blit(surface, (panel_x, y))
+        y += 35
+
+        # Rice supplies
+        att_rice = battle_engine.attacker_supplies.get("rice", 0)
+        def_rice = battle_engine.defender_supplies.get("rice", 0)
+
+        rice_color = (
+            (255, 255, 200)
+            if att_rice > 20
+            else (255, 200, 100)
+            if att_rice > 0
+            else (255, 100, 100)
+        )
+        att_rice_text = f"A Rice: {att_rice}"
+        surface = self.small_font.render(att_rice_text, True, rice_color)
+        self.screen.blit(surface, (panel_x, y))
+        y += 20
+
+        rice_color = (
+            (255, 255, 200)
+            if def_rice > 20
+            else (255, 200, 100)
+            if def_rice > 0
+            else (255, 100, 100)
+        )
+        def_rice_text = f"D Rice: {def_rice}"
+        surface = self.small_font.render(def_rice_text, True, rice_color)
+        self.screen.blit(surface, (panel_x, y))
 
     def render_selected_unit_info(
         self, unit: Optional[BattleUnit], x: int = 10, y: int = 10

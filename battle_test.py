@@ -26,6 +26,7 @@ from Battle import BattleEngine, BattleUnit, HexCoord, UnitState, BattlePhase
 from Battle.battle_renderer import BattleRenderer
 from Battle.combat_system import CombatSystem, AttackType
 from Battle.officer_names import get_officer_name_cached
+from config import get_settings, RiceDepletionMode
 
 
 class MockRuler:
@@ -66,7 +67,24 @@ def create_battle_test(province_id: int = 10) -> BattleEngine:
     Returns:
         Configured BattleEngine
     """
+    # Load settings
+    settings = get_settings()
+
     print(f"Creating battle in province {province_id}...")
+
+    # Display rice depletion mode
+    mode_str = (
+        "FORCE RETREAT"
+        if settings.rice_depletion_mode == RiceDepletionMode.FORCE_RETREAT
+        else "DESERTION"
+    )
+    print(f"\nRice Depletion Mode: {mode_str}")
+    if settings.rice_depletion_mode == RiceDepletionMode.FORCE_RETREAT:
+        print("  (Units will retreat when rice runs out - original game behavior)")
+    else:
+        print(
+            f"  ({int(settings.desertion_percentage * 100)}% of troops will desert daily when out of rice)"
+        )
 
     # Create battle
     battle = BattleEngine(province_id=province_id, is_attacker=True)
@@ -97,8 +115,26 @@ def create_battle_test(province_id: int = 10) -> BattleEngine:
             print(f"  Error loading officer {i}: {e}")
 
     # Set commanders (first unit on each side)
-    defender_units = battle.get_defending_units_on_map()
-    attacker_units = battle.get_attacking_units_on_map()
+    # Use the full unit lists, not filtered by "on map" since units aren't placed yet
+    defender_units = battle.defending_units
+    attacker_units = battle.attacking_units
+
+    # Initialize rice supplies (give enough for ~10 days)
+    attacker_troops = sum(u.soldiers for u in attacker_units)
+    defender_troops = sum(u.soldiers for u in defender_units)
+
+    # Rice = troops / consumption_rate per day, give 10 days worth
+    daily_consumption_rate = settings.rice_consumption_rate
+    battle.attacker_supplies["rice"] = (attacker_troops // daily_consumption_rate) * 10
+    battle.defender_supplies["rice"] = (defender_troops // daily_consumption_rate) * 10
+
+    print(f"\nSupplies:")
+    print(
+        f"  Attacker rice: {battle.attacker_supplies['rice']} (for {attacker_troops} troops)"
+    )
+    print(
+        f"  Defender rice: {battle.defender_supplies['rice']} (for {defender_troops} troops)"
+    )
 
     if defender_units:
         battle.set_commander(defender_units[0], is_attacker=False)
@@ -150,6 +186,12 @@ class BattleTestGame:
         self.fire_mode: bool = False
         self.weather: str = "sunny"  # sunny, light_clouds, dark_clouds, storm
         self.wind_direction: str = None  # Direction wind is blowing (for fire spread)
+
+        # Bribe system state
+        self.bribe_mode: bool = False
+        self.bribe_target: BattleUnit = None
+        self.bribe_amount: int = 0
+        self.bribe_result: dict = None
 
         # Personal combat system state (pre-battle phase)
         # ROTK2: Single duel between two selected generals (not all units)
@@ -255,6 +297,42 @@ class BattleTestGame:
                             )
                         else:
                             print("Fire mode cancelled")
+                elif self.bribe_mode:
+                    # Bribe amount entry
+                    if K_0 <= event.key <= K_9:
+                        digit = event.key - K_0
+                        self.bribe_amount = self.bribe_amount * 10 + digit
+                        if self.bribe_amount > 99:
+                            self.bribe_amount = 99
+                        print(f"  Bribe amount: {self.bribe_amount} gold")
+                    elif event.key == K_BACKSPACE:
+                        self.bribe_amount = self.bribe_amount // 10
+                        print(f"  Bribe amount: {self.bribe_amount} gold")
+                    elif event.key == K_ESCAPE:
+                        self.bribe_mode = False
+                        print("Bribe mode cancelled")
+                elif event.key == K_b:
+                    # Toggle bribe mode - only commander can bribe
+                    if self.phase == "battle" and self.selected_unit:
+                        if not self.selected_unit.is_commander:
+                            print("Only the commander can initiate bribes!")
+                        elif (
+                            self.selected_unit.has_attacked
+                            or self.selected_unit.has_moved
+                        ):
+                            print("Commander has already acted this turn!")
+                        else:
+                            self.bribe_mode = not self.bribe_mode
+                            if self.bribe_mode:
+                                print(
+                                    "\n>>> BRIBE MODE: Click any enemy to offer bribe"
+                                )
+                                print("  Enter amount (1-99 gold), then click target")
+                                self.bribe_amount = 0
+                            else:
+                                print("Bribe mode cancelled")
+                                self.bribe_mode = False
+                                self.bribe_target = None
                 elif event.key == K_w:
                     # Cycle wind direction
                     directions = [None, "N", "NE", "SE", "S", "SW", "NW"]
@@ -277,7 +355,33 @@ class BattleTestGame:
                     self.advance_placement()
                 elif event.key == K_RETURN:
                     if self.phase == "placement":
-                        self.start_battle()
+                        # Check if currently in attacker placement phase
+                        if self.placement_side == "attacker":
+                            placed = len(self.battle.get_attacking_units_on_map())
+                            total = len(self.battle.attacking_units)
+                            if placed < total:
+                                print(f"\n*** CANNOT PROCEED ***")
+                                print(f"Attacker must place all {total} units first!")
+                                print(f"({total - placed} unit(s) remaining)")
+                            else:
+                                # All attacker units placed, switch to defender
+                                self.placement_side = "defender"
+                                self.update_valid_placement_zones()
+                                print("\nDefender's turn to place units")
+                                print(
+                                    f"Valid zones: {len(self.valid_placement_hexes)} hexes near castle"
+                                )
+                        else:
+                            # Defender phase - check if commander is placed
+                            defender_units = self.battle.get_defending_units_on_map()
+                            commander_placed = any(
+                                u.is_commander for u in defender_units
+                            )
+                            if not commander_placed:
+                                print(f"\n*** CANNOT START BATTLE ***")
+                                print("Defender must place their commander first!")
+                            else:
+                                self.start_battle()
                     elif self.phase == "battle":
                         self.end_turn()
 
@@ -390,6 +494,27 @@ class BattleTestGame:
 
     def start_battle(self):
         """Start the personal combat offer phase (before tactical battle)."""
+        # Validate placement requirements
+        # Defender must have placed their commander
+        defender_units_on_map = self.battle.get_defending_units_on_map()
+        defender_commander_placed = any(u.is_commander for u in defender_units_on_map)
+
+        if not defender_commander_placed:
+            print("\n*** CANNOT START BATTLE ***")
+            print("Defender must place their commander!")
+            return
+
+        # Attacker must have placed ALL their units
+        attacker_units_on_map = self.battle.get_attacking_units_on_map()
+        total_attacker_units = len(self.battle.attacking_units)
+
+        if len(attacker_units_on_map) < total_attacker_units:
+            unplaced = total_attacker_units - len(attacker_units_on_map)
+            print("\n*** CANNOT START BATTLE ***")
+            print(f"Attacker must place all {total_attacker_units} units!")
+            print(f"({unplaced} unit(s) still need to be placed)")
+            return
+
         self.phase = "personal_combat_offer"
         self.personal_combat_phase = True
         self.personal_combat_step = "defender_offer"
@@ -486,8 +611,12 @@ class BattleTestGame:
                 self._start_tactical_battle()
 
         elif self.personal_combat_step == "defender_select":
-            # Select defender general by number
-            available = [u for u in self.battle.defending_units if not u.is_defeated()]
+            # Select defender general by number (only deployed units)
+            available = [
+                u
+                for u in self.battle.defending_units
+                if not u.is_defeated() and u.position
+            ]
             if key == K_1 and len(available) >= 1:
                 self._select_general_for_duel(available[0])
             elif key == K_2 and len(available) >= 2:
@@ -502,8 +631,12 @@ class BattleTestGame:
                 self._check_personal_combat_ready()
 
         elif self.personal_combat_step == "attacker_select":
-            # Select attacker general by number
-            available = [u for u in self.battle.attacking_units if not u.is_defeated()]
+            # Select attacker general by number (only deployed units)
+            available = [
+                u
+                for u in self.battle.attacking_units
+                if not u.is_defeated() and u.position
+            ]
             if key == K_1 and len(available) >= 1:
                 self._select_general_for_duel(available[0])
             elif key == K_2 and len(available) >= 2:
@@ -520,6 +653,12 @@ class BattleTestGame:
     def _select_general_for_duel(self, unit: BattleUnit):
         """Select a general for personal combat."""
         if not unit or unit.is_defeated():
+            return
+
+        # Check if unit is deployed on the battlefield
+        if not unit.position:
+            print(f"\n{unit.get_officer_name()} is not deployed on the battlefield!")
+            print("Only units placed on the map can participate in personal combat.")
             return
 
         if self.personal_combat_step == "defender_select":
@@ -614,18 +753,54 @@ class BattleTestGame:
             print(result["war_message"])
 
         # Apply consequences
+        commander_captured = False
+        captured_side = None  # "attacker" or "defender"
+
         if result["result"] == "win":
             print(f"\n{defe.get_officer_name()} is captured!")
             defe.state = UnitState.CAPTURED
             if defe.position:
                 self.battle.grid.remove_unit(defe.position)
+            # Check if captured unit was the commander
+            if defe.is_commander:
+                commander_captured = True
+                captured_side = "defender"
+                print(f"\n*** DEFENDER COMMANDER CAPTURED! ***")
         elif result["result"] == "loss":
             print(f"\n{att.get_officer_name()} is defeated!")
             att.state = UnitState.DEFEATED
             if att.position:
                 self.battle.grid.remove_unit(att.position)
+            # Check if defeated unit was the commander
+            if att.is_commander:
+                commander_captured = True
+                captured_side = "attacker"
+                print(f"\n*** ATTACKER COMMANDER DEFEATED! ***")
         else:
             print("\nBoth warriors survive the duel!")
+
+        # If commander was captured/defeated, force all units on that side to retreat
+        if commander_captured:
+            print(f"\n>>> ALL {captured_side.upper()} UNITS RETREAT! <<<")
+            if captured_side == "attacker":
+                units_to_retreat = self.battle.get_attacking_units_on_map()
+                for unit in units_to_retreat:
+                    unit.state = UnitState.DEFEATED
+                    if unit.position:
+                        self.battle.grid.remove_unit(unit.position)
+                    print(f"  {unit.get_officer_name()} retreats!")
+            else:
+                units_to_retreat = self.battle.get_defending_units_on_map()
+                for unit in units_to_retreat:
+                    unit.state = UnitState.CAPTURED
+                    if unit.position:
+                        self.battle.grid.remove_unit(unit.position)
+                    print(f"  {unit.get_officer_name()} retreats!")
+
+            print("=" * 60)
+            print(f"\n*** BATTLE ENDED: {captured_side.upper()} DEFEATED ***")
+            self.phase = "ended"
+            return
 
         print("=" * 60)
 
@@ -637,6 +812,79 @@ class BattleTestGame:
         self.phase = "battle"
         self.battle.phase = BattlePhase.TACTICAL
         self.personal_combat_phase = False
+
+    def execute_bribe(self, target_unit, gold_amount: int):
+        """Execute bribe attempt on target unit."""
+        from Battle.combat_system import CombatSystem
+
+        if not self.selected_unit:
+            print("Select your unit first!")
+            return
+
+        # Only commander can bribe
+        if not self.selected_unit.is_commander:
+            print("Only the commander can initiate bribes!")
+            return
+
+        # Check if target can be bribed (not already defected)
+        if target_unit.is_defeated():
+            print("Cannot bribe defeated units!")
+            return
+
+        # Check if target is on opposite side
+        if target_unit.is_attacker == self.selected_unit.is_attacker:
+            print("Cannot bribe friendly units!")
+            return
+
+        # Get briber's charm
+        briber_charm = getattr(self.selected_unit.officer, "Chm", 50)
+
+        # Calculate bribe
+        success, roll, defense = CombatSystem.calculate_bribe_success(
+            briber_charm, target_unit, gold_amount
+        )
+
+        # Get target stats for display
+        loyalty = getattr(target_unit.officer, "Loyalty", 50)
+        honor = getattr(target_unit.officer, "yili", 50)
+        target_name = target_unit.get_officer_name()
+
+        print(f"\n>>> BRIBE ATTEMPT <<<")
+        print(f"Target: {target_name}")
+        print(f"  Loyalty: {loyalty}, Honor: {honor}")
+        if honor < 40:
+            print(f"  (Low honor makes them susceptible to bribery)")
+        print(f"Defense: {defense} | Roll: {roll} | Gold: {gold_amount}")
+
+        if success:
+            print(f"\n>>> SUCCESS! <<<")
+            print(f"{target_name} accepts the bribe and switches sides!")
+
+            # Switch sides
+            target_unit.is_attacker = self.selected_unit.is_attacker
+            self.combat_log.append(f"Bribe: {target_name} switched sides!")
+
+            # Check if battle should end
+            remaining_enemies = [
+                u
+                for u in self.battle.get_all_units_on_map()
+                if u.is_attacker != self.selected_unit.is_attacker
+                and not u.is_defeated()
+            ]
+            if not remaining_enemies:
+                print(f"\n*** VICTORY: All enemies bribed or defeated! ***")
+                self.phase = "ended"
+        else:
+            print(f"\n>>> FAILED <<<")
+            print(f"{target_name} refuses the bribe!")
+            if roll < defense - 20:
+                print(f"  (They are insulted by the low offer)")
+
+        # Mark commander as having acted (bribe consumes the turn)
+        self.selected_unit.has_attacked = True
+        self.selected_unit.has_moved = True
+        self.bribe_mode = False
+        self.bribe_target = None
         print("\n>>> TACTICAL BATTLE BEGINS <<<")
         print("Click units to select, click hexes to move")
         print("Press ENTER to end turn")
@@ -695,6 +943,23 @@ class BattleTestGame:
         # Check if in fire mode
         if self.fire_mode and self.selected_unit:
             self.handle_fire_click(coord)
+            return
+
+        # Check if in bribe mode
+        if self.bribe_mode and self.selected_unit:
+            hex_obj = self.battle.grid.get_hex(coord)
+            if hex_obj and hex_obj.unit:
+                unit = hex_obj.unit
+                # Check if clicking on any enemy (no adjacency requirement)
+                if (
+                    unit.is_attacker != self.selected_unit.is_attacker
+                    and not unit.is_defeated()
+                ):
+                    if self.bribe_amount < 1:
+                        print("Enter bribe amount first (1-99)!")
+                        return
+                    self.execute_bribe(unit, self.bribe_amount)
+                    return
             return
 
         # Check if clicked on a unit
@@ -1061,6 +1326,21 @@ class BattleTestGame:
         if self.battle.turn == 0 and not was_attacker_turn:
             print("\n>>> A new day begins...")
 
+            # Display rice consumption from battle log
+            rice_logs = [
+                log
+                for log in self.battle.log
+                if "rice" in log.lower()
+                or "out of rice" in log.lower()
+                or "deserted" in log.lower()
+            ]
+            if rice_logs:
+                for log in rice_logs[-5:]:  # Show last 5 rice-related logs
+                    if "Day" in log and "rice consumption" in log:
+                        print(f"  {log}")
+                    elif "out of rice" in log.lower():
+                        print(f"  *** {log} ***")
+
             # Weather transitions automatically each day
             old_weather = self.weather
             self.transition_weather()
@@ -1196,6 +1476,10 @@ class BattleTestGame:
         if self.fire_mode:
             self.render_fire_mode_indicator()
 
+        # Render bribe mode indicator
+        if self.bribe_mode:
+            self.render_bribe_mode_indicator()
+
         # Render wind direction
         if self.phase == "battle":
             self.render_wind_direction()
@@ -1237,12 +1521,51 @@ class BattleTestGame:
                 2,
             )
 
+        # Draw unit counter
+        font = pygame.font.SysFont(None, 28)
+        small_font = pygame.font.SysFont(None, 20)
+
+        if self.placement_side == "attacker":
+            placed = len(self.battle.get_attacking_units_on_map())
+            total = len(self.battle.attacking_units)
+            counter_text = f"Placed: {placed}/{total}"
+            req_met = placed >= total
+        else:
+            placed = len(self.battle.get_defending_units_on_map())
+            commander_placed = any(
+                u.is_commander for u in self.battle.get_defending_units_on_map()
+            )
+            counter_text = (
+                f"Placed: {placed} (Cmdr: {'OK' if commander_placed else 'NEEDED'})"
+            )
+            req_met = commander_placed
+
+        # Background for counter
+        counter_bg = pygame.Surface((200, 60))
+        counter_bg.set_alpha(200)
+        counter_bg.fill((32, 32, 32))
+        self.screen.blit(counter_bg, (self.screen.get_width() - 210, 10))
+
+        # Counter text
+        color = (100, 255, 100) if req_met else (255, 200, 100)
+        text = font.render(counter_text, True, color)
+        self.screen.blit(text, (self.screen.get_width() - 200, 15))
+
+        # Requirement hint
+        if self.placement_side == "attacker":
+            hint = "All units required" if not req_met else "Ready!"
+        else:
+            hint = "Commander required!" if not req_met else "Ready!"
+
+        text = small_font.render(hint, True, (200, 200, 200))
+        self.screen.blit(text, (self.screen.get_width() - 200, 45))
+
     def render_placement_instructions(self):
         """Render placement phase UI."""
-        y = self.screen.get_height() - 120
+        y = self.screen.get_height() - 140
 
         # Semi-transparent background
-        s = pygame.Surface((400, 110))
+        s = pygame.Surface((400, 130))
         s.set_alpha(200)
         s.fill((0, 0, 0))
         self.screen.blit(s, (10, y))
@@ -1264,6 +1587,17 @@ class BattleTestGame:
         text = small_font.render(zone_text, True, (255, 255, 0))
         self.screen.blit(text, (20, y + 28))
 
+        # Requirements
+        if self.placement_side == "attacker":
+            req_text = "REQUIRED: Place ALL units"
+            req_color = (255, 100, 100)  # Red
+        else:
+            req_text = "REQUIRED: Place commander (leader)"
+            req_color = (255, 200, 100)  # Orange
+
+        text = small_font.render(req_text, True, req_color)
+        self.screen.blit(text, (20, y + 48))
+
         # Instructions
         lines = [
             "Click hexes to place units",
@@ -1274,13 +1608,13 @@ class BattleTestGame:
 
         for i, line in enumerate(lines):
             text = small_font.render(line, True, (200, 200, 200))
-            self.screen.blit(text, (20, y + 45 + i * 18))
+            self.screen.blit(text, (20, y + 68 + i * 18))
 
     def render_battle_instructions(self):
         """Render battle phase UI."""
-        y = self.screen.get_height() - 100
+        y = self.screen.get_height() - 120
 
-        s = pygame.Surface((400, 90))
+        s = pygame.Surface((400, 110))
         s.set_alpha(200)
         s.fill((0, 0, 0))
         self.screen.blit(s, (10, y))
@@ -1288,15 +1622,20 @@ class BattleTestGame:
         font = pygame.font.SysFont(None, 20)
         small_font = pygame.font.SysFont(None, 18)
 
+        # Get rice supplies
+        att_rice = self.battle.attacker_supplies.get("rice", 0)
+        def_rice = self.battle.defender_supplies.get("rice", 0)
+
         lines = [
-            "BATTLE PHASE",
+            f"BATTLE PHASE - Day {self.battle.day}",
             "Click unit to select, click hex to move",
-            "ENTER: End | ESC: Exit | F: Fire | D: Duel (Day 1)",
+            f"Rice: ATT {att_rice} | DEF {def_rice}",
+            "ENTER: End | ESC: Exit | F: Fire | B: Bribe",
         ]
 
         for i, line in enumerate(lines):
             text = font.render(line, True, (255, 255, 255))
-            self.screen.blit(text, (20, y + 10 + i * 20))
+            self.screen.blit(text, (20, y + 10 + i * 18))
 
     def render_fire_mode_indicator(self):
         """Render fire mode indicator."""
@@ -1306,6 +1645,25 @@ class BattleTestGame:
         text = font.render("FIRE MODE - Click adjacent hex", True, (255, 100, 0))
         x = (self.screen.get_width() - text.get_width()) // 2
         self.screen.blit(text, (x, 50))
+
+    def render_bribe_mode_indicator(self):
+        """Render bribe mode indicator."""
+        import pygame
+
+        font = pygame.font.SysFont(None, 28)
+        small_font = pygame.font.SysFont(None, 20)
+
+        # Main text
+        text = font.render("BRIBE MODE - Click any enemy", True, (255, 215, 0))
+        x = (self.screen.get_width() - text.get_width()) // 2
+        self.screen.blit(text, (x, 50))
+
+        # Amount text
+        amount_text = small_font.render(
+            f"Amount: {self.bribe_amount} gold (type 1-99)", True, (255, 255, 200)
+        )
+        x2 = (self.screen.get_width() - amount_text.get_width()) // 2
+        self.screen.blit(amount_text, (x2, 80))
 
     def render_personal_combat_offer(self):
         """Render personal combat offer phase UI."""
@@ -1362,14 +1720,18 @@ class BattleTestGame:
             lines = [
                 "Defender has proposed personal combat!",
                 "",
-                "Select your champion:",
+                "Select your champion (deployed units only):",
             ]
             for i, line in enumerate(lines):
                 text = small_font.render(line, True, (220, 220, 220))
                 self.screen.blit(text, (x + 20, y + 50 + i * 18))
 
-            # List available defender generals
-            available = [u for u in self.battle.defending_units if not u.is_defeated()]
+            # List available defender generals (only deployed units)
+            available = [
+                u
+                for u in self.battle.defending_units
+                if not u.is_defeated() and u.position
+            ]
             for i, unit in enumerate(available[:5]):  # Show up to 5
                 name = unit.get_officer_name()
                 war = unit.get_war_ability()
@@ -1411,14 +1773,18 @@ class BattleTestGame:
             lines = [
                 "Attacker has proposed personal combat!",
                 "",
-                "Select your champion:",
+                "Select your champion (deployed units only):",
             ]
             for i, line in enumerate(lines):
                 text = small_font.render(line, True, (220, 220, 220))
                 self.screen.blit(text, (x + 20, y + 50 + i * 18))
 
-            # List available attacker generals
-            available = [u for u in self.battle.attacking_units if not u.is_defeated()]
+            # List available attacker generals (only deployed units)
+            available = [
+                u
+                for u in self.battle.attacking_units
+                if not u.is_defeated() and u.position
+            ]
             for i, unit in enumerate(available[:5]):  # Show up to 5
                 name = unit.get_officer_name()
                 war = unit.get_war_ability()

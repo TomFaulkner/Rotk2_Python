@@ -786,6 +786,59 @@ class CombatSystem:
         desertion = max(1, base_desertion + random.randint(-2, 2))
         return min(desertion, unit.soldiers)
 
+    @staticmethod
+    def calculate_bribe_success(
+        briber_charm: int,
+        target_unit,
+        gold_offered: int,
+    ) -> tuple:
+        """
+        Calculate bribe success in battle.
+
+        Formula based on ROTK2 mechanics:
+        - Defense = (loyalty * 2) / 3 + (honor / 3) + 8
+        - If loyalty == 100: defense += 7
+        - Defense -= briber_charm / 8
+        - Roll = random(0, gold_offered)
+        - Success if roll >= defense
+
+        Note: Low honor officers (like Lu Bu, Wei Yan) are naturally easier to bribe
+        due to the honor component in the formula. No special cases needed.
+
+        Args:
+            briber_charm: Charisma of the officer offering the bribe
+            target_unit: The unit being bribed
+            gold_offered: Amount of gold (1-99, game caps at 99)
+
+        Returns:
+            Tuple of (success: bool, roll: int, defense: int)
+        """
+        import random
+
+        # Validate gold amount
+        if gold_offered < 1 or gold_offered > 99:
+            return (False, 0, 999)  # Invalid amount, auto-fail
+
+        # Get target stats
+        loyalty = getattr(target_unit.officer, "Loyalty", 50)
+        honor = getattr(target_unit.officer, "yili", 50)
+
+        # Calculate defense
+        defense = (loyalty * 2) // 3
+        if loyalty == 100:
+            defense += 7
+        defense += honor // 3
+        defense += 8
+
+        # Apply briber charm bonus
+        defense = max(0, defense - (briber_charm // 8))
+
+        # Roll for success (0 to gold_offered)
+        roll = random.randint(0, gold_offered)
+        success = roll >= defense
+
+        return (success, roll, defense)
+
 
 if __name__ == "__main__":
     # Test combat system

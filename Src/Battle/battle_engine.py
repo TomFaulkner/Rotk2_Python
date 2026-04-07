@@ -9,6 +9,7 @@ from enum import Enum
 
 from .hex_grid import HexGrid, HexCoord
 from .battle_unit import BattleUnit, UnitState, ReservePool
+from config import get_settings, RiceDepletionMode
 
 
 class BattlePhase(Enum):
@@ -229,7 +230,10 @@ class BattleEngine:
             to_reserve: True to put in reserve, False for battlefield
         """
         unit.is_attacker = True
-        if to_reserve or len(self.get_attacking_units_on_map()) >= self.MAX_UNITS_ON_MAP:
+        if (
+            to_reserve
+            or len(self.get_attacking_units_on_map()) >= self.MAX_UNITS_ON_MAP
+        ):
             self.attacker_reserve.add(unit)
         else:
             self.attacking_units.append(unit)
@@ -244,7 +248,10 @@ class BattleEngine:
             to_reserve: True to put in reserve, False for battlefield
         """
         unit.is_attacker = False
-        if to_reserve or len(self.get_defending_units_on_map()) >= self.MAX_UNITS_ON_MAP:
+        if (
+            to_reserve
+            or len(self.get_defending_units_on_map()) >= self.MAX_UNITS_ON_MAP
+        ):
             self.defender_reserve.add(unit)
         else:
             self.defending_units.append(unit)
@@ -257,8 +264,17 @@ class BattleEngine:
         Returns:
             List of attacking units
         """
-        return [u for u in self.attacking_units 
-                if u.state not in [UnitState.DEFEATED, UnitState.CAPTURED, UnitState.IN_RESERVE]]
+        return [
+            u
+            for u in self.attacking_units
+            if u.state
+            not in [
+                UnitState.DEFEATED,
+                UnitState.CAPTURED,
+                UnitState.IN_RESERVE,
+                UnitState.INACTIVE,
+            ]
+        ]
 
     def get_defending_units_on_map(self) -> List[BattleUnit]:
         """
@@ -267,8 +283,17 @@ class BattleEngine:
         Returns:
             List of defending units
         """
-        return [u for u in self.defending_units 
-                if u.state not in [UnitState.DEFEATED, UnitState.CAPTURED, UnitState.IN_RESERVE]]
+        return [
+            u
+            for u in self.defending_units
+            if u.state
+            not in [
+                UnitState.DEFEATED,
+                UnitState.CAPTURED,
+                UnitState.IN_RESERVE,
+                UnitState.INACTIVE,
+            ]
+        ]
 
     def get_all_units_on_map(self) -> List[BattleUnit]:
         """
@@ -322,7 +347,11 @@ class BattleEngine:
             List of units called from reserve
         """
         reserve = self.attacker_reserve if is_attacker else self.defender_reserve
-        current_count = len(self.get_attacking_units_on_map() if is_attacker else self.get_defending_units_on_map())
+        current_count = len(
+            self.get_attacking_units_on_map()
+            if is_attacker
+            else self.get_defending_units_on_map()
+        )
 
         called = []
         available = reserve.get_available()
@@ -376,6 +405,142 @@ class BattleEngine:
 
         return None
 
+    def calculate_daily_rice_consumption(self, total_troops: int) -> int:
+        """
+        Calculate daily rice consumption for battle.
+
+        Formula: total_troops // consumption_rate (default: 250, i.e., 4 rice per 1,000 troops)
+
+        Args:
+            total_troops: Total number of troops
+
+        Returns:
+            Rice consumed
+        """
+        settings = get_settings()
+        return total_troops // settings.rice_consumption_rate
+
+    def consume_rice_and_handle_depletion(self, is_attacker: bool) -> dict:
+        """
+        Consume rice for a side and handle depletion based on configured mode.
+
+        Modes:
+        - force_retreat: Original game behavior, force full retreat when rice runs out
+        - desertion: Alternative mode, 15% of troops desert daily when out of rice
+
+        Args:
+            is_attacker: True for attacker, False for defender
+
+        Returns:
+            Dict with consumption info and depletion results
+        """
+        settings = get_settings()
+        units = (
+            self.get_attacking_units_on_map()
+            if is_attacker
+            else self.get_defending_units_on_map()
+        )
+        total_troops = sum(unit.soldiers for unit in units)
+
+        if is_attacker:
+            rice_key = "attacker_supplies"
+            side_name = "Attacker"
+        else:
+            rice_key = "defender_supplies"
+            side_name = "Defender"
+
+        supplies = getattr(self, rice_key)
+        consumption = self.calculate_daily_rice_consumption(total_troops)
+
+        result = {
+            "side": side_name,
+            "troops": total_troops,
+            "consumption": consumption,
+            "previous_rice": supplies["rice"],
+            "out_of_rice": False,
+            "forced_retreat": False,
+            "desertion": 0,
+        }
+
+        # Check if already out of rice (for desertion mode - daily desertion)
+        if supplies["rice"] <= 0:
+            result["out_of_rice"] = True
+            supplies["rice"] = 0  # Keep at 0
+
+            if settings.rice_depletion_mode == RiceDepletionMode.DESERTION:
+                # Desertion mode: Continue losing troops daily while out of rice
+                desertion = int(total_troops * settings.desertion_percentage)
+                result["desertion"] = desertion
+                result["forced_retreat"] = False
+
+                # Apply desertion to units proportionally
+                if desertion > 0 and units:
+                    troops_per_unit = desertion // len(units)
+                    for unit in units:
+                        unit.soldiers = max(0, unit.soldiers - troops_per_unit)
+                        if unit.soldiers == 0:
+                            unit.state = UnitState.DEFEATED
+                            if unit.position:
+                                self.grid.remove_unit(unit.position)
+
+                    self.log.append(
+                        f"{side_name} out of rice! {desertion} more troops deserted!"
+                    )
+            else:
+                # Force retreat mode: Apply retreat if units still present
+                # This handles cases where rice started at 0 or previous retreat didn't clear units
+                if units:
+                    result["forced_retreat"] = True
+                    self.log.append(f"{side_name} has no rice! Forced to retreat!")
+
+                    # Mark all units as defeated/retreated
+                    for unit in units:
+                        unit.state = UnitState.DEFEATED
+                        if unit.position:
+                            self.grid.remove_unit(unit.position)
+
+            return result
+
+        # Deduct rice
+        supplies["rice"] -= consumption
+
+        # Check for rice depletion (first time running out)
+        if supplies["rice"] < 0:
+            supplies["rice"] = 0
+            result["out_of_rice"] = True
+
+            if settings.rice_depletion_mode == RiceDepletionMode.FORCE_RETREAT:
+                # Original game behavior: Force full retreat
+                result["forced_retreat"] = True
+                self.log.append(f"{side_name} ran out of rice! Forced to retreat!")
+
+                # Mark all units as defeated/retreated
+                for unit in units:
+                    unit.state = UnitState.DEFEATED
+                    if unit.position:
+                        self.grid.remove_unit(unit.position)
+
+            else:  # Desertion mode - first day out of rice
+                # Alternative: 15% of troops desert when out of rice
+                desertion = int(total_troops * settings.desertion_percentage)
+                result["desertion"] = desertion
+
+                # Apply desertion to units proportionally
+                if desertion > 0 and units:
+                    troops_per_unit = desertion // len(units)
+                    for unit in units:
+                        unit.soldiers = max(0, unit.soldiers - troops_per_unit)
+                        if unit.soldiers == 0:
+                            unit.state = UnitState.DEFEATED
+                            if unit.position:
+                                self.grid.remove_unit(unit.position)
+
+                    self.log.append(
+                        f"{side_name} ran out of rice! {desertion} troops deserted!"
+                    )
+
+        return result
+
     def next_turn(self) -> bool:
         """
         Advance to next turn.
@@ -389,9 +554,48 @@ class BattleEngine:
             self.phase = BattlePhase.ENDED
             return False
 
-        # Advance day
+        # Advance day and consume rice
         if self.turn == 1:  # After defender's turn
             self.day += 1
+
+            # Consume rice for both sides
+            attacker_result = self.consume_rice_and_handle_depletion(True)
+            defender_result = self.consume_rice_and_handle_depletion(False)
+
+            # Log rice consumption
+            self.log.append(f"Day {self.day} rice consumption:")
+            self.log.append(
+                f"  Attacker: {attacker_result['consumption']} rice ({attacker_result['troops']} troops)"
+            )
+            self.log.append(
+                f"  Defender: {defender_result['consumption']} rice ({defender_result['troops']} troops)"
+            )
+
+            # Check for out of rice and log appropriately
+            if attacker_result["out_of_rice"]:
+                if attacker_result["forced_retreat"]:
+                    self.log.append(
+                        f"  *** ATTACKER OUT OF RICE - FORCED TO RETREAT! ***"
+                    )
+                else:
+                    self.log.append(
+                        f"  *** ATTACKER OUT OF RICE - {attacker_result['desertion']} troops deserted! ***"
+                    )
+            if defender_result["out_of_rice"]:
+                if defender_result["forced_retreat"]:
+                    self.log.append(
+                        f"  *** DEFENDER OUT OF RICE - FORCED TO RETREAT! ***"
+                    )
+                else:
+                    self.log.append(
+                        f"  *** DEFENDER OUT OF RICE - {defender_result['desertion']} troops deserted! ***"
+                    )
+
+            # Check victory again in case rice depletion caused retreat
+            result = self.check_victory()
+            if result:
+                self.phase = BattlePhase.ENDED
+                return False
 
         # Switch turn
         self.turn = 1 - self.turn
