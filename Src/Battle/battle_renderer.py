@@ -656,7 +656,8 @@ class BattleRenderer:
             )
 
         # Render units (pass viewer side for hidden unit visibility)
-        viewer_is_attacker = battle_engine.is_attacker if battle_engine else None
+        # In hotseat 2-player mode, viewer is determined by whose turn it is
+        viewer_is_attacker = battle_engine.turn == 0 if battle_engine else None
         self.render_units(units, selected_unit, viewer_is_attacker)
 
         # Render selected unit info at top right (replacing the old battle info panel)

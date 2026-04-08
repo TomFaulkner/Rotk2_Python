@@ -18,6 +18,7 @@ class BattleGamePhase(Enum):
     BRIBE_SELECT = "bribe_select"
     REINFORCEMENT_SELECT = "reinforcement_select"
     REINFORCEMENT_PLACEMENT = "reinforcement_placement"
+    ATTACK_DIRECTION = "attack_direction"
     BATTLE = "battle"
     ENDED = "ended"
 
@@ -81,6 +82,9 @@ class BattleGame:
         self.reinforcement_units = []  # Units selected for reinforcement
         self.reinforcement_valid_hexes = []  # Valid placement hexes
 
+        # Attack direction state
+        self.attack_direction_target = None  # HexCoord being attacked
+
         # Cheat/debug mode
         self.cheats = cheats
 
@@ -100,6 +104,7 @@ class BattleGame:
             K_ESCAPE,
             K_RETURN,
             K_SPACE,
+            K_a,
             K_r,
             K_f,
             K_b,
@@ -122,8 +127,13 @@ class BattleGame:
                         self._cancel_reinforcement_placement()
                     elif event.key == K_SPACE:
                         self._auto_place_reinforcement()
+                elif self.phase == BattleGamePhase.ATTACK_DIRECTION:
+                    if event.key == K_ESCAPE:
+                        self._cancel_attack_direction()
                 elif event.key == K_ESCAPE:
                     self._handle_escape()
+                elif event.key == K_a:
+                    self._enter_attack_direction_mode()
                 elif event.key == K_r:
                     if self._can_call_reinforcements():
                         self._start_reinforcement()
@@ -131,8 +141,6 @@ class BattleGame:
                         print(
                             "Cannot call reinforcements now (need: defender's turn, reserves available, space on field)"
                         )
-                elif self.phase == BattleGamePhase.REINFORCEMENT_SELECT:
-                    self._handle_reinforcement_key(event.key)
                 elif (
                     self.phase == BattleGamePhase.PERSONAL_COMBAT_OFFER
                     or self.phase == BattleGamePhase.PERSONAL_COMBAT_SELECT
@@ -643,7 +651,7 @@ class BattleGame:
 
             # Auto-hide if placed in forest
             hex_obj = self.battle.grid.get_hex(coord)
-            if hex_obj and hex_obj.terrain.name == "FOREST":
+            if hex_obj and hex_obj.terrain.name.lower() == "forest":
                 self.reinforcement_unit.hide()
                 print(
                     f"{self.reinforcement_unit.get_officer_name()} is hidden in the forest"
@@ -696,6 +704,137 @@ class BattleGame:
         else:
             self.phase = BattleGamePhase.BATTLE
 
+    # ==================== ATTACK DIRECTION SYSTEM ====================
+
+    def _enter_attack_direction_mode(self):
+        """Enter attack direction mode to attack any adjacent hex."""
+        if not self.ui.selected_unit:
+            print("Select a unit first")
+            return
+
+        unit = self.ui.selected_unit
+        if not unit.can_attack():
+            print("Selected unit cannot attack")
+            return
+
+        # Get adjacent hexes
+        adjacent_hexes = self.battle.grid.get_adjacent(unit.position)
+        if not adjacent_hexes:
+            print("No adjacent hexes to attack")
+            return
+
+        self.attack_direction_target = None
+        self.phase = BattleGamePhase.ATTACK_DIRECTION
+        print("ATTACK DIRECTION MODE: Click an adjacent hex to attack")
+        print("(Hidden units will take damage but stay hidden)")
+
+    def _cancel_attack_direction(self):
+        """Cancel attack direction mode."""
+        self.attack_direction_target = None
+        self.phase = BattleGamePhase.BATTLE
+        print("Attack direction cancelled")
+
+    def _handle_attack_direction_click(self, coord):
+        """Handle click during attack direction mode."""
+        unit = self.ui.selected_unit
+        if not unit:
+            self._cancel_attack_direction()
+            return
+
+        # Check if clicked hex is adjacent
+        adjacent_hexes = self.battle.grid.get_adjacent(unit.position)
+        if coord not in adjacent_hexes:
+            print("Can only attack adjacent hexes")
+            return
+
+        # Check if there's a visible enemy at this hex
+        hex_obj = self.battle.grid.get_hex(coord)
+        if hex_obj and hex_obj.unit:
+            target = hex_obj.unit
+            if target.is_attacker != unit.is_attacker and not target.is_defeated():
+                # Attack visible enemy
+                self._execute_directional_attack(coord, target)
+                return
+
+        # Check for hidden enemies at this hex
+        all_units = self.battle.get_all_units_on_map()
+        hidden_enemy = None
+        for u in all_units:
+            if (
+                u.is_attacker != unit.is_attacker
+                and u.is_hidden()
+                and not u.is_defeated()
+                and u.position == coord
+            ):
+                hidden_enemy = u
+                break
+
+        if hidden_enemy:
+            # Attack hidden enemy - they take damage but stay hidden
+            self._execute_directional_attack(coord, hidden_enemy, is_hidden_target=True)
+        else:
+            # Attack empty hex
+            print(f"Attacking empty hex {coord}")
+            self._execute_directional_attack(coord, None)
+
+    def _execute_directional_attack(self, coord, target, is_hidden_target=False):
+        """Execute attack on a specific hex/direction."""
+        unit = self.ui.selected_unit
+
+        if target and not target.is_defeated():
+            # Perform normal attack
+            result = self.CombatSystem.calculate_normal_attack(
+                unit, target, self.battle.grid
+            )
+
+            # Apply damage
+            if result.defender_casualties > 0:
+                if is_hidden_target:
+                    print(
+                        f"HIT! Hidden unit at {coord} takes {result.defender_casualties} damage!"
+                    )
+                    self.ui.add_combat_message(
+                        f"Hit hidden unit for {result.defender_casualties} damage!"
+                    )
+                else:
+                    print(
+                        f"Hit {target.get_officer_name()} for {result.defender_casualties} damage"
+                    )
+                    self.ui.add_combat_message(
+                        f"Hit {target.get_officer_name()} for {result.defender_casualties} damage"
+                    )
+
+            # Hidden units stay hidden even when hit
+            # They only get revealed if they ambush or if the player remembers
+
+            # Check if target defeated
+            if result.defender_defeated:
+                if is_hidden_target:
+                    # Hidden unit defeated - now we reveal them
+                    target.state = self.UnitState.DEFEATED
+                    print(f"Hidden unit at {coord} has been defeated!")
+                    self.ui.add_combat_message("Hidden unit defeated!")
+                else:
+                    print(f"{target.get_officer_name()} defeated!")
+                    self.ui.add_combat_message(f"{target.get_officer_name()} defeated!")
+
+                # Remove from grid
+                if target.position:
+                    self.battle.grid.remove_unit(target.position)
+        else:
+            # No target - attack misses
+            print(f"Attack on {coord} finds no target")
+            self.ui.add_combat_message("Attack missed - no target")
+
+        # Mark unit as having attacked
+        unit.has_attacked = True
+        unit.state = self.UnitState.ATTACKED
+
+        # Clear selection and return to battle
+        self.ui.clear_selection()
+        self.attack_direction_target = None
+        self.phase = BattleGamePhase.BATTLE
+
     def _handle_click(self, pos):
         """Handle mouse click."""
         x, y = pos
@@ -709,6 +848,8 @@ class BattleGame:
             self._handle_personal_combat_click(clicked_hex)
         elif self.phase == BattleGamePhase.REINFORCEMENT_PLACEMENT:
             self._handle_reinforcement_placement_click(clicked_hex)
+        elif self.phase == BattleGamePhase.ATTACK_DIRECTION:
+            self._handle_attack_direction_click(clicked_hex)
         elif self.phase == BattleGamePhase.BATTLE:
             self._handle_battle_click(clicked_hex)
 
@@ -751,7 +892,7 @@ class BattleGame:
 
             # Auto-hide unit if placed in forest
             hex_obj = self.battle.grid.get_hex(coord)
-            if hex_obj and hex_obj.terrain.name == "FOREST":
+            if hex_obj and hex_obj.terrain.name.lower() == "forest":
                 unit.hide()
                 print(f"{unit.get_officer_name()} is hidden in the forest")
 
@@ -828,7 +969,7 @@ class BattleGame:
                 mountain_count = 0
                 for check_coord in self.ui.reachable_hexes:
                     check_hex = self.battle.grid.get_hex(check_coord)
-                    if check_hex and check_hex.terrain.name == "MOUNTAIN":
+                    if check_hex and check_hex.terrain.name.lower() == "mountain":
                         mountain_count += 1
                 if mountain_count > 0:
                     print(
@@ -840,8 +981,18 @@ class BattleGame:
                 unit, self.battle.grid, all_units
             )
 
+            # Get terrain type and hidden state for display
+            terrain_name = "Unknown"
+            hidden_status = ""
+            if unit.position:
+                hex_obj = self.battle.grid.get_hex(unit.position)
+                if hex_obj:
+                    terrain_name = hex_obj.terrain.name
+                if unit.is_hidden():
+                    hidden_status = ", HIDDEN"
+
             print(
-                f"Selected: {unit.get_officer_name()}, mobility: {unit.mobility}, reachable: {len(self.ui.reachable_hexes)}"
+                f"Selected: {unit.get_officer_name()}, mobility: {unit.mobility}, reachable: {len(self.ui.reachable_hexes)}, terrain: {terrain_name}{hidden_status}"
             )
 
         elif self.ui.selected_unit and self.ui.selected_unit.can_move():
@@ -1091,9 +1242,13 @@ class BattleGame:
                     ambush_triggered = True
 
             if ambush_triggered:
-                unit.engage()
+                # Check if unit should hide in forest after ambush
+                if hex_obj.terrain.name.lower() == "forest":
+                    unit.hide()
+                    print(f"{unit.get_officer_name()} hides in the forest after ambush")
+                else:
+                    unit.engage()
                 print(f"Ambushed! {unit.get_officer_name()} turn ends")
-                # Unit stays revealed after ambush
                 self.ui.clear_selection()
                 return
 
@@ -1118,7 +1273,7 @@ class BattleGame:
             )
 
             # Auto-hide unit if in forest
-            if hex_obj.terrain.name == "FOREST":
+            if hex_obj.terrain.name.lower() == "forest":
                 unit.hide()
                 print(f"{unit.get_officer_name()} hides in the forest")
 
@@ -1256,8 +1411,15 @@ class BattleGame:
 
         for i, unit in enumerate(unplaced):
             if i < len(valid_hexes):
-                self.battle.place_unit(unit, valid_hexes[i])
+                coord = valid_hexes[i]
+                self.battle.place_unit(unit, coord)
                 print(f"Auto-placed {unit.get_officer_name()}")
+
+                # Auto-hide unit if placed in forest
+                hex_obj = self.battle.grid.get_hex(coord)
+                if hex_obj and hex_obj.terrain.name.lower() == "forest":
+                    unit.hide()
+                    print(f"{unit.get_officer_name()} is hidden in the forest")
 
         if is_attacker:
             self.placement_side = "defender"
@@ -1358,6 +1520,10 @@ class BattleGame:
         # Render reinforcement placement zones if in that phase
         if self.phase == BattleGamePhase.REINFORCEMENT_PLACEMENT:
             self._render_reinforcement_placement_zones()
+
+        # Render attack direction indicators if in that phase
+        if self.phase == BattleGamePhase.ATTACK_DIRECTION:
+            self._render_attack_direction_indicators()
 
         # Render personal combat UI overlay
         if self.phase in [
@@ -1697,6 +1863,62 @@ class BattleGame:
         for i, line in enumerate(lines):
             text = small_font.render(line, True, (200, 200, 200))
             self.screen.blit(text, (20, y + 45 + i * 16))
+
+    def _render_attack_direction_indicators(self):
+        """Render attack direction indicators on adjacent hexes."""
+        import pygame
+
+        unit = self.ui.selected_unit
+        if not unit or not unit.position:
+            return
+
+        # Get adjacent hexes
+        adjacent_hexes = self.battle.grid.get_adjacent(unit.position)
+
+        # Draw attack indicators on each adjacent hex
+        for coord in adjacent_hexes:
+            x, y_pos, width, height = self.ui.renderer.get_tile_rect(coord)
+
+            # Red tint for attackable hexes
+            s = pygame.Surface(
+                (self.screen.get_width(), self.screen.get_height()), pygame.SRCALPHA
+            )
+            pygame.draw.rect(s, (255, 50, 50, 64), (x, y_pos, width, height))
+            self.screen.blit(s, (0, 0))
+            pygame.draw.rect(self.screen, (255, 100, 100), (x, y_pos, width, height), 2)
+
+            # Draw sword icon in center
+            cx = x + width // 2
+            cy = y_pos + height // 2
+            pygame.draw.line(
+                self.screen, (255, 200, 200), (cx - 6, cy + 6), (cx + 6, cy - 6), 3
+            )
+            pygame.draw.line(
+                self.screen, (255, 200, 200), (cx - 6, cy - 6), (cx + 6, cy + 6), 3
+            )
+
+        # Draw instruction panel
+        y = self.screen.get_height() - 80
+        s = pygame.Surface((350, 70))
+        s.set_alpha(200)
+        s.fill((32, 0, 0))
+        self.screen.blit(s, (10, y))
+
+        font = pygame.font.SysFont(None, 24)
+        small_font = pygame.font.SysFont(None, 20)
+
+        text = font.render("ATTACK DIRECTION MODE", True, (255, 150, 150))
+        self.screen.blit(text, (20, y + 5))
+
+        lines = [
+            "Click red zone to attack",
+            "Hidden units will be hit but stay hidden",
+            "ESC: Cancel",
+        ]
+
+        for i, line in enumerate(lines):
+            text = small_font.render(line, True, (200, 200, 200))
+            self.screen.blit(text, (20, y + 25 + i * 16))
 
     def run(self):
         """Main game loop."""

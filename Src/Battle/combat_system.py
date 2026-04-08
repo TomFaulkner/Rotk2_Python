@@ -362,6 +362,9 @@ class CombatSystem:
 
         for enemy in all_units:
             if enemy.is_attacker != unit.is_attacker and not enemy.is_defeated():
+                # Skip hidden enemies - they shouldn't show up as attackable
+                if enemy.is_hidden():
+                    continue
                 if enemy.position in adjacent:
                     enemies.append(enemy)
 
@@ -716,7 +719,7 @@ class CombatSystem:
             return 0
 
         hex_obj = grid.get_hex(ambusher.position)
-        if not hex_obj or hex_obj.terrain.name != "FOREST":
+        if not hex_obj or hex_obj.terrain.name.lower() != "forest":
             return 0
 
         # Calculate damage

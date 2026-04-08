@@ -136,7 +136,7 @@ class BattleEngine:
                 return
             # Fallback: check is_castle flag or CASTLE terrain name
             elif hex_obj.is_castle or (
-                hex_obj.terrain.name == "CASTLE"
+                hex_obj.terrain.name.lower() == "castle"
                 and not hasattr(hex_obj, "terrain_code")
             ):
                 self.defender_castle_pos = coord

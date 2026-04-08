@@ -340,6 +340,9 @@ class BattleUI:
             and self.adjacent_enemies
         ):
             for enemy in self.adjacent_enemies:
+                # Skip hidden enemies - don't highlight their position
+                if enemy.is_hidden():
+                    continue
                 if enemy.position:
                     highlight_hexes.append(enemy.position)
 
@@ -554,7 +557,7 @@ class BattleUI:
         lines = [
             f"BATTLE PHASE - DAY {self.battle.day} - {turn_text} TURN",
             f"Rice: ATT {att_rice} | DEF {def_rice} | Weather: {weather_display} | {wind_text}",
-            "Click unit: Select | Click hex: Move | Adjacent: Attack",
+            "Click unit: Select | Click hex: Move | Adjacent: Attack | A: Attack Dir",
             "ENTER: End | ESC: Exit | F: Fire | B: Bribe"
             + (" | R: Reinforce" if can_reinforce else ""),
         ]
@@ -566,9 +569,12 @@ class BattleUI:
                 text = font.render(line, True, (255, 255, 255))
             self.screen.blit(text, (20, y + 8 + i * 22))
 
-        # Render adjacent enemy markers
+        # Render adjacent enemy markers (but NOT for hidden units)
         if self.adjacent_enemies:
             for enemy in self.adjacent_enemies:
+                # Skip hidden enemies - don't reveal their position
+                if enemy.is_hidden():
+                    continue
                 if enemy.position:
                     x, y = self.renderer.coord_to_pixel(enemy.position)
                     cx = x + self.renderer.tile_width // 2
