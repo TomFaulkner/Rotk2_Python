@@ -20,6 +20,7 @@ class UnitState(Enum):
     CAPTURED = 6  # Captured by enemy
     DEFEATED = 7  # Defeated in battle
     IN_RESERVE = 8  # In reserve, not on map
+    HIDDEN = 9  # Hidden in forest, invisible to enemies
 
 
 class BattleUnit:
@@ -214,6 +215,19 @@ class BattleUnit:
     def engage(self):
         """Mark unit as engaged (adjacent to enemy)."""
         self.state = UnitState.ENGAGED
+
+    def hide(self):
+        """Mark unit as hidden (in forest)."""
+        self.state = UnitState.HIDDEN
+
+    def reveal(self):
+        """Reveal unit from hiding."""
+        if self.state == UnitState.HIDDEN:
+            self.state = UnitState.ACTIVE
+
+    def is_hidden(self) -> bool:
+        """Check if unit is hidden."""
+        return self.state == UnitState.HIDDEN
 
     def end_turn(self):
         """End turn, reset flags."""

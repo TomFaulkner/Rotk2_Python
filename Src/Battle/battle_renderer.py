@@ -266,16 +266,35 @@ class BattleRenderer:
                     fy = cy - int(8 * math.sin(angle))
                     pygame.draw.circle(self.screen, (255, 100, 0), (fx, fy), 3)
 
-    def render_unit(self, unit: BattleUnit, selected: bool = False):
+    def render_unit(
+        self,
+        unit: BattleUnit,
+        selected: bool = False,
+        viewer_is_attacker: Optional[bool] = None,
+    ):
         """
         Render a unit on the grid.
 
         Args:
             unit: BattleUnit to render
             selected: True if this unit is selected
+            viewer_is_attacker: Side of the player viewing the unit (for hidden unit visibility)
         """
         if not unit.position:
             return
+
+        # Check if unit is hidden
+        if unit.is_hidden():
+            # Hidden units are invisible to enemies
+            if (
+                viewer_is_attacker is not None
+                and unit.is_attacker != viewer_is_attacker
+            ):
+                return  # Don't render enemy hidden units
+            # Owner sees hidden units semi-transparent
+            is_hidden_visible = True
+        else:
+            is_hidden_visible = False
 
         x, y = self.coord_to_pixel(unit.position)
         cx = x + self.tile_width // 2
@@ -290,10 +309,32 @@ class BattleRenderer:
         if unit.is_defeated():
             color = (64, 64, 64)
 
-        # Draw unit circle
-        radius = self.tile_width // 3
-        pygame.draw.circle(self.screen, color, (cx, cy), radius)
-        pygame.draw.circle(self.screen, (0, 0, 0), (cx, cy), radius, 2)
+        # For hidden units, make semi-transparent
+        if is_hidden_visible:
+            # Create semi-transparent surface for the unit
+            unit_surface = pygame.Surface(
+                (self.tile_width, self.tile_height), pygame.SRCALPHA
+            )
+            # Draw unit circle on the surface with transparency
+            pygame.draw.circle(
+                unit_surface,
+                (*color, 128),
+                (self.tile_width // 2, self.tile_height // 2),
+                self.tile_width // 3,
+            )
+            pygame.draw.circle(
+                unit_surface,
+                (0, 0, 0, 128),
+                (self.tile_width // 2, self.tile_height // 2),
+                self.tile_width // 3,
+                2,
+            )
+            self.screen.blit(unit_surface, (x, y))
+        else:
+            # Draw unit circle normally
+            radius = self.tile_width // 3
+            pygame.draw.circle(self.screen, color, (cx, cy), radius)
+            pygame.draw.circle(self.screen, (0, 0, 0), (cx, cy), radius, 2)
 
         # Draw soldier count
         soldiers_text = str(unit.soldiers)
@@ -322,7 +363,10 @@ class BattleRenderer:
             )
 
     def render_units(
-        self, units: List[BattleUnit], selected_unit: Optional[BattleUnit] = None
+        self,
+        units: List[BattleUnit],
+        selected_unit: Optional[BattleUnit] = None,
+        viewer_is_attacker: Optional[bool] = None,
     ):
         """
         Render all units.
@@ -330,10 +374,11 @@ class BattleRenderer:
         Args:
             units: List of BattleUnits to render
             selected_unit: Currently selected unit
+            viewer_is_attacker: Side of the player viewing (for hidden unit visibility)
         """
         for unit in units:
             is_selected = unit == selected_unit
-            self.render_unit(unit, is_selected)
+            self.render_unit(unit, is_selected, viewer_is_attacker)
 
     def render_movement_range(
         self,
@@ -610,8 +655,9 @@ class BattleRenderer:
                 grid, selected_unit.position, selected_unit.mobility, reachable_hexes
             )
 
-        # Render units
-        self.render_units(units, selected_unit)
+        # Render units (pass viewer side for hidden unit visibility)
+        viewer_is_attacker = battle_engine.is_attacker if battle_engine else None
+        self.render_units(units, selected_unit, viewer_is_attacker)
 
         # Render selected unit info at top right (replacing the old battle info panel)
         panel_width = 200  # Updated to match render_selected_unit_info

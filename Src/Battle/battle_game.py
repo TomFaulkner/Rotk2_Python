@@ -419,6 +419,12 @@ class BattleGame:
             print(f"Placed {unit.get_officer_name()} at {coord}")
             self.ui.add_combat_message(f"Placed {unit.get_officer_name()}")
 
+            # Auto-hide unit if placed in forest
+            hex_obj = self.battle.grid.get_hex(coord)
+            if hex_obj and hex_obj.terrain.name == "FOREST":
+                unit.hide()
+                print(f"{unit.get_officer_name()} is hidden in the forest")
+
             # Check if side is done
             if is_attacker:
                 remaining = [
@@ -509,7 +515,17 @@ class BattleGame:
             )
 
         elif self.ui.selected_unit and self.ui.selected_unit.can_move():
-            if coord in self.ui.reachable_hexes:
+            # Check if the clicked hex is adjacent to current position (step-by-step movement)
+            if self.ui.selected_unit.position:
+                adjacent_coords = self.battle.grid.get_adjacent(
+                    self.ui.selected_unit.position
+                )
+                is_adjacent = coord in adjacent_coords
+            else:
+                is_adjacent = False
+
+            # Allow move if adjacent OR if in reachable_hexes (for longer moves)
+            if is_adjacent or coord in self.ui.reachable_hexes:
                 self._execute_move(coord)
             else:
                 # Log invalid tile selection
@@ -707,15 +723,40 @@ class BattleGame:
                 else self.battle.get_defending_units_on_map()
             )
 
+            # Check for forest ambush from hidden enemies
+            all_units = self.battle.get_all_units_on_map()
+            hidden_enemies = self.CombatSystem.get_hidden_enemies_adjacent_to(
+                self.battle.grid, coord, all_units, unit.is_attacker
+            )
+
+            ambush_triggered = False
+            for hidden_enemy in hidden_enemies:
+                damage = self.CombatSystem.perform_forest_ambush(
+                    hidden_enemy, unit, self.battle.grid
+                )
+                if damage > 0:
+                    ambush_triggered = True
+
+            if ambush_triggered:
+                unit.engage()
+                print(f"Ambushed! {unit.get_officer_name()} turn ends")
+                # Unit stays revealed after ambush
+                self.ui.clear_selection()
+                return
+
             if self.battle.grid.is_adjacent_to_enemy(coord, friendly_units):
                 unit.engage()
                 print(f"Engaged enemy! {unit.get_officer_name()} turn ends")
 
             self.ui.reachable_hexes = []
-            all_units = self.battle.get_all_units_on_map()
             self.ui.adjacent_enemies = self.CombatSystem.get_adjacent_enemies(
                 unit, self.battle.grid, all_units
             )
+
+            # Auto-hide unit if in forest
+            if hex_obj.terrain.name == "FOREST":
+                unit.hide()
+                print(f"{unit.get_officer_name()} hides in the forest")
 
     def _execute_bribe(self):
         """Execute bribe with selected target and amount."""

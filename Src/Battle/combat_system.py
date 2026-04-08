@@ -634,6 +634,103 @@ class CombatSystem:
         return helping_allies
 
     @staticmethod
+    def get_hidden_enemies_adjacent_to(
+        grid, coord: HexCoord, all_units: List, viewer_is_attacker: bool
+    ) -> List:
+        """
+        Get all hidden enemy units adjacent to a coordinate.
+
+        Args:
+            grid: HexGrid
+            coord: Position to check
+            all_units: All units in battle
+            viewer_is_attacker: Side of the viewer (to identify enemies)
+
+        Returns:
+            List of hidden enemy units adjacent to the coordinate
+        """
+        adjacent = grid.get_adjacent(coord)
+        hidden_enemies = []
+
+        for unit in all_units:
+            # Check if unit is an enemy and is hidden
+            if (
+                unit.is_attacker != viewer_is_attacker
+                and unit.is_hidden()
+                and not unit.is_defeated()
+            ):
+                if unit.position in adjacent:
+                    hidden_enemies.append(unit)
+
+        return hidden_enemies
+
+    @staticmethod
+    def calculate_ambush_damage(ambusher, target) -> int:
+        """
+        Calculate ambush damage for forest ambush.
+
+        Args:
+            ambusher: The unit performing the ambush
+            target: The unit being ambushed
+
+        Returns:
+            Damage amount
+        """
+        import random
+
+        # 90+ Intel targets are immune to forest ambush damage
+        if target.officer.Int >= 90:
+            return 0
+
+        # Intel-based base damage
+        ambusher_intel = ambusher.get_intelligence()
+        ambusher_troops = ambusher.soldiers
+        target_troops = target.soldiers
+
+        base = (ambusher_intel * ambusher_troops) // 280
+        # Small randomness + target size factor
+        final_base = int(base * random.uniform(0.85, 1.15) * (target_troops / 100.0))
+        damage = max(8, final_base)  # minimum floor
+
+        # Apply 3x ambush multiplier
+        final_damage = int(damage * 3.0)
+
+        return final_damage
+
+    @staticmethod
+    def perform_forest_ambush(ambusher, target, grid) -> int:
+        """
+        Perform a forest ambush attack.
+
+        Args:
+            ambusher: The hidden unit performing the ambush
+            target: The unit being ambushed
+            grid: HexGrid
+
+        Returns:
+            Damage dealt
+        """
+        # Check if ambusher is actually in forest
+        if not ambusher.position:
+            return 0
+
+        hex_obj = grid.get_hex(ambusher.position)
+        if not hex_obj or hex_obj.terrain.name != "FOREST":
+            return 0
+
+        # Calculate damage
+        damage = CombatSystem.calculate_ambush_damage(ambusher, target)
+
+        if damage > 0:
+            # Apply damage
+            target.take_damage(damage)
+            print(
+                f"🌲 AMBUSH! {ambusher.get_officer_name()} strikes from the forest for {damage} casualties!"
+            )
+
+        return damage
+
+    @staticmethod
     def can_challenge_to_duel(challenger, target, day: int) -> bool:
         """
         Check if challenger can challenge target to a duel.
