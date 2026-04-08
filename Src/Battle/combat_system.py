@@ -602,6 +602,38 @@ class CombatSystem:
         return allies
 
     @staticmethod
+    def get_allies_adjacent_to_target(attacker, target, grid, all_units: List) -> List:
+        """
+        Get all friendly units adjacent to the target (for simultaneous attacks).
+
+        Args:
+            attacker: The attacking unit
+            target: The target unit being attacked
+            grid: HexGrid
+            all_units: All units in battle
+
+        Returns:
+            List of allies adjacent to the target who can help attack
+        """
+        if not target.position:
+            return []
+
+        target_adjacent = grid.get_adjacent(target.position)
+        helping_allies = []
+
+        for unit in all_units:
+            if (
+                unit.is_attacker == attacker.is_attacker
+                and unit != attacker
+                and not unit.is_defeated()
+                and unit.can_attack()
+            ):
+                if unit.position in target_adjacent:
+                    helping_allies.append(unit)
+
+        return helping_allies
+
+    @staticmethod
     def can_challenge_to_duel(challenger, target, day: int) -> bool:
         """
         Check if challenger can challenge target to a duel.

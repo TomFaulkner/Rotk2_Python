@@ -604,14 +604,12 @@ class BattleGame:
             return
 
         all_units = self.battle.get_all_units_on_map()
-        adjacent_allies = self.CombatSystem.get_adjacent_allies(
-            self.ui.selected_unit, self.battle.grid, all_units
+        # For simultaneous attacks, find allies adjacent to the TARGET (not the attacker)
+        helping_allies = self.CombatSystem.get_allies_adjacent_to_target(
+            self.ui.selected_unit, target, self.battle.grid, all_units
         )
 
-        self.ui.helping_allies = []
-        for ally in adjacent_allies:
-            if ally.can_attack():
-                self.ui.helping_allies.append(ally)
+        self.ui.helping_allies = helping_allies
 
         self.ui.attack_target = target
         self.ui.attack_options = ["normal", "charge"]
@@ -702,13 +700,14 @@ class BattleGame:
             cost = hex_obj.get_movement_cost()
             unit.move_to(coord, cost)
 
-            enemy_units = (
-                self.battle.get_defending_units_on_map()
+            # Get friendly units to check adjacency against enemies
+            friendly_units = (
+                self.battle.get_attacking_units_on_map()
                 if unit.is_attacker
-                else self.battle.get_attacking_units_on_map()
+                else self.battle.get_defending_units_on_map()
             )
 
-            if self.battle.grid.is_adjacent_to_enemy(coord, enemy_units):
+            if self.battle.grid.is_adjacent_to_enemy(coord, friendly_units):
                 unit.engage()
                 print(f"Engaged enemy! {unit.get_officer_name()} turn ends")
 
