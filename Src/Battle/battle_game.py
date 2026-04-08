@@ -16,6 +16,8 @@ class BattleGamePhase(Enum):
     PERSONAL_COMBAT_OFFER = "personal_combat_offer"
     PERSONAL_COMBAT_SELECT = "personal_combat_select"
     BRIBE_SELECT = "bribe_select"
+    REINFORCEMENT_SELECT = "reinforcement_select"
+    REINFORCEMENT_PLACEMENT = "reinforcement_placement"
     BATTLE = "battle"
     ENDED = "ended"
 
@@ -33,7 +35,7 @@ class BattleGame:
     Uses BattleEngine for game logic and BattleUI for rendering.
     """
 
-    def __init__(self, screen, battle_engine, renderer):
+    def __init__(self, screen, battle_engine, renderer, cheats: bool = False):
         """
         Initialize battle game.
 
@@ -41,6 +43,7 @@ class BattleGame:
             screen: Pygame surface
             battle_engine: BattleEngine instance
             renderer: BattleRenderer instance
+            cheats: Enable debug/cheat features (W for wind, E for weather)
         """
         from Battle import BattleUI, BattlePhaseUI
         from Battle.battle_unit import UnitState
@@ -72,7 +75,18 @@ class BattleGame:
         self.bribe_amount = 0
         self.bribe_step = "select_target"  # select_target, enter_amount, confirm
 
+        # Reinforcement state
+        self.reinforcement_overlay = None
+        self.reinforcement_unit = None  # Unit being placed
+        self.reinforcement_units = []  # Units selected for reinforcement
+        self.reinforcement_valid_hexes = []  # Valid placement hexes
+
+        # Cheat/debug mode
+        self.cheats = cheats
+
         print("\n=== BATTLE STARTED ===")
+        if cheats:
+            print("CHEATS ENABLED: W=cycle wind, E=force weather")
         print("Defender places commander, Attacker places all units")
         print("Controls: Click to place, SPACE to auto-place, ENTER to start")
 
@@ -86,16 +100,7 @@ class BattleGame:
             K_ESCAPE,
             K_RETURN,
             K_SPACE,
-            K_1,
-            K_2,
-            K_3,
-            K_4,
-            K_0,
-            K_BACKSPACE,
-            K_KP1,
-            K_KP2,
-            K_KP3,
-            K_KP4,
+            K_r,
             K_f,
             K_b,
         )
@@ -105,8 +110,29 @@ class BattleGame:
                 self.running = False
 
             elif event.type == KEYDOWN:
-                if event.key == K_ESCAPE:
+                # Cheat keys (work in any phase)
+                if self.cheats:
+                    if self._handle_cheat_keys(event.key):
+                        continue  # Cheat key was handled, skip other handlers
+
+                if self.phase == BattleGamePhase.REINFORCEMENT_SELECT:
+                    self._handle_reinforcement_key(event.key)
+                elif self.phase == BattleGamePhase.REINFORCEMENT_PLACEMENT:
+                    if event.key == K_ESCAPE:
+                        self._cancel_reinforcement_placement()
+                    elif event.key == K_SPACE:
+                        self._auto_place_reinforcement()
+                elif event.key == K_ESCAPE:
                     self._handle_escape()
+                elif event.key == K_r:
+                    if self._can_call_reinforcements():
+                        self._start_reinforcement()
+                    else:
+                        print(
+                            "Cannot call reinforcements now (need: defender's turn, reserves available, space on field)"
+                        )
+                elif self.phase == BattleGamePhase.REINFORCEMENT_SELECT:
+                    self._handle_reinforcement_key(event.key)
                 elif (
                     self.phase == BattleGamePhase.PERSONAL_COMBAT_OFFER
                     or self.phase == BattleGamePhase.PERSONAL_COMBAT_SELECT
@@ -137,6 +163,39 @@ class BattleGame:
             print("Attack cancelled")
         else:
             self.running = False
+
+    def _handle_cheat_keys(self, key) -> bool:
+        """
+        Handle cheat/debug keys.
+
+        Args:
+            key: Pygame key constant
+
+        Returns:
+            True if a cheat key was handled, False otherwise
+        """
+        from pygame.locals import K_w, K_e
+
+        if key == K_w:
+            # Cycle wind direction
+            directions = [None, "N", "NE", "SE", "S", "SW", "NW"]
+            current_idx = (
+                directions.index(self.battle.wind_direction)
+                if self.battle.wind_direction in directions
+                else -1
+            )
+            self.battle.wind_direction = directions[(current_idx + 1) % len(directions)]
+            print(f"[CHEAT] Wind: {self.battle.wind_direction or 'Calm'}")
+            return True
+
+        elif key == K_e:
+            # Force weather transition
+            old_weather = self.battle.weather
+            new_weather = self.battle.transition_weather()
+            print(f"[CHEAT] Weather: {old_weather} -> {new_weather}")
+            return True
+
+        return False
 
     def _handle_return(self):
         """Handle return key."""
@@ -281,6 +340,63 @@ class BattleGame:
                 self.ui.attack_options = []
                 print("Fire mode: Click adjacent hex")
 
+    def _handle_reinforcement_key(self, key):
+        """Handle keys during reinforcement selection."""
+        from pygame.locals import (
+            K_ESCAPE,
+            K_UP,
+            K_DOWN,
+            K_RETURN,
+            K_1,
+            K_2,
+            K_3,
+            K_4,
+            K_5,
+            K_6,
+            K_7,
+            K_8,
+            K_9,
+            K_0,
+        )
+
+        if self.reinforcement_overlay is None:
+            self.phase = BattleGamePhase.BATTLE
+            return
+
+        # Handle navigation keys
+        if key == K_ESCAPE:
+            # Cancel reinforcement
+            self.reinforcement_overlay = None
+            self.phase = BattleGamePhase.BATTLE
+            print("Reinforcement cancelled")
+        elif key == K_UP:
+            self.reinforcement_overlay.selected_index = max(
+                0, self.reinforcement_overlay.selected_index - 1
+            )
+            self.reinforcement_overlay._ensure_visible()
+        elif key == K_DOWN:
+            max_idx = len(self.reinforcement_overlay.items) - 1
+            self.reinforcement_overlay.selected_index = min(
+                max_idx, self.reinforcement_overlay.selected_index + 1
+            )
+            self.reinforcement_overlay._ensure_visible()
+        elif key == K_RETURN:
+            # Confirm selection
+            self._handle_reinforcement_selection()
+        elif key in (K_1, K_2, K_3, K_4, K_5, K_6, K_7, K_8, K_9):
+            # Number key selection
+            visible_idx = key - K_1  # 0-8
+            actual_idx = self.reinforcement_overlay.scroll_offset + visible_idx
+            if actual_idx < len(self.reinforcement_overlay.items):
+                self.reinforcement_overlay.selected_index = actual_idx
+                self._handle_reinforcement_selection()
+        elif key == K_0:
+            # 0 key selects 10th visible item
+            actual_idx = self.reinforcement_overlay.scroll_offset + 9
+            if actual_idx < len(self.reinforcement_overlay.items):
+                self.reinforcement_overlay.selected_index = actual_idx
+                self._handle_reinforcement_selection()
+
     def _handle_bribe_key(self, key):
         """Handle keys during bribe modal."""
         from pygame.locals import (
@@ -368,6 +484,218 @@ class BattleGame:
         self.bribe_step = "select_target"
         print("Bribe cancelled")
 
+    # ==================== REINFORCEMENT SYSTEM ====================
+
+    def _can_call_reinforcements(self) -> bool:
+        """
+        Check if defender can call reinforcements.
+
+        Returns:
+            True if reinforcements are available and defender has space
+        """
+        # Only defender can reinforce during their turn
+        if self.battle.turn != 1:  # 1 = defender's turn
+            return False
+
+        # Check if there are available reserves
+        available_reserves = self.battle.defender_reserve.get_available()
+        if not available_reserves:
+            return False
+
+        # Check active unit count (excluding defeated, captured, retreated, injured)
+        active_count = self._get_active_defender_count()
+        if active_count >= self.battle.MAX_UNITS_ON_MAP:
+            return False
+
+        return True
+
+    def _get_active_defender_count(self) -> int:
+        """
+        Get count of active defending units on the battlefield.
+
+        Excludes: DEFEATED, CAPTURED, RETREATED, INJURED
+        """
+        exclude_states = {
+            self.UnitState.DEFEATED,
+            self.UnitState.CAPTURED,
+            self.UnitState.RETREATED,
+            self.UnitState.INJURED,
+        }
+
+        count = 0
+        for unit in self.battle.defending_units:
+            if unit.state not in exclude_states and unit.position is not None:
+                count += 1
+        return count
+
+    def _start_reinforcement(self):
+        """Start the reinforcement selection process."""
+        from Battle.battle_ui import ScrollableListOverlay
+
+        available_reserves = self.battle.defender_reserve.get_available()
+        if not available_reserves:
+            print("No reinforcements available")
+            return
+
+        # Build item list for scrollable overlay
+        items = []
+        for unit in available_reserves:
+            items.append(
+                {
+                    "id": unit.get_officer_id(),
+                    "name": unit.get_officer_name(),
+                    "stats": f"War:{unit.get_war_ability()} Int:{unit.get_intelligence()} Sol:{unit.soldiers}",
+                    "unit": unit,
+                }
+            )
+
+        self.reinforcement_overlay = ScrollableListOverlay(
+            screen=self.screen,
+            items=items,
+            title=f"Call Reinforcements ({len(available_reserves)} available)",
+            visible_count=10,
+            border_color=(100, 150, 255),  # Blue border for reinforcements
+        )
+
+        self.phase = BattleGamePhase.REINFORCEMENT_SELECT
+        print(
+            "Select a reinforcement (1-9,0 or navigate with arrows, Enter to confirm)"
+        )
+
+    def _handle_reinforcement_selection(self):
+        """Handle reinforcement selection from overlay."""
+        if self.reinforcement_overlay is None:
+            self.phase = BattleGamePhase.BATTLE
+            return
+
+        # Get selected item directly from selected_index (not from confirmed_selection)
+        selected_idx = self.reinforcement_overlay.selected_index
+        if selected_idx < 0 or selected_idx >= len(self.reinforcement_overlay.items):
+            self.reinforcement_overlay = None
+            self.phase = BattleGamePhase.BATTLE
+            print("Reinforcement cancelled")
+            return
+
+        selection = self.reinforcement_overlay.items[selected_idx]
+        self.reinforcement_overlay = None
+
+        unit = selection.get("unit")
+        if not unit:
+            self.phase = BattleGamePhase.BATTLE
+            return
+
+        # Remove from reserve and add to defending units
+        self.battle.defender_reserve.remove(unit)
+        if unit not in self.battle.defending_units:
+            self.battle.defending_units.append(unit)
+
+        unit.state = self.UnitState.INACTIVE  # Ready for placement
+        self.reinforcement_unit = unit
+        self.reinforcement_units = [unit]
+
+        # Calculate valid placement hexes
+        self.reinforcement_valid_hexes = self._get_reinforcement_placement_hexes()
+
+        if not self.reinforcement_valid_hexes:
+            print("No valid placement positions available!")
+            unit.state = self.UnitState.IN_RESERVE
+            self.battle.defender_reserve.add(unit)
+            self.phase = BattleGamePhase.BATTLE
+            return
+
+        self.phase = BattleGamePhase.REINFORCEMENT_PLACEMENT
+        print(f"Place {unit.get_officer_name()} on the battlefield")
+        print(f"Valid hexes: {len(self.reinforcement_valid_hexes)}")
+
+    def _get_reinforcement_placement_hexes(self) -> list:
+        """
+        Get valid hexes for placing reinforcements.
+
+        Uses defender placement zones minus occupied hexes.
+        """
+        # Get base defender zones
+        base_hexes = self.battle._get_defender_placement_zones()
+
+        # Filter out occupied hexes
+        valid_hexes = []
+        for coord in base_hexes:
+            hex_obj = self.battle.grid.get_hex(coord)
+            if hex_obj and hex_obj.is_passable() and hex_obj.unit is None:
+                valid_hexes.append(coord)
+
+        return valid_hexes
+
+    def _handle_reinforcement_placement_click(self, coord):
+        """Handle click during reinforcement placement."""
+        if self.reinforcement_unit is None:
+            return
+        if coord not in self.reinforcement_valid_hexes:
+            print("Invalid placement position")
+            return
+
+        if self.battle.place_unit(self.reinforcement_unit, coord):
+            print(
+                f"Reinforcement {self.reinforcement_unit.get_officer_name()} placed at {coord}"
+            )
+            self.ui.add_combat_message(
+                f"Reinforcement: {self.reinforcement_unit.get_officer_name()}"
+            )
+
+            # Auto-hide if placed in forest
+            hex_obj = self.battle.grid.get_hex(coord)
+            if hex_obj and hex_obj.terrain.name == "FOREST":
+                self.reinforcement_unit.hide()
+                print(
+                    f"{self.reinforcement_unit.get_officer_name()} is hidden in the forest"
+                )
+
+            # Continue with reinforcements or return to battle
+            self._continue_or_end_reinforcement()
+
+    def _auto_place_reinforcement(self):
+        """Auto-place reinforcement in a valid position."""
+        if self.reinforcement_unit is None:
+            return
+        if not self.reinforcement_valid_hexes:
+            print("No valid positions for auto-placement")
+            self._cancel_reinforcement_placement()
+            return
+
+        # Pick first available hex
+        coord = self.reinforcement_valid_hexes[0]
+        self._handle_reinforcement_placement_click(coord)
+
+    def _cancel_reinforcement_placement(self):
+        """Cancel reinforcement placement and return unit to reserve."""
+        if self.reinforcement_unit:
+            # Return unit to reserve
+            self.reinforcement_unit.state = self.UnitState.IN_RESERVE
+            if self.reinforcement_unit not in [
+                u for u in self.battle.defender_reserve.units
+            ]:
+                self.battle.defender_reserve.add(self.reinforcement_unit)
+            print(f"{self.reinforcement_unit.get_officer_name()} returned to reserve")
+
+        self.reinforcement_unit = None
+        self.reinforcement_units = []
+        self.reinforcement_valid_hexes = []
+        self.phase = BattleGamePhase.BATTLE
+
+    def _continue_or_end_reinforcement(self):
+        """Check if more reinforcements can be called or return to battle."""
+        self.reinforcement_unit = None
+        self.reinforcement_units = []
+        self.reinforcement_valid_hexes = []
+
+        # Check if defender can call more reinforcements
+        if self._can_call_reinforcements():
+            # Ask if they want to call another
+            print("Press R to call another reinforcement, or continue with battle")
+            # Return to battle phase but they'll be able to press R again
+            self.phase = BattleGamePhase.BATTLE
+        else:
+            self.phase = BattleGamePhase.BATTLE
+
     def _handle_click(self, pos):
         """Handle mouse click."""
         x, y = pos
@@ -379,6 +707,8 @@ class BattleGame:
             self._handle_placement_click(clicked_hex)
         elif self.phase == BattleGamePhase.PERSONAL_COMBAT_SELECT:
             self._handle_personal_combat_click(clicked_hex)
+        elif self.phase == BattleGamePhase.REINFORCEMENT_PLACEMENT:
+            self._handle_reinforcement_placement_click(clicked_hex)
         elif self.phase == BattleGamePhase.BATTLE:
             self._handle_battle_click(clicked_hex)
 
@@ -523,6 +853,29 @@ class BattleGame:
                 is_adjacent = coord in adjacent_coords
             else:
                 is_adjacent = False
+
+            # Check if unit can afford the movement cost
+            if hex_obj:
+                move_cost = hex_obj.get_movement_cost()
+                if self.ui.selected_unit.mobility < move_cost:
+                    print(
+                        f"Not enough mobility! Need {move_cost}, have {self.ui.selected_unit.mobility}"
+                    )
+                    return
+
+            # For multi-tile moves, check if we'd pass adjacent to enemies
+            if not is_adjacent and coord in self.ui.reachable_hexes:
+                # Check if destination is adjacent to enemy - if so, only allow single-step
+                friendly_units = (
+                    self.battle.get_attacking_units_on_map()
+                    if self.ui.selected_unit.is_attacker
+                    else self.battle.get_defending_units_on_map()
+                )
+                if self.battle.grid.is_adjacent_to_enemy(coord, friendly_units):
+                    print(
+                        "Cannot move directly to hex adjacent to enemy. Move one step at a time."
+                    )
+                    return
 
             # Allow move if adjacent OR if in reachable_hexes (for longer moves)
             if is_adjacent or coord in self.ui.reachable_hexes:
@@ -747,8 +1100,19 @@ class BattleGame:
             if self.battle.grid.is_adjacent_to_enemy(coord, friendly_units):
                 unit.engage()
                 print(f"Engaged enemy! {unit.get_officer_name()} turn ends")
+                self.ui.reachable_hexes = []
+            elif not unit.can_move():
+                # Unit has no more mobility, clear reachable hexes
+                self.ui.reachable_hexes = []
+            else:
+                # Unit can still move, update reachable hexes from new position
+                self.ui.reachable_hexes = self.battle.grid.get_movement_range(
+                    coord, unit.mobility
+                )
+                print(
+                    f"Remaining mobility: {unit.mobility}, reachable hexes: {len(self.ui.reachable_hexes)}"
+                )
 
-            self.ui.reachable_hexes = []
             self.ui.adjacent_enemies = self.CombatSystem.get_adjacent_enemies(
                 unit, self.battle.grid, all_units
             )
@@ -991,6 +1355,10 @@ class BattleGame:
         """Render the game."""
         self.ui.render()
 
+        # Render reinforcement placement zones if in that phase
+        if self.phase == BattleGamePhase.REINFORCEMENT_PLACEMENT:
+            self._render_reinforcement_placement_zones()
+
         # Render personal combat UI overlay
         if self.phase in [
             BattleGamePhase.PERSONAL_COMBAT_OFFER,
@@ -999,6 +1367,9 @@ class BattleGame:
             self._render_personal_combat_overlay()
         elif self.phase == BattleGamePhase.BRIBE_SELECT:
             self._render_bribe_overlay()
+        elif self.phase == BattleGamePhase.REINFORCEMENT_SELECT:
+            if self.reinforcement_overlay:
+                self.reinforcement_overlay.render()
 
     def _render_personal_combat_overlay(self):
         """Render personal combat UI overlay."""
@@ -1280,6 +1651,52 @@ class BattleGame:
 
             text = small_font.render("[Y] Confirm  [N] Cancel", True, (200, 200, 200))
             self.screen.blit(text, (x + 40, y + 200))
+
+    def _render_reinforcement_placement_zones(self):
+        """Render reinforcement placement zones (blue highlights)."""
+        import pygame
+
+        # Draw valid placement zones
+        for coord in self.reinforcement_valid_hexes:
+            x, y_pos, width, height = self.ui.renderer.get_tile_rect(coord)
+            s = pygame.Surface(
+                (self.screen.get_width(), self.screen.get_height()), pygame.SRCALPHA
+            )
+            # Blue tint for reinforcements
+            pygame.draw.rect(s, (0, 100, 255, 64), (x, y_pos, width, height))
+            self.screen.blit(s, (0, 0))
+            pygame.draw.rect(self.screen, (0, 150, 255), (x, y_pos, width, height), 2)
+
+        # Draw instruction panel
+        y = self.screen.get_height() - 100
+        s = pygame.Surface((350, 90))
+        s.set_alpha(200)
+        s.fill((0, 0, 32))
+        self.screen.blit(s, (10, y))
+
+        font = pygame.font.SysFont(None, 24)
+        small_font = pygame.font.SysFont(None, 20)
+
+        text = font.render("REINFORCEMENT PLACEMENT", True, (100, 200, 255))
+        self.screen.blit(text, (20, y + 5))
+
+        if self.reinforcement_unit:
+            name_text = small_font.render(
+                f"Placing: {self.reinforcement_unit.get_officer_name()}",
+                True,
+                (255, 255, 255),
+            )
+            self.screen.blit(name_text, (20, y + 28))
+
+        lines = [
+            "Click blue zone to place",
+            "SPACE: Auto-place",
+            "ESC: Cancel",
+        ]
+
+        for i, line in enumerate(lines):
+            text = small_font.render(line, True, (200, 200, 200))
+            self.screen.blit(text, (20, y + 45 + i * 16))
 
     def run(self):
         """Main game loop."""

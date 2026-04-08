@@ -20,7 +20,7 @@ from pygame.locals import *
 
 from Data import Data
 from Officer import Officer
-from Battle import BattleEngine, BattleUnit, BattleGame, BattleGamePhase
+from Battle import BattleEngine, BattleUnit, BattleGame
 from Battle.battle_renderer import BattleRenderer
 from config import get_settings, RiceDepletionMode
 
@@ -53,8 +53,8 @@ def create_test_battle(province_id: int = 10) -> BattleEngine:
     # Create battle
     battle = BattleEngine(province_id=province_id, is_attacker=True)
 
-    # First 5 officers as defenders
-    print("\nDefenders (first 5 officers):")
+    # First 5 officers as defenders (on field)
+    print("\nDefenders (first 5 officers on field):")
     for i in range(5):
         try:
             officer = load_officer_data(i)
@@ -62,6 +62,20 @@ def create_test_battle(province_id: int = 10) -> BattleEngine:
             unit = BattleUnit(officer, soldiers=soldiers, is_attacker=False)
             battle.add_defending_unit(unit)
             print(f"  {i + 1}. {unit.get_officer_name()} - {soldiers} soldiers")
+        except Exception as e:
+            print(f"  Error loading officer {i}: {e}")
+
+    # Officers 10-15 as defender reserves (for reinforcement testing)
+    print("\nDefender Reserves (officers 10-15):")
+    for i in range(10, 16):
+        try:
+            officer = load_officer_data(i)
+            soldiers = 40 + ((i - 10) * 8)
+            unit = BattleUnit(officer, soldiers=soldiers, is_attacker=False)
+            battle.defender_reserve.add(unit)
+            print(
+                f"  {i - 9}. {unit.get_officer_name()} - {soldiers} soldiers (reserve)"
+            )
         except Exception as e:
             print(f"  Error loading officer {i}: {e}")
 
@@ -112,9 +126,9 @@ class BattleTestGame(BattleGame):
     """
     Battle test game with test-specific features.
 
-    Extends BattleGame to add:
-    - Test features (force weather, cycle wind)
-    - Custom initialization
+    Uses BattleGame with cheats=True to enable debug features:
+    - W: Cycle wind direction
+    - E: Force weather transition
     """
 
     def __init__(self, width: int = 1024, height: int = 768):
@@ -127,78 +141,15 @@ class BattleTestGame(BattleGame):
         battle = create_test_battle(province_id=10)
         renderer = BattleRenderer(screen, tile_size=32)
 
-        # Initialize base BattleGame
-        super().__init__(screen, battle, renderer)
+        # Initialize base BattleGame with cheats enabled
+        super().__init__(screen, battle, renderer, cheats=True)
 
         print("\n" + "=" * 50)
         print("TEST FEATURES:")
         print("  W - Cycle wind direction")
         print("  E - Force weather transition")
+        print("  R - Call reinforcements (defender's turn only)")
         print("=" * 50)
-
-    def handle_events(self):
-        """Handle events with test features."""
-        from pygame.locals import KEYDOWN, K_w, K_e
-
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                self.running = False
-
-            elif event.type == KEYDOWN:
-                # Test features
-                if event.key == K_w:
-                    # Cycle wind direction (test feature)
-                    directions = [None, "N", "NE", "SE", "S", "SW", "NW"]
-                    current_idx = (
-                        directions.index(self.battle.wind_direction)
-                        if self.battle.wind_direction in directions
-                        else -1
-                    )
-                    self.battle.wind_direction = directions[
-                        (current_idx + 1) % len(directions)
-                    ]
-                    print(f"[TEST] Wind: {self.battle.wind_direction or 'Calm'}")
-                    continue
-
-                elif event.key == K_e:
-                    # Force weather transition (test feature)
-                    old_weather = self.battle.weather
-                    new_weather = self.battle.transition_weather()
-                    print(f"[TEST] Weather: {old_weather} -> {new_weather}")
-                    continue
-
-                # Pass other events to parent
-                self._handle_keydown(event.key)
-
-            elif event.type == pygame.MOUSEBUTTONDOWN:
-                if event.button == 1:
-                    self._handle_click(event.pos)
-
-    def _handle_keydown(self, key):
-        """Handle keydown events (called from handle_events)."""
-        from pygame.locals import K_ESCAPE, K_RETURN, K_SPACE, K_f, K_b
-
-        if key == K_ESCAPE:
-            self._handle_escape()
-        elif key == K_SPACE:
-            self._advance_placement()
-        elif key == K_RETURN:
-            self._handle_return()
-        elif key == K_f:
-            self._toggle_fire_mode()
-        elif key == K_b:
-            self._toggle_bribe_mode()
-        else:
-            # Handle other keys based on phase
-            if (
-                self.phase == BattleGamePhase.PERSONAL_COMBAT_OFFER
-                or self.phase == BattleGamePhase.PERSONAL_COMBAT_SELECT
-            ):
-                self._handle_personal_combat_key(key)
-            elif self.phase == BattleGamePhase.BRIBE_SELECT:
-                self._handle_bribe_key(key)
-            elif self.ui.attack_target:
-                self._handle_attack_key(key)
 
 
 def main():

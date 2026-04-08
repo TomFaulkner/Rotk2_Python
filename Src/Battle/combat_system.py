@@ -16,6 +16,7 @@ class AttackType(Enum):
     SIMULTANEOUS = "simultaneous"  # Multiple units attack together
     CHARGE = "charge"  # Heavy damage to both sides
     FIRE = "fire"  # Set hex on fire
+    AMBUSH = "ambush"  # Forest ambush attack
 
 
 class CombatResult:
@@ -997,6 +998,138 @@ class CombatSystem:
                 )
 
         result["total_deserted"] = total_deserted
+        return result
+
+    @staticmethod
+    def resolve_unit_destruction(
+        unit,
+        last_attack_type: AttackType,
+        attacker_war: int = 0,
+        winning_side_is_attacker: bool = True,
+    ) -> str:
+        """
+        Resolve what happens when a unit's soldiers reach 0.
+
+        Determines if the officer is killed, captured, or injured based on
+        the attack type that destroyed them and battle outcome.
+
+        Args:
+            unit: The unit being destroyed
+            last_attack_type: Type of attack that reduced soldiers to 0
+            attacker_war: War ability of the attacker (for CHARGE death chance)
+            winning_side_is_attacker: Whether attacker won the battle (affects capture)
+
+        Returns:
+            "killed", "captured", or "injured"
+        """
+        from .battle_unit import UnitState
+
+        if unit.soldiers > 0:
+            return "alive"
+
+        # FIRE attack always kills
+        if last_attack_type == AttackType.FIRE:
+            unit.state = UnitState.DEFEATED
+            return "killed"
+
+        # CHARGE attack has noticeable death chance (higher with strong attacker)
+        elif last_attack_type == AttackType.CHARGE:
+            death_chance = 0.35 + (attacker_war / 300.0)  # ~35-65% range
+            if random.random() < death_chance:
+                unit.state = UnitState.DEFEATED
+                return "killed"
+            else:
+                # Captured only if enemy won, otherwise injured
+                if winning_side_is_attacker != unit.is_attacker:
+                    unit.state = UnitState.CAPTURED
+                    return "captured"
+                else:
+                    unit.state = UnitState.INJURED
+                    return "injured"
+
+        # Normal, Simultaneous, Ambush, etc.
+        else:
+            # Mostly capture, but small random death chance
+            death_chance = 0.08  # ~8%
+            if random.random() < death_chance:
+                unit.state = UnitState.DEFEATED
+                return "killed"
+            else:
+                # Captured only if enemy won, otherwise injured
+                if winning_side_is_attacker != unit.is_attacker:
+                    unit.state = UnitState.CAPTURED
+                    return "captured"
+                else:
+                    unit.state = UnitState.INJURED
+                    return "injured"
+
+    @staticmethod
+    def resolve_battle_unit_fates(
+        battle_engine,
+        attacker_won: bool,
+    ) -> dict:
+        """
+        Resolve the fate of all units at the end of battle.
+
+        This handles:
+        - Defeated units: Captured if on losing side, injured if on winning side
+        - Reserve units: Captured if they belong to loser
+        - Injured units: Already marked appropriately
+
+        Args:
+            battle_engine: The BattleEngine instance
+            attacker_won: True if attacker won, False if defender won
+
+        Returns:
+            Dict with summary:
+            - 'killed': List of killed units
+            - 'captured': List of captured units
+            - 'injured': List of injured units
+        """
+        from .battle_unit import UnitState
+
+        result = {
+            "killed": [],
+            "captured": [],
+            "injured": [],
+        }
+
+        # Process all units (both sides)
+        all_units = (
+            battle_engine.attacking_units
+            + battle_engine.defending_units
+            + battle_engine.attacker_reserve.units
+            + battle_engine.defender_reserve.units
+        )
+
+        for unit in all_units:
+            # Skip already processed states
+            if unit.state == UnitState.DEFEATED:
+                result["killed"].append(unit)
+            elif unit.state == UnitState.CAPTURED:
+                result["captured"].append(unit)
+            elif unit.state == UnitState.INJURED:
+                result["injured"].append(unit)
+            elif unit.state in [UnitState.IN_RESERVE, UnitState.INACTIVE]:
+                # Reserve units: captured if on losing side
+                unit_is_attacker = unit.is_attacker
+                if attacker_won:
+                    # Attacker won: defender units captured
+                    if not unit_is_attacker:
+                        unit.state = UnitState.CAPTURED
+                        result["captured"].append(unit)
+                    else:
+                        # Attacker reserves survive
+                        pass
+                else:
+                    # Defender won: attacker units captured
+                    if unit_is_attacker:
+                        unit.state = UnitState.CAPTURED
+                        result["captured"].append(unit)
+                    else:
+                        # Defender reserves survive
+                        pass
+
         return result
 
     @staticmethod

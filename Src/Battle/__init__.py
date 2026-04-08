@@ -9,7 +9,7 @@ from .battle_unit import BattleUnit, UnitState, ReservePool
 from .terrain import Terrain
 from .battle_engine import BattleEngine, BattlePhase, BattleResult
 from .turn_manager import TurnManager, TurnPhase
-from .battle_ui import BattleUI, BattlePhaseUI
+from .battle_ui import BattleUI, BattlePhaseUI, ScrollableListOverlay
 from .battle_game import BattleGame, BattleGamePhase
 
 __all__ = [
@@ -27,6 +27,7 @@ __all__ = [
     "TurnPhase",
     "BattleUI",
     "BattlePhaseUI",
+    "ScrollableListOverlay",
     "BattleGame",
     "BattleGamePhase",
 ]

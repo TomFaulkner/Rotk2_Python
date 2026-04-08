@@ -21,6 +21,7 @@ class UnitState(Enum):
     DEFEATED = 7  # Defeated in battle
     IN_RESERVE = 8  # In reserve, not on map
     HIDDEN = 9  # Hidden in forest, invisible to enemies
+    INJURED = 10  # Injured in battle, cannot fight but escapes capture
 
 
 class BattleUnit:
@@ -176,8 +177,9 @@ class BattleUnit:
         """
         if self.state in [UnitState.DEFEATED, UnitState.CAPTURED, UnitState.RETREATED]:
             return False
-        if self.has_moved:
+        if self.state == UnitState.ENGAGED:
             return False
+        # Check mobility remaining (has_moved just tracks if unit moved at all this turn)
         if self.mobility <= 0:
             return False
         return True
@@ -192,6 +194,9 @@ class BattleUnit:
         if self.state in [UnitState.DEFEATED, UnitState.CAPTURED]:
             return False
         if self.has_attacked:
+            return False
+        if self.has_moved:
+            # Original ROTK2: one action per turn - cannot attack after moving
             return False
         if self.soldiers <= 0:
             return False

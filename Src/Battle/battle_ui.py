@@ -14,8 +14,244 @@ class BattlePhaseUI(Enum):
 
     PLACEMENT = "placement"
     PERSONAL_COMBAT_OFFER = "personal_combat_offer"
+    REINFORCEMENT_PLACEMENT = "reinforcement_placement"
     BATTLE = "battle"
     ENDED = "ended"
+
+
+class ScrollableListOverlay:
+    """
+    A scrollable list overlay for selecting items from a long list.
+
+    Supports keyboard navigation (UP/DOWN, number keys) and displays
+    items in a scrollable view with visible range indicators.
+    """
+
+    def __init__(
+        self,
+        screen,
+        items: List[Dict[str, Any]],
+        title: str = "Select Item",
+        visible_count: int = 10,
+        width: int = 550,
+        item_height: int = 28,
+        border_color: tuple = (200, 180, 100),
+    ):
+        """
+        Initialize scrollable list overlay.
+
+        Args:
+            screen: Pygame surface to render to
+            items: List of item dicts with 'id', 'name', 'stats' keys
+            title: Title to display at top
+            visible_count: Number of items visible at once
+            width: Width of the overlay in pixels
+            item_height: Height of each item row
+            border_color: RGB tuple for border color
+        """
+        self.screen = screen
+        self.items = items
+        self.title = title
+        self.visible_count = visible_count
+        self.width = width
+        self.item_height = item_height
+        self.border_color = border_color
+
+        self.scroll_offset = 0
+        self.selected_index = 0  # Currently highlighted item
+        self.confirmed_selection: Optional[int] = None  # Final selection
+
+        # Calculate dimensions
+        self.height = 80 + (visible_count * item_height)  # Header + items + padding
+        self.x = (screen.get_width() - width) // 2
+        self.y = (screen.get_height() - self.height) // 2
+
+        # Key mapping for number selection (1-9, 0)
+        self.number_keys = {}
+
+    def handle_key(self, key) -> bool:
+        """
+        Handle keyboard input.
+
+        Args:
+            key: Pygame key constant
+
+        Returns:
+            True if selection confirmed, False to continue
+        """
+        import pygame
+
+        if key == pygame.K_UP:
+            self.selected_index = max(0, self.selected_index - 1)
+            self._ensure_visible()
+            return False
+        elif key == pygame.K_DOWN:
+            self.selected_index = min(len(self.items) - 1, self.selected_index + 1)
+            self._ensure_visible()
+            return False
+        elif key == pygame.K_PAGEUP:
+            self.selected_index = max(0, self.selected_index - self.visible_count)
+            self._ensure_visible()
+            return False
+        elif key == pygame.K_PAGEDOWN:
+            self.selected_index = min(
+                len(self.items) - 1, self.selected_index + self.visible_count
+            )
+            self._ensure_visible()
+            return False
+        elif key == pygame.K_HOME:
+            self.selected_index = 0
+            self._ensure_visible()
+            return False
+        elif key == pygame.K_END:
+            self.selected_index = len(self.items) - 1
+            self._ensure_visible()
+            return False
+        elif key == pygame.K_RETURN:
+            if self.selected_index < len(self.items):
+                self.confirmed_selection = self.selected_index
+                return True
+            return False
+        elif key == pygame.K_ESCAPE:
+            self.confirmed_selection = None
+            return True
+        elif key in (
+            pygame.K_1,
+            pygame.K_2,
+            pygame.K_3,
+            pygame.K_4,
+            pygame.K_5,
+            pygame.K_6,
+            pygame.K_7,
+            pygame.K_8,
+            pygame.K_9,
+        ):
+            # Number keys select visible items 1-9
+            visible_idx = key - pygame.K_1  # 0-8
+            actual_idx = self.scroll_offset + visible_idx
+            if actual_idx < len(self.items):
+                self.selected_index = actual_idx
+                self.confirmed_selection = actual_idx
+                return True
+            return False
+        elif key == pygame.K_0:
+            # 0 selects the 10th visible item
+            actual_idx = self.scroll_offset + 9
+            if actual_idx < len(self.items):
+                self.selected_index = actual_idx
+                self.confirmed_selection = actual_idx
+                return True
+            return False
+
+        return False
+
+    def _ensure_visible(self):
+        """Ensure selected index is within visible range."""
+        if self.selected_index < self.scroll_offset:
+            self.scroll_offset = self.selected_index
+        elif self.selected_index >= self.scroll_offset + self.visible_count:
+            self.scroll_offset = self.selected_index - self.visible_count + 1
+
+        # Clamp scroll offset
+        max_scroll = max(0, len(self.items) - self.visible_count)
+        self.scroll_offset = max(0, min(self.scroll_offset, max_scroll))
+
+    def render(self):
+        """Render the scrollable list overlay."""
+        import pygame
+
+        # Darken background
+        overlay = pygame.Surface(
+            (self.screen.get_width(), self.screen.get_height()), pygame.SRCALPHA
+        )
+        overlay.fill((0, 0, 0, 150))
+        self.screen.blit(overlay, (0, 0))
+
+        # Main dialog box
+        dialog = pygame.Surface((self.width, self.height))
+        dialog.set_alpha(240)
+        dialog.fill((30, 30, 35))
+        self.screen.blit(dialog, (self.x, self.y))
+        pygame.draw.rect(
+            self.screen, self.border_color, (self.x, self.y, self.width, self.height), 3
+        )
+
+        font = pygame.font.SysFont(None, 28)
+        item_font = pygame.font.SysFont(None, 22)
+        small_font = pygame.font.SysFont(None, 18)
+
+        # Title
+        title_text = font.render(self.title, True, (255, 255, 200))
+        title_x = self.x + (self.width - title_text.get_width()) // 2
+        self.screen.blit(title_text, (title_x, self.y + 15))
+
+        # Scroll indicators
+        if self.scroll_offset > 0:
+            up_text = small_font.render("▲ More above", True, (200, 200, 150))
+            self.screen.blit(up_text, (self.x + 20, self.y + 45))
+
+        visible_end = min(self.scroll_offset + self.visible_count, len(self.items))
+        if visible_end < len(self.items):
+            down_text = small_font.render("▼ More below", True, (200, 200, 150))
+            self.screen.blit(down_text, (self.x + 20, self.y + self.height - 55))
+
+        # Item list
+        list_y = self.y + 50
+        for i in range(self.scroll_offset, visible_end):
+            item = self.items[i]
+            row_y = list_y + (i - self.scroll_offset) * self.item_height
+
+            # Selection highlight
+            if i == self.selected_index:
+                highlight = pygame.Surface((self.width - 20, self.item_height - 2))
+                highlight.fill((60, 80, 120))
+                self.screen.blit(highlight, (self.x + 10, row_y))
+
+            # Number key hint (1-9, 0 for visible items)
+            visible_idx = i - self.scroll_offset
+            if visible_idx < 9:
+                key_num = str(visible_idx + 1)
+            elif visible_idx == 9:
+                key_num = "0"
+            else:
+                key_num = " "
+
+            key_text = item_font.render(f"[{key_num}]", True, (150, 255, 150))
+            self.screen.blit(key_text, (self.x + 20, row_y + 3))
+
+            # Name
+            name = item.get("name", "Unknown")
+            name_text = item_font.render(name, True, (255, 255, 255))
+            self.screen.blit(name_text, (self.x + 65, row_y + 3))
+
+            # Stats (right-aligned)
+            stats = item.get("stats", "")
+            if stats:
+                stats_text = item_font.render(stats, True, (200, 200, 200))
+                stats_x = self.x + self.width - stats_text.get_width() - 20
+                self.screen.blit(stats_text, (stats_x, row_y + 3))
+
+        # Instructions
+        instr_y = self.y + self.height - 35
+        instr_text = small_font.render(
+            "[↑↓] Navigate  [1-9,0] Select  [Enter] Confirm  [ESC] Cancel",
+            True,
+            (180, 180, 180),
+        )
+        self.screen.blit(instr_text, (self.x + 20, instr_y))
+
+    def get_selection(self) -> Optional[Dict[str, Any]]:
+        """
+        Get the confirmed selection.
+
+        Returns:
+            Selected item dict or None if cancelled
+        """
+        if self.confirmed_selection is not None and self.confirmed_selection < len(
+            self.items
+        ):
+            return self.items[self.confirmed_selection]
+        return None
 
 
 class BattleUI:
@@ -301,11 +537,26 @@ class BattleUI:
 
         turn_text = "ATTACKER" if self.battle.turn == 0 else "DEFENDER"
 
+        # Check if defender can reinforce
+        can_reinforce = (
+            self.battle.turn == 1  # Defender's turn
+            and self.battle.defender_reserve.get_available()
+            and len(
+                [
+                    u
+                    for u in self.battle.get_defending_units_on_map()
+                    if not u.is_defeated()
+                ]
+            )
+            < self.battle.MAX_UNITS_ON_MAP
+        )
+
         lines = [
             f"BATTLE PHASE - DAY {self.battle.day} - {turn_text} TURN",
             f"Rice: ATT {att_rice} | DEF {def_rice} | Weather: {weather_display} | {wind_text}",
             "Click unit: Select | Click hex: Move | Adjacent: Attack",
-            "ENTER: End | ESC: Exit | F: Fire | B: Bribe",
+            "ENTER: End | ESC: Exit | F: Fire | B: Bribe"
+            + (" | R: Reinforce" if can_reinforce else ""),
         ]
 
         for i, line in enumerate(lines):
