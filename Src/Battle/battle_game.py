@@ -936,8 +936,35 @@ class BattleGame:
         """Handle click during battle."""
         # Fire mode
         if self.ui.fire_mode and self.ui.selected_unit:
-            # TODO: Implement fire attack
-            print("Fire attack not fully implemented")
+            unit = self.ui.selected_unit
+
+            # Check if fire can be started
+            can_fire = self.CombatSystem.can_start_fire(
+                unit, coord, self.battle.grid, self.battle.weather
+            )
+
+            if not can_fire:
+                print("Cannot start fire here")
+                self.ui.fire_mode = False
+                return
+
+            # Attempt to start fire
+            success, message, _ = self.CombatSystem.calculate_fire_success(
+                unit,
+                coord,
+                self.battle.grid,
+                self.battle.weather,
+                self.battle.wind_direction,
+            )
+
+            print(message)
+            self.ui.add_combat_message(message)
+
+            # Mark unit as having acted (turn ends whether success or failure)
+            unit.has_attacked = True
+            unit.state = self.UnitState.ATTACKED
+            self.ui.clear_selection()
+
             self.ui.fire_mode = False
             return
 
