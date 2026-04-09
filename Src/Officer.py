@@ -1,5 +1,13 @@
 from Data import Data
 
+# Import for name translation
+try:
+    from Battle.officer_names import get_officer_name
+    import translations
+except ImportError:
+    get_officer_name = None
+    translations = None
+
 
 class Officer(object):
     # region properties
@@ -35,6 +43,19 @@ class Officer(object):
     # endregion properties
 
     def GetName(self):
+        # Check if we should use English names
+        if translations and get_officer_name:
+            try:
+                # Get current language from translation manager
+                lang = translations.get_translation_manager()._language
+                if lang == "en":
+                    # Calculate officer ID from offset
+                    officer_id = (self.Offset - Data.OFFICER_START) // Data.OFFICER_SIZE
+                    return get_officer_name(officer_id)
+            except Exception:
+                pass  # Fall back to Chinese name on any error
+
+        # Return Chinese name (original implementation)
         officer_name_data = ""
         index = 0
         while True:

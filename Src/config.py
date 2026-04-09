@@ -6,8 +6,14 @@ Supports environment variables from .env file.
 """
 
 from enum import Enum
-from typing import Literal
 from pydantic_settings import BaseSettings, SettingsConfigDict
+
+
+class Language(str, Enum):
+    """Supported game languages."""
+
+    CHINESE = "zh"
+    ENGLISH = "en"
 
 
 class RiceDepletionMode(str, Enum):
@@ -31,6 +37,10 @@ class BattleSettings(BaseSettings):
         case_sensitive=False,
         extra="ignore",  # Allow extra env vars without errors
     )
+
+    # Language setting
+    language: Language = Language.CHINESE
+    """Game language: 'zh' for Chinese, 'en' for English"""
 
     # Rice consumption settings
     rice_depletion_mode: RiceDepletionMode = RiceDepletionMode.FORCE_RETREAT
@@ -89,3 +99,5 @@ def reload_settings() -> BattleSettings:
 # Convenience exports
 RICE_DEPLETION_RETREAT = RiceDepletionMode.FORCE_RETREAT
 RICE_DEPLETION_DESERTION = RiceDepletionMode.DESERTION
+LANGUAGE_CHINESE = Language.CHINESE
+LANGUAGE_ENGLISH = Language.ENGLISH
