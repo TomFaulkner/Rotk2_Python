@@ -184,6 +184,26 @@ class UIManager:
             elif event.key == pygame.K_RIGHT:
                 self.move_focus("right")
                 return True
+            elif event.key == pygame.K_ESCAPE:
+                # Close submenu if open, otherwise exit
+                if self.current_screen and hasattr(self.current_screen, "close_submenu"):
+                    if self.current_screen.close_submenu():
+                        return True
+                return False  # Let caller handle exit
+            elif event.key in (pygame.K_RETURN, pygame.K_SPACE):
+                # Activate focused component
+                if self.focused_component and hasattr(self.focused_component, "on_click"):
+                    self.focused_component.on_click()
+                return True
+            elif event.key == pygame.K_DOWN:
+                self.move_focus("down")
+                return True
+            elif event.key == pygame.K_LEFT:
+                self.move_focus("left")
+                return True
+            elif event.key == pygame.K_RIGHT:
+                self.move_focus("right")
+                return True
             elif event.key in (pygame.K_RETURN, pygame.K_SPACE):
                 # Activate focused component
                 if self.focused_component and hasattr(self.focused_component, "on_click"):
@@ -237,7 +257,16 @@ class UIManager:
         if not self.current_screen:
             return
 
-        navigator = FocusNavigator(self.current_screen)
+        # Check if we're in a submenu and should navigate within it
+        container = self.current_screen
+        if (
+            hasattr(self.current_screen, "is_submenu_open")
+            and self.current_screen.is_submenu_open()
+        ):
+            if hasattr(self.current_screen, "_submenu_container"):
+                container = self.current_screen._submenu_container
+
+        navigator = FocusNavigator(container)
         next_component = navigator.find_next_focus(self.focused_component, direction)
 
         if next_component:
@@ -285,8 +314,12 @@ class UIManager:
                 if self.focused_component and hasattr(self.focused_component, "on_click"):
                     self.focused_component.on_click()
             elif button.name == "B":
-                # Back action - could emit an event or call a callback
-                pass
+                # Back action - close submenu if open
+                if self.current_screen and hasattr(self.current_screen, "close_submenu"):
+                    if self.current_screen.close_submenu():
+                        pass  # Submenu was closed
+                    elif hasattr(self.current_screen, "on_back"):
+                        self.current_screen.on_back()
 
     def render(self, surface: pygame.Surface) -> None:
         """

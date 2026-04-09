@@ -162,7 +162,10 @@ class UIComponent(ABC):
         if not self.visible:
             return False
 
-        screen_rect = transform.to_screen(self.rect)
+        # Use absolute position for correct hit detection with nested containers
+        abs_x, abs_y = self.get_absolute_position()
+        abs_rect = pygame.Rect(abs_x, abs_y, self._size[0], self._size[1])
+        screen_rect = transform.to_screen(abs_rect)
         return screen_rect.collidepoint(point)
 
     def handle_event(self, event: pygame.event.Event, transform: Transform) -> bool:

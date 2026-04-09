@@ -121,6 +121,15 @@ class SnesProvinceScreen(UIContainer):
         ("Move", "move"),
     ]
 
+    # View submenu items
+    VIEW_SUBMENU = [
+        ("Other Province", "other_province"),
+        ("General", "general"),
+        ("Summary 1", "summary1"),
+        ("Summary 2", "summary2"),
+        ("Territory", "territory"),
+    ]
+
     def __init__(self, province: Province | None = None):
         """
         Initialize SNES-style province screen.
@@ -135,6 +144,9 @@ class SnesProvinceScreen(UIContainer):
         self.province = province
         self.portrait_loader = SnesPortraitLoader()
         self._selected_menu: str | None = None
+        self._submenu_container: UIContainer | None = None
+        self._submenu_parent_button: UIButton | None = None
+        self._menu_buttons: dict[str, UIButton] = {}
         self._create_ui()
 
     def _create_ui(self) -> None:
@@ -262,6 +274,7 @@ class SnesProvinceScreen(UIContainer):
                 on_click=lambda act=action: self._on_menu_click(act),
                 parent=self,
             )
+            self._menu_buttons[action] = btn
 
         # Row 2
         row2_y = menu_y_start + menu_height + 10
@@ -277,6 +290,7 @@ class SnesProvinceScreen(UIContainer):
                 on_click=lambda act=action: self._on_menu_click(act),
                 parent=self,
             )
+            self._menu_buttons[action] = btn
 
     def _create_main_content(self) -> None:
         """Create portrait, personnel section, and stats panel."""
@@ -581,7 +595,136 @@ class SnesProvinceScreen(UIContainer):
         except:
             return 0
 
+    def _show_submenu(
+        self, parent_action: str, items: list[tuple[str, str]], x: int, y: int
+    ) -> None:
+        """
+        Show a submenu below the specified position.
+
+        Args:
+            parent_action: The parent menu action that opened this submenu
+            items: List of (label, action) tuples for submenu items
+            x: X position for submenu
+            y: Y position for submenu
+        """
+        # Hide any existing submenu
+        self._hide_submenu()
+
+        # Track the parent button that opened this submenu
+        self._submenu_parent_button = self._menu_buttons.get(parent_action)
+
+        # Create submenu container
+        button_height = 40
+        button_width = 200
+        padding = 5
+
+        submenu_height = len(items) * (button_height + padding) + padding
+
+        self._submenu_container = UIContainer(
+            position=(x, y),
+            size=(button_width + 20, submenu_height),
+            background_color=(35, 35, 50),
+            border_color=(80, 80, 100),
+            border_width=2,
+            padding=10,
+            parent=self,
+        )
+
+        # Add submenu buttons
+        first_button = None
+        for i, (label, action) in enumerate(items):
+            btn = UIButton(
+                text=label,
+                position=(10, 10 + i * (button_height + padding)),
+                size=(button_width, button_height),
+                normal_color=(50, 50, 70),
+                hover_color=(70, 70, 90),
+                text_color=(255, 255, 255),
+                on_click=lambda act=action: self._on_submenu_click(act),
+                parent=self._submenu_container,
+            )
+            if first_button is None:
+                first_button = btn
+
+        # Move focus to first submenu item
+        if first_button:
+            from UI.core.manager import UIManager
+
+            ui_manager = UIManager.get_instance()
+            if ui_manager:
+                ui_manager.set_focus(first_button)
+
+    def close_submenu(self) -> bool:
+        """Close the submenu (called by UIManager when B button is pressed)."""
+        if self._submenu_container:
+            self._hide_submenu()
+            # Return focus to the parent button
+            if self._submenu_parent_button:
+                from UI.core.manager import UIManager
+
+                ui_manager = UIManager.get_instance()
+                if ui_manager:
+                    ui_manager.set_focus(self._submenu_parent_button)
+            return True
+        return False
+
+    def is_submenu_open(self) -> bool:
+        """Check if a submenu is currently open."""
+        return self._submenu_container is not None
+
+    def _hide_submenu(self) -> None:
+        """Hide the current submenu."""
+        if self._submenu_container:
+            self.remove_child(self._submenu_container)
+            self._submenu_container = None
+
+    def _on_submenu_click(self, action: str) -> None:
+        """Handle submenu item click."""
+        print(f"Submenu selected: {action}")
+        self._hide_submenu()
+        # Return focus to the parent button
+        if self._submenu_parent_button:
+            from UI.core.manager import UIManager
+
+            ui_manager = UIManager.get_instance()
+            if ui_manager:
+                ui_manager.set_focus(self._submenu_parent_button)
+
+        # Handle specific submenu actions
+        if action == "other_province":
+            print("View Other Province - TODO: Implement province selection")
+        elif action == "general":
+            print("View General - TODO: Show general info")
+        elif action == "summary1":
+            print("View Summary 1 - TODO: Show summary 1")
+        elif action == "summary2":
+            print("View Summary 2 - TODO: Show summary 2")
+        elif action == "territory":
+            print("View Territory - TODO: Show territory map")
+
     def _on_menu_click(self, action: str) -> None:
         """Handle menu button click."""
         self._selected_menu = action
         print(f"Menu selected: {action}")
+
+        # Hide any existing submenu
+        self._hide_submenu()
+
+        # Handle menu-specific actions
+        if action == "view":
+            # Show View submenu under the View button (position 80, 60 + button height)
+            self._show_submenu("view", self.VIEW_SUBMENU, 80, 115)
+        elif action == "army":
+            print("Army menu - TODO: Implement")
+        elif action == "person":
+            print("Person menu - TODO: Implement")
+        elif action == "trade":
+            print("Trade menu - TODO: Implement")
+        elif action == "internal":
+            print("Internal Affairs menu - TODO: Implement")
+        elif action == "diplomacy":
+            print("Diplomacy menu - TODO: Implement")
+        elif action == "espionage":
+            print("Espionage menu - TODO: Implement")
+        elif action == "move":
+            print("Move menu - TODO: Implement")
