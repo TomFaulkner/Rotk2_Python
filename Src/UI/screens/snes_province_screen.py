@@ -151,22 +151,92 @@ class SnesProvinceScreen(UIContainer):
         # Command prompt at bottom
         self._create_command_prompt()
 
+    # Province name mappings (Chinese -> English)
+    PROVINCE_NAMES = {
+        "幽州": "Youzhou",
+        "幷州": "Bingzhou",
+        "冀州": "Jizhou",
+        "青州": "Qingzhou",
+        "兗州": "Yanzhou",
+        "司州": "Sizhou",
+        "雍州": "Yongzhou",
+        "涼州": "Liangzhou",
+        "徐州": "Xuzhou",
+        "予州": "Yuzhou",
+        "荊州": "Jingzhou",
+        "揚州": "Yangzhou",
+        "益州": "Yizhou",
+        "交州": "Jiaozhou",
+    }
+
+    def _get_province_name_english(self) -> str:
+        """Get English province name."""
+        if not self.province:
+            return "Unknown Province"
+        # Parse the Chinese name (e.g., "幽州-1" -> "Youzhou-1")
+        chinese_name = self.province.Name
+        for cn, en in self.PROVINCE_NAMES.items():
+            if cn in chinese_name:
+                return chinese_name.replace(cn, en)
+        return chinese_name
+
+    def _get_current_date(self) -> str:
+        """Get current game date as string."""
+        try:
+            from Data import Data
+
+            year = Data.BUF[0x44] + Data.BUF[0x45] * 256
+            month = Data.BUF[0x46] + 1
+            # Get month name
+            months = [
+                "Jan",
+                "Feb",
+                "Mar",
+                "Apr",
+                "May",
+                "Jun",
+                "Jul",
+                "Aug",
+                "Sep",
+                "Oct",
+                "Nov",
+                "Dec",
+            ]
+            month_name = months[month - 1] if 1 <= month <= 12 else str(month)
+            return f"{month_name} {year}"
+        except:
+            return "Unknown Date"
+
     def _create_title_bar(self) -> None:
-        """Create the province name title at top."""
-        title_text = self.province.Name if self.province else "Unknown Province"
+        """Create the province name and date title bar."""
+        province_text = self._get_province_name_english()
+        date_text = self._get_current_date()
 
         title_bg = UIContainer(
             position=(0, 0), size=(1280, 50), background_color=(30, 30, 50), parent=self
         )
 
-        title = UILabel(
-            text=title_text,
-            position=(640, 25),
+        # Province name on left
+        province_label = UILabel(
+            text=province_text,
+            position=(20, 25),
             size=(400, 40),
             font=pygame.font.Font(None, 36),
             color=(233, 69, 96),
-            align="center",
-            anchor=Anchor.CENTER,
+            align="left",
+            anchor=Anchor.CENTER_LEFT,
+            parent=title_bg,
+        )
+
+        # Date on right
+        date_label = UILabel(
+            text=date_text,
+            position=(1260, 25),
+            size=(200, 40),
+            font=pygame.font.Font(None, 32),
+            color=(200, 200, 200),
+            align="right",
+            anchor=Anchor.CENTER_RIGHT,
             parent=title_bg,
         )
 
@@ -189,7 +259,7 @@ class SnesProvinceScreen(UIContainer):
                 normal_color=(60, 60, 80),
                 hover_color=(80, 80, 110),
                 text_color=(255, 255, 255),
-                on_click=lambda a=action: self._on_menu_click(a),
+                on_click=lambda act=action: self._on_menu_click(act),
                 parent=self,
             )
 
@@ -204,12 +274,12 @@ class SnesProvinceScreen(UIContainer):
                 normal_color=(60, 60, 80),
                 hover_color=(80, 80, 110),
                 text_color=(255, 255, 255),
-                on_click=lambda a=action: self._on_menu_click(a),
+                on_click=lambda act=action: self._on_menu_click(act),
                 parent=self,
             )
 
     def _create_main_content(self) -> None:
-        """Create portrait and stats panel."""
+        """Create portrait, personnel section, and stats panel."""
         if not self.province:
             return
 
@@ -246,6 +316,10 @@ class SnesProvinceScreen(UIContainer):
                     border_width=2,
                     parent=self,
                 )
+
+        # Personnel section under portrait
+        personnel_y = portrait_y + portrait_size[1] + 20
+        self._create_personnel_section(self, portrait_x, personnel_y)
 
         # Stats panel (right of portrait)
         self._create_stats_panel(portrait_x + portrait_size[0] + 40, content_y)
@@ -315,6 +389,7 @@ class SnesProvinceScreen(UIContainer):
             ("Horses", f"{self.province.Horses}"),
             ("Rice Price", f"{self.province.RicePrice}"),
             ("Officers", f"{self.province.ClaimedOfficerNumber}"),
+            ("Free Generals", f"{self.province.UnClaimedOfficerNumber}"),
         ]
 
         for label, value in col2_stats:
@@ -339,9 +414,6 @@ class SnesProvinceScreen(UIContainer):
             )
 
             row_y += row_height
-
-        # Personnel section at bottom of stats panel
-        self._create_personnel_section(stats_container, 30, 280)
 
     def _create_command_prompt(self) -> None:
         """Create command prompt at bottom."""

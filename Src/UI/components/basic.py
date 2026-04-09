@@ -227,13 +227,16 @@ class UIButton(UIContainer):
 
         elif event.type == pygame.MOUSEBUTTONDOWN:
             if event.button == 1:  # Left click
-                self._pressed = True
-                return True
+                # Only press if mouse is actually over this button
+                if self.contains_point(event.pos, transform):
+                    self._pressed = True
+                    return True
 
         elif event.type == pygame.MOUSEBUTTONUP:
             if event.button == 1 and self._pressed:
                 self._pressed = False
-                if self._hovered and self.on_click:
+                # Check if mouse is still over the button (not just _hovered state)
+                if self.contains_point(event.pos, transform) and self.on_click:
                     self.on_click()
                 return True
 
