@@ -96,8 +96,15 @@ def main():
     ui_manager.set_screen(province_screen)
 
     print("\nControls:")
-    print("  Click menu buttons to select commands")
-    print("  Close window to exit")
+    print("  MOUSE: Click menu buttons to select commands")
+    print("  GAMEPAD:")
+    print("    - D-Pad/Left Stick: Navigate between buttons")
+    print("    - A Button: Activate selected button")
+    print("    - B Button: Back/Cancel")
+    print("  KEYBOARD:")
+    print("    - Arrow Keys: Navigate between buttons")
+    print("    - Enter/Space: Activate selected button")
+    print("    - Escape: Exit")
     print("\nRunning display loop...")
 
     # Main loop

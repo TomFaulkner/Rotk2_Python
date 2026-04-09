@@ -13,6 +13,7 @@ import pygame
 from .anchor import UIMode
 from .transform import Transform
 from .container import UIContainer
+from .gamepad_handler import GamepadHandler, FocusNavigator
 
 if TYPE_CHECKING:
     from .component import UIComponent
@@ -73,6 +74,9 @@ class UIManager:
         # Transform for coordinate conversion
         self.transform = Transform(self.virtual_resolution, self.actual_resolution)
 
+        # Gamepad handler
+        self.gamepad = GamepadHandler()
+
         # Debug
         self.debug_mode = False
 
@@ -98,6 +102,15 @@ class UIManager:
         self.current_screen = screen
         self.focused_component = None
         self.hover_component = None
+
+        # Set initial focus to first focusable component
+        if screen:
+            from .gamepad_handler import FocusNavigator
+
+            navigator = FocusNavigator(screen)
+            focusable = navigator.get_focusable_components()
+            if focusable:
+                self.set_focus(focusable[0])
 
     def set_resolution(self, width: int, height: int, maintain_aspect: bool = True) -> None:
         """
@@ -157,6 +170,26 @@ class UIManager:
                     component.on_mouse_enter()
                 self.hover_component = component
 
+        # Handle keyboard navigation
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_UP:
+                self.move_focus("up")
+                return True
+            elif event.key == pygame.K_DOWN:
+                self.move_focus("down")
+                return True
+            elif event.key == pygame.K_LEFT:
+                self.move_focus("left")
+                return True
+            elif event.key == pygame.K_RIGHT:
+                self.move_focus("right")
+                return True
+            elif event.key in (pygame.K_RETURN, pygame.K_SPACE):
+                # Activate focused component
+                if self.focused_component and hasattr(self.focused_component, "on_click"):
+                    self.focused_component.on_click()
+                return True
+
         # Pass event to current screen
         return self.current_screen.handle_event(event, self.transform)
 
@@ -201,18 +234,59 @@ class UIManager:
         Args:
             direction: One of 'up', 'down', 'left', 'right', 'next', 'previous'
         """
-        # TODO: Implement focus navigation
-        pass
+        if not self.current_screen:
+            return
+
+        navigator = FocusNavigator(self.current_screen)
+        next_component = navigator.find_next_focus(self.focused_component, direction)
+
+        if next_component:
+            self.set_focus(next_component)
 
     def update(self, dt: float) -> None:
         """
-        Update all UI components.
+        Update all UI components and handle gamepad input.
 
         Args:
             dt: Delta time in seconds
         """
         if self.current_screen:
             self.current_screen.update(dt)
+
+        # Handle gamepad input
+        self._handle_gamepad(dt)
+
+    def _handle_gamepad(self, dt: float) -> None:
+        """
+        Process gamepad input for navigation.
+
+        Args:
+            dt: Delta time in seconds
+        """
+        if not self.gamepad.is_connected():
+            return
+
+        buttons = self.gamepad.update(dt)
+
+        for button in buttons:
+            # Navigation
+            if button.name in ("DPAD_UP", "LEFT_STICK_UP"):
+                self.move_focus("up")
+            elif button.name in ("DPAD_DOWN", "LEFT_STICK_DOWN"):
+                self.move_focus("down")
+            elif button.name in ("DPAD_LEFT", "LEFT_STICK_LEFT"):
+                self.move_focus("left")
+            elif button.name in ("DPAD_RIGHT", "LEFT_STICK_RIGHT"):
+                self.move_focus("right")
+
+            # Actions
+            elif button.name == "A":
+                # Activate focused component
+                if self.focused_component and hasattr(self.focused_component, "on_click"):
+                    self.focused_component.on_click()
+            elif button.name == "B":
+                # Back action - could emit an event or call a callback
+                pass
 
     def render(self, surface: pygame.Surface) -> None:
         """
