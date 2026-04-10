@@ -65,9 +65,10 @@ class MapRenderer:
     NUMBER_TEXT_COLOR = (255, 255, 255)
     NUMBER_BOX_SIZE = (24, 24)
 
-    # Steam Deck optimized dimensions
-    DEFAULT_DESIGN_SIZE: tuple[int, int] = (1050, 720)
-    DEFAULT_MAP_OFFSET: tuple[int, int] = (115, 40)
+    # Steam Deck optimized dimensions - uses original coordinate system
+    # Background is 1088x944, provinces are within it at their original positions
+    DEFAULT_DESIGN_SIZE: tuple[int, int] = (1088, 944)
+    DEFAULT_MAP_OFFSET: tuple[int, int] = (96, -72)  # Center in 1280x800
 
     def __init__(self, design_size: tuple[int, int] | None = None, shapes_file: str | None = None):
         """Initialize the map renderer.
@@ -130,12 +131,9 @@ class MapRenderer:
                 # Headless environment or other issue - load without convert
                 self.terrain_background = pygame.image.load(str(path))
 
-            # Scale to design size if needed
-            bg_width, bg_height = self.terrain_background.get_size()
-            if (bg_width, bg_height) != (self.design_width, self.design_height):
-                self.terrain_background = pygame.transform.scale(
-                    self.terrain_background, (self.design_width, self.design_height)
-                )
+            # Keep background at original size - provinces align with it naturally
+            # The background is 1088x944, same as design_size
+            # No scaling needed since coordinates match the original image
             self._cache_dirty = True
             return True
         except pygame.error as e:
