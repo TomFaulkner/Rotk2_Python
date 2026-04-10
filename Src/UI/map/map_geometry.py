@@ -144,8 +144,9 @@ class ProvinceShapeManager:
 
         self.shapes: dict[int, ProvinceShape] = {}
         self._bounds_index: list[tuple[int, tuple[int, int, int, int]]] = []
-        self.map_dimensions = {"width": 1000, "height": 650}
-        self.map_offset = {"x": 140, "y": 75}
+        # Steam Deck optimized dimensions (1280x800)
+        self.map_dimensions = {"width": 1050, "height": 720}
+        self.map_offset = {"x": 115, "y": 40}
 
         if shapes_file is None:
             shapes_file = "data/province_shapes.json"

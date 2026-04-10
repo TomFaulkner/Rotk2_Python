@@ -65,13 +65,20 @@ class MapRenderer:
     NUMBER_TEXT_COLOR = (255, 255, 255)
     NUMBER_BOX_SIZE = (24, 24)
 
-    def __init__(self, design_size: tuple[int, int] = (1000, 650), shapes_file: str | None = None):
+    # Steam Deck optimized dimensions
+    DEFAULT_DESIGN_SIZE: tuple[int, int] = (1050, 720)
+    DEFAULT_MAP_OFFSET: tuple[int, int] = (115, 40)
+
+    def __init__(self, design_size: tuple[int, int] | None = None, shapes_file: str | None = None):
         """Initialize the map renderer.
 
         Args:
-            design_size: The design resolution for the map area (width, height)
+            design_size: The design resolution for the map area (width, height).
+                        Defaults to Steam Deck optimized (1050, 720).
             shapes_file: Path to province_shapes.json. Uses default if None.
         """
+        if design_size is None:
+            design_size = self.DEFAULT_DESIGN_SIZE
         self.design_width, self.design_height = design_size
         self.shape_manager = ProvinceShapeManager(shapes_file)
 
@@ -116,9 +123,16 @@ class MapRenderer:
             return False
 
         try:
-            self.terrain_background = pygame.image.load(str(path)).convert()
+            # Load image - try convert() for performance, fallback to no convert
+            try:
+                self.terrain_background = pygame.image.load(str(path)).convert()
+            except (pygame.error, TypeError):
+                # Headless environment or other issue - load without convert
+                self.terrain_background = pygame.image.load(str(path))
+
             # Scale to design size if needed
-            if self.terrain_background.get_size() != (self.design_width, self.design_height):
+            bg_width, bg_height = self.terrain_background.get_size()
+            if (bg_width, bg_height) != (self.design_width, self.design_height):
                 self.terrain_background = pygame.transform.scale(
                     self.terrain_background, (self.design_width, self.design_height)
                 )
@@ -213,9 +227,10 @@ class MapRenderer:
             if color:
                 self._render_province_fill(surface, shape, color)
 
-        # 3. Draw province borders
-        for shape in self.shape_manager.shapes.values():
-            self._render_province_border(surface, shape)
+        # 3. Draw province borders (only if no background image - avoid double-drawing)
+        if not self.terrain_background:
+            for shape in self.shape_manager.shapes.values():
+                self._render_province_border(surface, shape)
 
         # 4. Draw province numbers
         if self.show_numbers:
@@ -223,6 +238,9 @@ class MapRenderer:
                 self._render_province_number(surface, shape)
 
         return surface
+
+    # Province fill alpha (0-255) - 210 is ~82% opaque, lets background borders show through
+    FILL_ALPHA = 210
 
     def _render_province_fill(
         self, surface: pygame.Surface, shape: ProvinceShape, color: tuple[int, int, int]
@@ -235,7 +253,17 @@ class MapRenderer:
             color: Fill color
         """
         points = shape.points
-        pygame.draw.polygon(surface, color, points)
+
+        # If we have a background image, use alpha blending so borders show through
+        if self.terrain_background:
+            # Create a temporary surface for alpha blending
+            fill_surface = pygame.Surface((self.design_width, self.design_height), pygame.SRCALPHA)
+            fill_color = (*color, self.FILL_ALPHA)
+            pygame.draw.polygon(fill_surface, fill_color, points)
+            surface.blit(fill_surface, (0, 0))
+        else:
+            # Solid fill when no background
+            pygame.draw.polygon(surface, color, points)
 
     def _render_province_border(self, surface: pygame.Surface, shape: ProvinceShape) -> None:
         """Render a province border.
@@ -306,9 +334,8 @@ class MapRenderer:
         letterbox = transform.get_letterbox_rect()
 
         # Calculate map position within the letterboxed area
-        # The map is designed to be at offset (140, 75) within the virtual 1280x800
-        map_offset_x = 140
-        map_offset_y = 75
+        # Optimized for Steam Deck 1280x800 - centers the map with minimal padding
+        map_offset_x, map_offset_y = self.DEFAULT_MAP_OFFSET
 
         # Scale the cached map to screen size
         scaled_width = int(self.design_width * scale)
@@ -385,8 +412,7 @@ class MapRenderer:
         virtual_x, virtual_y = transform.to_virtual(screen_point)
 
         # Adjust for map offset within virtual space
-        map_offset_x = 140
-        map_offset_y = 75
+        map_offset_x, map_offset_y = self.DEFAULT_MAP_OFFSET
 
         map_x = virtual_x - map_offset_x
         map_y = virtual_y - map_offset_y
@@ -419,8 +445,7 @@ class MapRenderer:
         scale = transform.get_scale()
         letterbox = transform.get_letterbox_rect()
 
-        map_offset_x = 140
-        map_offset_y = 75
+        map_offset_x, map_offset_y = self.DEFAULT_MAP_OFFSET
 
         screen_x = int(letterbox.x + (map_offset_x + shape.center[0]) * scale)
         screen_y = int(letterbox.y + (map_offset_y + shape.center[1]) * scale)
@@ -432,10 +457,10 @@ def test_renderer():
     """Test the map renderer with a simple display."""
     pygame.init()
 
-    # Create window
+    # Create window - Steam Deck native resolution
     screen_size = (1280, 800)
     screen = pygame.display.set_mode(screen_size)
-    pygame.display.set_caption("Map Renderer Test")
+    pygame.display.set_caption("Map Renderer Test - Steam Deck (1280x800)")
 
     # Import transform
     import sys
@@ -448,6 +473,13 @@ def test_renderer():
 
     # Create renderer
     renderer = MapRenderer()
+
+    # Load the clean province border background (eliminates gaps)
+    background_loaded = renderer.load_terrain_background("download/numbers-removed.jpg")
+    if background_loaded:
+        print("✓ Loaded clean province border background")
+    else:
+        print("⚠ Could not load background, using default beige color")
 
     # Set some sample rulers
     renderer.set_province_ruler(1, 0)  # Gray
