@@ -1,19 +1,24 @@
-class GameStatus():
+from pathlib import Path
+
+
+class GameStatus:
     ShowLogo = 1
     DisplayMenu = 2
-    ShowOthers =3
+    ShowOthers = 3
     WaitNumber = 4
     ShowMap = 5
     ShowCommands = 6
     ShowGenerals = 7
     ShowGenerals2 = 8
 
-class InputMode():
+
+class InputMode:
     Alpha_OK = 1
     Number_Only = 2
     Number_YN_Only = 4
 
-class ShowOfficerFlag():
+
+class ShowOfficerFlag:
     Empty = 0
     Int = 1
     War = 2
@@ -22,7 +27,8 @@ class ShowOfficerFlag():
     Loyalty = 5
     Weapons = 6
 
-class DelegateMode():
+
+class DelegateMode:
     No = 0
     Directly = 1
     Full = 4
@@ -30,8 +36,16 @@ class DelegateMode():
     Military = 6
     Person = 7
 
+
 class Data(object):
-    GamePath = "../Resources/"
+    # Auto-detect Resources path based on script location
+    _script_dir = Path(__file__).parent
+    if (_script_dir.parent / "Resources").exists():
+        GamePath = str(_script_dir.parent / "Resources") + "/"
+    elif (_script_dir / "Resources").exists():
+        GamePath = str(_script_dir / "Resources") + "/"
+    else:
+        GamePath = "../Resources/"  # Fallback
     SaveData = None
     KAODATA = None
     PACKDATA = None
@@ -58,18 +72,18 @@ class Data(object):
     SettingsFileName = "settings.txt"
     DATA_OFFSET = 0x38
 
-    PROVINCE_START = 0x2D8C+DATA_OFFSET
+    PROVINCE_START = 0x2D8C + DATA_OFFSET
     PROVINCE_SIZE = 0x23
 
-    RULER_START = 0x2AFC+DATA_OFFSET
+    RULER_START = 0x2AFC + DATA_OFFSET
     RULER_SIZE = 0x29
 
     OFFICER_START = 0x20 + DATA_OFFSET
     OFFICER_SIZE = 0x2B
 
-    CURRENT_RULER_OFFSET = 0x335c+DATA_OFFSET
-    CURRENT_RULER_OFFICER_OFFSET = 0x335e + DATA_OFFSET
-    CURRENT_PROVINCE_OFFSET = 0x3362+DATA_OFFSET
+    CURRENT_RULER_OFFSET = 0x335C + DATA_OFFSET
+    CURRENT_RULER_OFFICER_OFFSET = 0x335E + DATA_OFFSET
+    CURRENT_PROVINCE_OFFSET = 0x3362 + DATA_OFFSET
     GAME_DIFFCULTY_OFFSET = 0x337B + DATA_OFFSET
     GAME_DIFFCULTY = 1
     NUMBER_OF_RULERS = 0
@@ -118,43 +132,43 @@ class Data(object):
         for i in range(0, len(buf), 2):
             CNINDEX[(buf[i + 1] << 8) + (buf[i + 0])] = int(i / 2)
 
-    with open(GamePath+"dsbuf.dat","rb") as f:
-        #DSBUF = list(f.read())[0x3FD0:0x9f92]
+    with open(GamePath + "dsbuf.dat", "rb") as f:
+        # DSBUF = list(f.read())[0x3FD0:0x9f92]
         DSBUF = list(f.read())
-        for i in range(0,6):
-            DSBUF[0xAFF6+i] = i
+        for i in range(0, 6):
+            DSBUF[0xAFF6 + i] = i
 
-    with open(GamePath+"ascii.fnt","rb") as f:
+    with open(GamePath + "ascii.fnt", "rb") as f:
         ASCII_FONT = list(f.read())
 
     with open(GamePath + "province.des", "rb") as f:
         tmp = bytearray(f.read(833))
         i = 0
 
-        buf=[]
-        buf2=[]
+        buf = []
+        buf2 = []
         buf3 = []
         while True:
-            if i>=len(tmp):
+            if i >= len(tmp):
                 break
 
             b = tmp[i]
-            if b==0:
+            if b == 0:
                 buf2.append("".join(buf3))
                 buf.append(buf2)
-                buf2=[]
-                buf3=[]
-                i+=1
-            elif b==0x0A:
+                buf2 = []
+                buf3 = []
+                i += 1
+            elif b == 0x0A:
                 buf2.append("".join(buf3))
-                buf3=[]
-                i+=1
-            elif b<0x80:
+                buf3 = []
+                i += 1
+            elif b < 0x80:
                 buf3.append(chr(b))
-                i+=1
+                i += 1
             else:
-                b2 = tmp[i+1]
-                zh_cn = CNINDEX.get(b*256+b2)
+                b2 = tmp[i + 1]
+                zh_cn = CNINDEX.get(b * 256 + b2)
                 if zh_cn is not None:
                     buf3.append("$")
                     buf3.append(str(zh_cn))
@@ -171,18 +185,18 @@ class Data(object):
         i = 0
         tmp = []
         while True:
-            if i>=len(buf):
+            if i >= len(buf):
                 break
-            if buf[i]>=0x80:
-                tmp.append(CNINDEX[buf[i+0]*256+buf[i+1]])
-                i+=2
-            elif buf[i]==0:
+            if buf[i] >= 0x80:
+                tmp.append(CNINDEX[buf[i + 0] * 256 + buf[i + 1]])
+                i += 2
+            elif buf[i] == 0:
                 LOGOTEXT[page] = tmp
                 tmp = []
                 page += 1
-                i+=1
+                i += 1
             else:
-                i+=1
+                i += 1
 
     with open(GamePath + "h.bin", "rb") as f:
         tmp_buf = f.read(0x58)
@@ -196,15 +210,17 @@ class Data(object):
     GAME_DIFFCULTY = int(BUF[GAME_DIFFCULTY_OFFSET])
     NUMBER_OF_RULERS = int(BUF[NUMBER_OF_RULERS_OFFSET])
 
-    MapIndex = [[0, 0, 0, 0, 0, 2, 1, 0],
-                      [0, 0, 0, 4, 3, 6, 0, 0],
-                      [0, 0, 0, 5, 7, 9, 8, 0],
-                      [15, 0, 0, 11, 10, 17, 16, 24],
-                      [14, 13, 12, 20, 19, 28, 18, 25],
-                      [0, 30, 29, 31, 21, 22, 27, 26],
-                      [0, 33, 32, 40, 23, 38, 37, 0],
-                      [0, 35, 34, 41, 39, 0, 0, 0],
-                      [0, 0, 36, 0, 0, 0, 0, 0]]
+    MapIndex = [
+        [0, 0, 0, 0, 0, 2, 1, 0],
+        [0, 0, 0, 4, 3, 6, 0, 0],
+        [0, 0, 0, 5, 7, 9, 8, 0],
+        [15, 0, 0, 11, 10, 17, 16, 24],
+        [14, 13, 12, 20, 19, 28, 18, 25],
+        [0, 30, 29, 31, 21, 22, 27, 26],
+        [0, 33, 32, 40, 23, 38, 37, 0],
+        [0, 35, 34, 41, 39, 0, 0, 0],
+        [0, 0, 36, 0, 0, 0, 0, 0],
+    ]
 
     # Text={}
     # conf = configparser.ConfigParser()
@@ -216,20 +232,20 @@ class Data(object):
 
     GrpdataMappings = {
         # all width is (top 2 bytes+3)/4, 80 02 means:(0x280+3)/4=0xa0
-        "MainMenu": [0x00, 0x00,0x00],
-        "Map": [0x37ae, 0x00,0x00],
-        "MapTop": [0x62B2, 0x128,0x00],
-        "MapBottom": [0x6951,0x128, 0x3d],
-        "MapHead": [0x696a,0x200, 0x04],
-        "jiemeng": [0x6a18,0x138, 0x48],
-        "Transit": [0x731f,0x138, 0x48],
-        "SendFood": [0x7bec,0x138, 0x48],
-        "Letter": [0x85f0,0x1c0, 0x44],
-        "SomeWeather": [0x881f,0x1f0, 0x28],
-        "Sunny": [0x8990, 0x1f0, 0x28],
-        "Cloud": [0x8b44, 0x1f0, 0x28],
-        "Rain": [0x8d2a, 0x1f0, 0x28],
-        "WarMenu": [0x8f52,0x1a0, 0x0],
+        "MainMenu": [0x00, 0x00, 0x00],
+        "Map": [0x37AE, 0x00, 0x00],
+        "MapTop": [0x62B2, 0x128, 0x00],
+        "MapBottom": [0x6951, 0x128, 0x3D],
+        "MapHead": [0x696A, 0x200, 0x04],
+        "jiemeng": [0x6A18, 0x138, 0x48],
+        "Transit": [0x731F, 0x138, 0x48],
+        "SendFood": [0x7BEC, 0x138, 0x48],
+        "Letter": [0x85F0, 0x1C0, 0x44],
+        "SomeWeather": [0x881F, 0x1F0, 0x28],
+        "Sunny": [0x8990, 0x1F0, 0x28],
+        "Cloud": [0x8B44, 0x1F0, 0x28],
+        "Rain": [0x8D2A, 0x1F0, 0x28],
+        "WarMenu": [0x8F52, 0x1A0, 0x0],
     }
 
     @staticmethod
@@ -240,5 +256,3 @@ class Data(object):
     def SetWordToOffset(buf, word, offset):
         buf[offset + 1] = word >> 8
         buf[offset + 0] = word % 256
-
-

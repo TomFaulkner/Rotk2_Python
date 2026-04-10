@@ -7,7 +7,11 @@ from typing import TYPE_CHECKING
 
 import pygame
 
-from map_geometry import ProvinceShape, ProvinceShapeManager
+try:
+    from .map_geometry import ProvinceShape, ProvinceShapeManager
+except ImportError:
+    # Fallback for direct execution
+    from map_geometry import ProvinceShape, ProvinceShapeManager
 
 if TYPE_CHECKING:
     from UI.core.transform import Transform

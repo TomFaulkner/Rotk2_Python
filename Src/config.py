@@ -23,6 +23,13 @@ class RiceDepletionMode(str, Enum):
     DESERTION = "desertion"  # Alternative - 15% troop desertion
 
 
+class UIMode(str, Enum):
+    """UI mode for the game."""
+
+    CLASSIC = "classic"  # Original DOS CGA-style UI
+    MODERN = "modern"  # New Steam Deck optimized UI
+
+
 class BattleSettings(BaseSettings):
     """
     Battle system configuration settings.
@@ -37,6 +44,10 @@ class BattleSettings(BaseSettings):
         case_sensitive=False,
         extra="ignore",  # Allow extra env vars without errors
     )
+
+    # UI mode setting (controls which UI system to use)
+    ui_mode: UIMode = UIMode.MODERN
+    """UI mode: 'classic' (DOS-style) or 'modern' (Steam Deck optimized)"""
 
     # Language setting
     language: Language = Language.CHINESE
@@ -101,3 +112,5 @@ RICE_DEPLETION_RETREAT = RiceDepletionMode.FORCE_RETREAT
 RICE_DEPLETION_DESERTION = RiceDepletionMode.DESERTION
 LANGUAGE_CHINESE = Language.CHINESE
 LANGUAGE_ENGLISH = Language.ENGLISH
+UI_MODE_CLASSIC = UIMode.CLASSIC
+UI_MODE_MODERN = UIMode.MODERN

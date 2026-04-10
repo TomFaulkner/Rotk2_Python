@@ -72,19 +72,37 @@ class GamepadHandler:
         self._init_joystick()
 
     def _init_joystick(self) -> None:
-        """Initialize joystick if available."""
+        """Initialize joystick if available and it's a valid gamepad."""
         pygame.joystick.init()
 
-        if pygame.joystick.get_count() > 0:
+        # Find first valid gamepad (not macropad/keyboard)
+        for i in range(pygame.joystick.get_count()):
             try:
-                self.joystick = pygame.joystick.Joystick(0)
-                self.joystick.init()
-                print(f"Gamepad connected: {self.joystick.get_name()}")
+                candidate = pygame.joystick.Joystick(i)
+                candidate.init()
+
+                # Filter: valid gamepads have at least 4 axes (2 analog sticks) and 8+ buttons
+                num_axes = candidate.get_numaxes()
+                num_buttons = candidate.get_numbuttons()
+                name = candidate.get_name()
+
+                if num_axes >= 4 and num_buttons >= 8:
+                    # This looks like a real gamepad
+                    self.joystick = candidate
+                    print(f"Gamepad connected: {name} (axes={num_axes}, buttons={num_buttons})")
+                    return
+                else:
+                    # Skip non-gamepad devices (macropads, keyboards, etc.)
+                    print(
+                        f"Skipping non-gamepad device: {name} (axes={num_axes}, buttons={num_buttons})"
+                    )
+                    candidate.quit()
+
             except pygame.error as e:
-                print(f"Failed to initialize joystick: {e}")
-                self.joystick = None
-        else:
-            print("No gamepad detected")
+                print(f"Failed to initialize joystick {i}: {e}")
+                continue
+
+        print("No valid gamepad detected")
 
     def _get_button_edge(self, button_id: int) -> bool:
         """
@@ -123,24 +141,26 @@ class GamepadHandler:
 
         try:
             # === ONE-SHOT BUTTONS (debounced, trigger once per press) ===
-            # Face buttons (Xbox layout)
-            if self._get_button_edge(0):  # A
+            # Face buttons (Xbox layout) - with bounds checking
+            num_buttons = self.joystick.get_numbuttons()
+
+            if num_buttons > 0 and self._get_button_edge(0):  # A
                 pressed.append(GamepadButton.A)
-            if self._get_button_edge(1):  # B
+            if num_buttons > 1 and self._get_button_edge(1):  # B
                 pressed.append(GamepadButton.B)
-            if self._get_button_edge(2):  # X
+            if num_buttons > 2 and self._get_button_edge(2):  # X
                 pressed.append(GamepadButton.X)
-            if self._get_button_edge(3):  # Y
+            if num_buttons > 3 and self._get_button_edge(3):  # Y
                 pressed.append(GamepadButton.Y)
 
             # Bumpers and menu buttons
-            if self._get_button_edge(4):  # LB
+            if num_buttons > 4 and self._get_button_edge(4):  # LB
                 pressed.append(GamepadButton.LB)
-            if self._get_button_edge(5):  # RB
+            if num_buttons > 5 and self._get_button_edge(5):  # RB
                 pressed.append(GamepadButton.RB)
-            if self._get_button_edge(6):  # Back/Select
+            if num_buttons > 6 and self._get_button_edge(6):  # Back/Select
                 pressed.append(GamepadButton.SELECT)
-            if self._get_button_edge(7):  # Start
+            if num_buttons > 7 and self._get_button_edge(7):  # Start
                 pressed.append(GamepadButton.START)
 
             # === NAVIGATION (D-Pad and Stick with cooldown) ===
@@ -148,43 +168,47 @@ class GamepadHandler:
             if self._navigation_cooldown > 0:
                 self._navigation_cooldown -= dt
 
-            # Check D-Pad hat
-            hat = self.joystick.get_hat(0)
+            # Check D-Pad hat (with bounds checking)
             dpad_pressed = False
+            num_hats = self.joystick.get_numhats()
 
-            # Check if any D-pad direction is pressed
-            if hat[1] != 0 or hat[0] != 0:
-                # D-pad is being held
-                if self._navigation_cooldown <= 0:
-                    # Time to trigger
-                    if hat[1] > 0:
-                        pressed.append(GamepadButton.DPAD_UP)
-                    elif hat[1] < 0:
-                        pressed.append(GamepadButton.DPAD_DOWN)
+            if num_hats > 0:
+                hat = self.joystick.get_hat(0)
 
-                    if hat[0] < 0:
-                        pressed.append(GamepadButton.DPAD_LEFT)
-                    elif hat[0] > 0:
-                        pressed.append(GamepadButton.DPAD_RIGHT)
+                # Check if any D-pad direction is pressed
+                if hat[1] != 0 or hat[0] != 0:
+                    # D-pad is being held
+                    if self._navigation_cooldown <= 0:
+                        # Time to trigger
+                        if hat[1] > 0:
+                            pressed.append(GamepadButton.DPAD_UP)
+                        elif hat[1] < 0:
+                            pressed.append(GamepadButton.DPAD_DOWN)
 
-                    dpad_pressed = True
+                        if hat[0] < 0:
+                            pressed.append(GamepadButton.DPAD_LEFT)
+                        elif hat[0] > 0:
+                            pressed.append(GamepadButton.DPAD_RIGHT)
 
-                    # Set cooldown - use initial delay for first press, then repeat rate
-                    if not self._is_repeating:
-                        self._navigation_cooldown = self._initial_cooldown
-                        self._is_repeating = True
-                    else:
-                        self._navigation_cooldown = self._repeat_cooldown
+                        dpad_pressed = True
 
-                # Store state for edge detection
-                self._prev_hat_state = hat
-            else:
-                # D-pad released - reset repeat state
-                self._is_repeating = False
-                self._prev_hat_state = (0, 0)
+                        # Set cooldown - use initial delay for first press, then repeat rate
+                        if not self._is_repeating:
+                            self._navigation_cooldown = self._initial_cooldown
+                            self._is_repeating = True
+                        else:
+                            self._navigation_cooldown = self._repeat_cooldown
 
-            # Check analog stick (only if D-pad not being used)
-            if not dpad_pressed:
+                    # Store state for edge detection
+                    self._prev_hat_state = hat
+                else:
+                    # D-pad released - reset repeat state
+                    self._is_repeating = False
+                    self._prev_hat_state = (0, 0)
+
+            # Check analog stick (only if D-pad not being used) - with bounds checking
+            num_axes = self.joystick.get_numaxes()
+            if not dpad_pressed and num_axes >= 2:
                 axis_x = self.joystick.get_axis(0)
                 axis_y = self.joystick.get_axis(1)
 

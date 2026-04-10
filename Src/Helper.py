@@ -118,6 +118,10 @@ class Helper(object):
         if b == 0:
             return 0, 0, 0
         else:
+            # Defensive: ensure palette index is valid
+            if not Helper.Palettes or palette_no >= len(Helper.Palettes):
+                # Fallback to white if palette not initialized
+                return 0xFF, 0xFF, 0xFF
             return (
                 Helper.Palettes[palette_no].r,
                 Helper.Palettes[palette_no].g,
@@ -160,9 +164,7 @@ class Helper(object):
     ):
         row_height = 31
 
-        bmp = Helper.DrawText(
-            prompt, back_color=back_color, scaled=True, palette_no=palette_no
-        )
+        bmp = Helper.DrawText(prompt, back_color=back_color, scaled=True, palette_no=palette_no)
         pygame.draw.rect(
             Helper.Screen,
             back_color,
@@ -173,9 +175,7 @@ class Helper(object):
                 bmp.get_height(),
             ),
         )
-        Helper.Screen.blit(
-            bmp, (x * Helper.Scale, (y + row_height * row) * Helper.Scale)
-        )
+        Helper.Screen.blit(bmp, (x * Helper.Scale, (y + row_height * row) * Helper.Scale))
         cursor_x = bmp.get_width() + x * Helper.Scale
         cursor_y = (y + row_height * row) * Helper.Scale
 
@@ -197,9 +197,7 @@ class Helper(object):
                     bmp.get_height(),
                 ),
             )
-            Helper.Screen.blit(
-                bmp, (x * Helper.Scale, (y + row_height * (row + 1)) * Helper.Scale)
-            )
+            Helper.Screen.blit(bmp, (x * Helper.Scale, (y + row_height * (row + 1)) * Helper.Scale))
 
         pygame.display.flip()
 
@@ -212,9 +210,7 @@ class Helper(object):
                 if event.type == pygame.QUIT:
                     sys.exit()
                 if event.type == Helper.Event_CursorShining:
-                    Helper.CursorShining(
-                        "".join(input), cursor_x, cursor_y, back_color, palette_no
-                    )
+                    Helper.CursorShining("".join(input), cursor_x, cursor_y, back_color, palette_no)
                 if event.type == pygame.KEYDOWN and keydown_mode is True:
                     return Helper.GetChar(event.key).lower().strip()
                 if event.type == pygame.KEYUP:
@@ -256,17 +252,11 @@ class Helper(object):
                                 continue
                         if max_chars > 0 and len(input) < max_chars:
                             input.append(Helper.GetChar(event.key))
-                    Helper.CursorShining(
-                        "".join(input), cursor_x, cursor_y, back_color, palette_no
-                    )
+                    Helper.CursorShining("".join(input), cursor_x, cursor_y, back_color, palette_no)
 
     @staticmethod
     def GetChar(key: int):
-        if (
-            (key >= 48 and key <= 57)
-            or (key >= 65 and key <= 90)
-            or (key >= 97 and key <= 122)
-        ):
+        if (key >= 48 and key <= 57) or (key >= 65 and key <= 90) or (key >= 97 and key <= 122):
             return chr(key)
         else:
             return ""
@@ -417,14 +407,10 @@ class Helper(object):
 
                     name.append(text[i])
 
-                buf.append(
-                    Helper.DrawWordInternal(int("".join(name)), back_color, palette_no)
-                )
+                buf.append(Helper.DrawWordInternal(int("".join(name)), back_color, palette_no))
                 i += 1
             else:
-                buf.append(
-                    Helper.DrawCharacterInternal(text[i], back_color, palette_no)
-                )
+                buf.append(Helper.DrawCharacterInternal(text[i], back_color, palette_no))
                 i += 1
 
         width = 0
@@ -487,9 +473,7 @@ class Helper(object):
         return chinese_text
 
     @staticmethod
-    def ShowDelayedText(
-        text, palette_no=6, wait_time=1000, top=360, clear_input_area=True
-    ):
+    def ShowDelayedText(text, palette_no=6, wait_time=1000, top=360, clear_input_area=True):
         if clear_input_area is True:
             Helper.ClearInputArea()
         img = Helper.DrawText(text, palette_no=palette_no, scaled=True)
@@ -558,9 +542,7 @@ class Helper(object):
         return chinese_text
 
     @staticmethod
-    def ShowCommandsInInputArea(
-        commands, cols, palette_no=1, width=90, commands_color=[], top=0
-    ):
+    def ShowCommandsInInputArea(commands, cols, palette_no=1, width=90, commands_color=[], top=0):
         bmp = pygame.Surface((330, 93))
         bmp.fill((0, 0, 0))
 
@@ -599,12 +581,8 @@ class Helper(object):
         bmp = pygame.Surface((330, 160))
         bmp.fill((0, 0, 0))
 
-        col1 = Helper.DrawText(
-            Helper.GetBuiltinText(0x3FF2, 0x3FF5), (0, 0, 0), palette_no=3
-        )
-        col2 = Helper.DrawText(
-            Helper.GetBuiltinText(0x3FF9, 0x3FFD), (0, 0, 0), palette_no=3
-        )
+        col1 = Helper.DrawText(Helper.GetBuiltinText(0x3FF2, 0x3FF5), (0, 0, 0), palette_no=3)
+        col2 = Helper.DrawText(Helper.GetBuiltinText(0x3FF9, 0x3FFD), (0, 0, 0), palette_no=3)
 
         col3 = None
         if show_flag != ShowOfficerFlag.Empty:
@@ -684,9 +662,7 @@ class Helper(object):
     def CursorShining(prompt, cursor_x, cursor_y, back_color=(0, 0, 0), palette_no=7):
         cursor_background = {True: (255, 255, 255), False: (0, 0, 0)}
 
-        bmp = Helper.DrawText(
-            prompt, scaled=True, back_color=back_color, palette_no=palette_no
-        )
+        bmp = Helper.DrawText(prompt, scaled=True, back_color=back_color, palette_no=palette_no)
         pygame.draw.rect(
             Helper.Screen,
             back_color,
@@ -793,18 +769,14 @@ class Helper(object):
 
     @staticmethod
     def GetProvinceName(prov_no, without_no=False):
-        prov_name_index = (
-            Data.PROVINCE_START + Data.PROVINCE_SIZE * (prov_no - 1) + 0x22
-        )
+        prov_name_index = Data.PROVINCE_START + Data.PROVINCE_SIZE * (prov_no - 1) + 0x22
 
         name_list = []
         for i in range(0, 14):
             name_list.append(Helper.GetBuiltinText(0x4520 + 6 * i))
 
         if without_no is True:
-            prov_name = name_list[Data.BUF[prov_name_index]] + Helper.GetBuiltinText(
-                0x6309, 0x630A
-            )
+            prov_name = name_list[Data.BUF[prov_name_index]] + Helper.GetBuiltinText(0x6309, 0x630A)
         else:
             prov_name = (
                 name_list[Data.BUF[prov_name_index]]
@@ -818,9 +790,7 @@ class Helper(object):
     @staticmethod
     def GetProvinceNameImage(prov_no):
         prov_name = Helper.GetProvinceName(prov_no)
-        prov_name_bmp = Helper.DrawText(
-            prov_name, back_color=(255, 255, 255), palette_no=0
-        )
+        prov_name_bmp = Helper.DrawText(prov_name, back_color=(255, 255, 255), palette_no=0)
         return prov_name_bmp
 
     @staticmethod
@@ -854,38 +824,24 @@ class Helper(object):
         bmp.blit(officer_bmp, (60, 70))
 
         ruler_offset = Data.RULER_START + Data.RULER_SIZE * (ruler_no - 0)
-        ruler_province_offset = (
-            Data.BUF[(ruler_offset + 3)] * 256 + Data.BUF[ruler_offset + 2]
-        )
-        ruler_as_general_offset = (
-            Data.BUF[(ruler_offset + 1)] * 256 + Data.BUF[ruler_offset]
-        )
+        ruler_province_offset = Data.BUF[(ruler_offset + 3)] * 256 + Data.BUF[ruler_offset + 2]
+        ruler_as_general_offset = Data.BUF[(ruler_offset + 1)] * 256 + Data.BUF[ruler_offset]
 
         ruler_name_data = Officer.FromOffset(ruler_as_general_offset).GetName()
-        ruler_name_bmp = Helper.DrawText(
-            ruler_name_data, back_color=(255, 255, 255), palette_no=0
-        )
+        ruler_name_bmp = Helper.DrawText(ruler_name_data, back_color=(255, 255, 255), palette_no=0)
         bmp.blit(ruler_name_bmp, (105, 20))
 
         ruler_trust = Data.BUF[ruler_offset + 0x06]
         trust_text = Helper.GetBuiltinText(0x67D2).replace("%3d", str(ruler_trust))
-        trust_bmp = Helper.DrawText(
-            trust_text, back_color=(255, 255, 255), palette_no=0
-        )
+        trust_bmp = Helper.DrawText(trust_text, back_color=(255, 255, 255), palette_no=0)
         bmp.blit(trust_bmp, (152, 20))
-        officer_offset = (
-            Data.BUF[(province_offset + 3)] * 256 + Data.BUF[province_offset + 2]
-        )
+        officer_offset = Data.BUF[(province_offset + 3)] * 256 + Data.BUF[province_offset + 2]
         officer_name_data = Officer.FromOffset(officer_offset).GetName()
-        officer_bmp = Helper.DrawText(
-            officer_name_data, back_color=(255, 255, 255), palette_no=0
-        )
+        officer_bmp = Helper.DrawText(officer_name_data, back_color=(255, 255, 255), palette_no=0)
         bmp.blit(officer_bmp, (105, 70))
 
         bmp.blit(Helper.head_picture, (250, 0))
-        portrait = (
-            Data.BUF[officer_offset + 0x1B] * 256 + Data.BUF[officer_offset + 0x1A] - 1
-        )
+        portrait = Data.BUF[officer_offset + 0x1B] * 256 + Data.BUF[officer_offset + 0x1A] - 1
         face = Helper.GetFace(portrait)
         bmp.blit(face, (259, 14))
 
@@ -1069,9 +1025,7 @@ class Helper(object):
         onlines = Helper.DrawText(Helper.GetBuiltinText(0x6288, 0x628F), palette_no=6)
         onlines_num = Helper.DrawText(str(len(p.GetOfficerList())), palette_no=7)
         offlines = Helper.DrawText(Helper.GetBuiltinText(0x62C4, 0x62CB), palette_no=6)
-        offlines_num = Helper.DrawText(
-            str(len(p.GetUnclaimedOfficerList())), palette_no=7
-        )
+        offlines_num = Helper.DrawText(str(len(p.GetUnclaimedOfficerList())), palette_no=7)
 
         gold = Helper.DrawText(Helper.GetBuiltinText(0x7C37), palette_no=3)
         gold_num = Data.BUF[(province_offset + 9)] * 256 + Data.BUF[province_offset + 8]
@@ -1089,14 +1043,10 @@ class Helper(object):
         )
         food_bmp = Helper.DrawText(str(food_num), palette_no=7)
 
-        rice_price = Helper.DrawText(
-            Helper.GetBuiltinText(0x629E, 0x62A1), palette_no=3
-        )
+        rice_price = Helper.DrawText(Helper.GetBuiltinText(0x629E, 0x62A1), palette_no=3)
         rice_price_value = Data.BUF[(province_offset + 0x1B)]
         rice_price_bmp = Helper.DrawText(str(rice_price_value), palette_no=7)
-        horse = Helper.DrawText(
-            Helper.GetBuiltinText(0x62DA, 0x62DD), palette_no=3, scaled=False
-        )
+        horse = Helper.DrawText(Helper.GetBuiltinText(0x62DA, 0x62DD), palette_no=3, scaled=False)
         horse_value = Data.BUF[(province_offset + 0x19)]
         horse_bmp = Helper.DrawText(str(horse_value), palette_no=7)
 
@@ -1416,8 +1366,7 @@ class Helper(object):
                 header.blit(
                     name_list[i],
                     (
-                        x_list[i]
-                        + (x_list[i + 1] - x_list[i] - name_list[i].get_width()) / 2,
+                        x_list[i] + (x_list[i + 1] - x_list[i] - name_list[i].get_width()) / 2,
                         8,
                     ),
                 )
@@ -1426,8 +1375,7 @@ class Helper(object):
                     name_list[i],
                     (
                         x_list[len(name_list) - 1]
-                        + (335 - x_list[len(name_list) - 1] - name_list[i].get_width())
-                        / 2,
+                        + (335 - x_list[len(name_list) - 1] - name_list[i].get_width()) / 2,
                         8,
                     ),
                 )
@@ -1478,21 +1426,15 @@ class Helper(object):
                     height + 2,
                 ),
             )
-            huangjin = Helper.DrawText(
-                str(province.Gold), scaled=False, palette_no=palette_no
-            )
+            huangjin = Helper.DrawText(str(province.Gold), scaled=False, palette_no=palette_no)
             body.blit(huangjin, (x_list[3] - huangjin.get_width() - 3, height + 2))
-            liangshi = Helper.DrawText(
-                str(province.Food), scaled=False, palette_no=palette_no
-            )
+            liangshi = Helper.DrawText(str(province.Food), scaled=False, palette_no=palette_no)
             body.blit(liangshi, (x_list[4] - liangshi.get_width() - 3, height + 2))
             shibing = Helper.DrawText(
                 str(province.GetSoldiers()), scaled=False, palette_no=palette_no
             )
             body.blit(shibing, (x_list[5] - shibing.get_width() - 3, height + 2))
-            zhongcheng = Helper.DrawText(
-                str(province.Loyalty), scaled=False, palette_no=palette_no
-            )
+            zhongcheng = Helper.DrawText(str(province.Loyalty), scaled=False, palette_no=palette_no)
             body.blit(zhongcheng, (x_list[6] - zhongcheng.get_width() - 3, height + 2))
             jiangling = Helper.DrawText(
                 str(len(province.GetOfficerList())), scaled=False, palette_no=palette_no
@@ -1538,9 +1480,7 @@ class Helper(object):
         while current > 0:
             next = Data.GetWordFromOffset(Data.BUF, current)
             if next == offset:
-                Data.SetWordToOffset(
-                    Data.BUF, Data.GetWordFromOffset(Data.BUF, next), current
-                )
+                Data.SetWordToOffset(Data.BUF, Data.GetWordFromOffset(Data.BUF, next), current)
                 Data.SetWordToOffset(Data.BUF, 0, next)
                 return
 
@@ -1606,9 +1546,7 @@ class Helper(object):
             magic = 0
 
             for province in Province.GetListByRulerNo(ruler.No):
-                magic += len(province.GetOfficerList()) * 100 + int(
-                    province.Soldiers / 100
-                )
+                magic += len(province.GetOfficerList()) * 100 + int(province.Soldiers / 100)
 
             Data.BUF[ruler.Offset + 0x0C] = magic % 256
             Data.BUF[ruler.Offset + 0x0D] = int(magic / 256)

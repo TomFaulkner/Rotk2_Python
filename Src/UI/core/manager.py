@@ -172,7 +172,17 @@ class UIManager:
 
         # Handle keyboard navigation
         if event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_UP:
+            # Check if current screen handles its own navigation
+            screen_handles_navigation = (
+                self.current_screen
+                and hasattr(self.current_screen, "handles_own_navigation")
+                and self.current_screen.handles_own_navigation
+            )
+
+            if screen_handles_navigation:
+                # Let screen handle navigation
+                pass
+            elif event.key == pygame.K_UP:
                 self.move_focus("up")
                 return True
             elif event.key == pygame.K_DOWN:
@@ -190,20 +200,6 @@ class UIManager:
                     if self.current_screen.close_submenu():
                         return True
                 return False  # Let caller handle exit
-            elif event.key in (pygame.K_RETURN, pygame.K_SPACE):
-                # Activate focused component
-                if self.focused_component and hasattr(self.focused_component, "on_click"):
-                    self.focused_component.on_click()
-                return True
-            elif event.key == pygame.K_DOWN:
-                self.move_focus("down")
-                return True
-            elif event.key == pygame.K_LEFT:
-                self.move_focus("left")
-                return True
-            elif event.key == pygame.K_RIGHT:
-                self.move_focus("right")
-                return True
             elif event.key in (pygame.K_RETURN, pygame.K_SPACE):
                 # Activate focused component
                 if self.focused_component and hasattr(self.focused_component, "on_click"):
