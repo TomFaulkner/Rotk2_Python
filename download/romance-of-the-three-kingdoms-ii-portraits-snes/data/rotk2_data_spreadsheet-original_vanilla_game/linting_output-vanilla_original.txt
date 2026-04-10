@@ -1,0 +1,17 @@
+
+Validation messages:
+
+
+Invalidity messages for later chain - scenario code 0:
+Failed condition: officer['active_date'] >= prevOfficer['active_date'] Officer number: 280; Position within chain: 111; Active date code: 203;
+
+Invalidity messages for later chain - scenario code 2:
+Failed condition: officer['active_date'] >= prevOfficer['active_date'] Officer number: 215; Position within chain: 2; Active date code: 192;
+Failed condition: officer['active_date'] >= prevOfficer['active_date'] Officer number: 194; Position within chain: 5; Active date code: 192;
+Failed condition: officer['active_date'] >= prevOfficer['active_date'] Officer number: 207; Position within chain: 7; Active date code: 191;
+
+Invalidity messages for later chain - scenario code 3:
+Failed condition: officer['active_date'] >= prevOfficer['active_date'] Officer number: 303; Position within chain: 2; Active date code: 205;
+Failed condition: officer['active_date'] >= prevOfficer['active_date'] Officer number: 215; Position within chain: 3; Active date code: 192;
+
+
