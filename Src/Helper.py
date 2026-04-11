@@ -840,6 +840,10 @@ class Helper(object):
         officer_bmp = Helper.DrawText(officer_name_data, back_color=(255, 255, 255), palette_no=0)
         bmp.blit(officer_bmp, (105, 70))
 
+        if Helper.head_picture is None:
+            Helper.head_picture = pygame.Surface((82, 105))
+            Helper.head_picture.fill((255, 255, 255))
+
         bmp.blit(Helper.head_picture, (250, 0))
         portrait = Data.BUF[officer_offset + 0x1B] * 256 + Data.BUF[officer_offset + 0x1A] - 1
         face = Helper.GetFace(portrait)

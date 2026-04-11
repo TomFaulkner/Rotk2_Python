@@ -1,6 +1,7 @@
 import os.path
 
 from Data import Data
+from game_start import initialize_new_game_state, load_scenario_into_buffer, mark_player_ruler
 import pygame, sys
 from Helper import Helper, Province, Officer, Ruler
 
@@ -330,10 +331,7 @@ class MainMenu(object):
             return -1
 
         self.scenario_no = no - 1
-        total_bytes = 0x33F0 - 0x42  # debug.exe 1411:68 call 76c:25e
-        Data.BUF[0x42 : 0x42 + total_bytes] = Data.SCENARIO[
-            self.scenario_no * 0x33AF : self.scenario_no * 0x33AF + total_bytes
-        ]
+        load_scenario_into_buffer(self.scenario_no)
         # rulers number in six generations: 0c 0c 09 0b 05 05
         # stored in dsbuf:4ce8 offset
         # dsbuf:4cee, current scenerio number(from 0)
@@ -418,9 +416,9 @@ class MainMenu(object):
             player_list.append(ruler_no - 1)
 
             if limit[self.scenario_no] == ruler_no:
-                Data.BUF[0x3360 + 0x0F] = len(player_list)
+                mark_player_ruler(0x0F, len(player_list))
             else:
-                Data.BUF[0x3360 + ruler_no - 1] = len(player_list)
+                mark_player_ruler(ruler_no - 1, len(player_list))
             img = self.NewGameSelectRuler(self.scenario_no, page, player_list)
             Helper.Screen.blit(img, (295 * Helper.Scale, 5 * Helper.Scale))
 
@@ -598,40 +596,7 @@ class MainMenu(object):
             else:
                 break
 
-        year = Data.BUF[0x45] * 256 + Data.BUF[0x44]
-        Data.BUF[0x44] = (year + 1) % 256  # new year
-        Data.BUF[0x45] = int((year + 1) / 256)  # new year
-        Data.BUF[0x46] = 0  # 1st month of new year
-
-        for i in range(0, 16):
-            if Data.BUF[0x3360 + i] == 1:
-                break
-
-        off = Data.RULER_START + i * Data.RULER_SIZE
-
-        Data.BUF[0x335A + Data.DATA_OFFSET] = 0  # start from 0
-        Data.BUF[0x335C + Data.DATA_OFFSET] = off % 256
-        Data.BUF[0x335D + Data.DATA_OFFSET] = int(off / 256)
-
-        off2 = Data.BUF[off + 1] * 256 + Data.BUF[off]
-        Data.BUF[0x335E + Data.DATA_OFFSET] = off2 % 256
-        Data.BUF[0x335F + Data.DATA_OFFSET] = int(off2 / 256)
-
-        off3 = Data.BUF[off + 3] * 256 + Data.BUF[off + 2]
-        Data.BUF[0x3362 + Data.DATA_OFFSET] = off3 % 256
-        Data.BUF[0x3363 + Data.DATA_OFFSET] = int(off3 / 256)
-
-        Data.BUF[0x337B + Data.DATA_OFFSET] = self.level
-        option = 0x0
-        option |= self.seewar
-        if self.history == 1:
-            option |= 0x80
-
-        Data.BUF[0x337C + Data.DATA_OFFSET] = option
-        Data.BUF[0x337D + Data.DATA_OFFSET] = 5
-        Data.BUF[0x337E + Data.DATA_OFFSET] = 4
-
-        Helper.MainMap = Helper.GetMap()
+        initialize_new_game_state(self.level, self.seewar, self.history)
 
         return "OK"
 

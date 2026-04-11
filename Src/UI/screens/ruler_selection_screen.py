@@ -37,12 +37,18 @@ Layout:
 
 from __future__ import annotations
 
+from dataclasses import dataclass
 import sys
 from collections.abc import Callable
 from pathlib import Path
 from typing import TYPE_CHECKING
 
 import pygame
+
+from Officer import Officer
+from Province import Province
+from Ruler import Ruler
+from officer_display import get_officer_display_name
 
 sys.path.insert(0, str(Path(__file__).parent.parent.parent))
 
@@ -60,16 +66,17 @@ if TYPE_CHECKING:
     pass
 
 
-class RulerSelectionScreen(UIContainer):
-    """
-    Ruler selection screen with full-screen map and popup overlay.
+@dataclass
+class RulerSelectionResult:
+    """Structured result returned from the ruler selection screen."""
 
-    Features:
-    - Full-screen interactive world map
-    - Click to select OR keyboard/gamepad navigation
-    - Popup overlay with ruler info
-    - Navigate provinces with arrows/D-pad
-    """
+    province_no: int
+    ruler_no: int
+    ruler_name: str
+
+
+class RulerSelectionScreen(UIContainer):
+    """Ruler selection screen with full-screen map and popup overlay."""
 
     # Tell UIManager we handle our own keyboard/gamepad navigation
     handles_own_navigation = True
@@ -90,31 +97,6 @@ class RulerSelectionScreen(UIContainer):
     HIGHLIGHT_COLOR = (100, 200, 100)
     HIGHLIGHT_BORDER = (255, 255, 100)
 
-    # Sample ruler bios
-    RULER_BIOS = {
-        "Cao Cao": "The cunning warlord who would unite northern China. Known for his strategic brilliance and ruthless efficiency.",
-        "Liu Bei": "A virtuous leader who claims descent from the imperial Han. His charisma attracts loyal heroes like Guan Yu and Zhang Fei.",
-        "Sun Quan": "The young ruler of Wu, inheriting a strong foundation. He commands the rich Yangtze River region and powerful navy.",
-        "Yuan Shao": "The powerful northern warlord with the largest territory. His indecisiveness belies his massive military strength.",
-        "Dong Zhuo": "The tyrant who seized control of Luoyang and the Emperor. His cruelty sparked the coalition against him.",
-        "Ma Teng": "The western warlord commanding the cavalry of Liang province. A fierce warrior loyal to the Han dynasty.",
-        "Liu Biao": "The scholarly governor of Jing province. His territory is prosperous but his indecision leaves him vulnerable.",
-        "Liu Zhang": "The weak ruler of Yi province. His land is rich and defensible, but he lacks military ambition.",
-    }
-
-    # Ruler name to officer ID mapping (for portrait loading)
-    # Based on portrait_mapping.json
-    RULER_OFFICER_IDS = {
-        "Cao Cao": 0,
-        "Liu Bei": 1,
-        "Sun Quan": 220,
-        "Yuan Shao": 3,
-        "Dong Zhuo": 8,
-        "Ma Teng": 5,
-        "Liu Biao": 7,
-        "Liu Zhang": 18,
-    }
-
     def __init__(self):
         """Initialize the ruler selection screen."""
         super().__init__(
@@ -126,10 +108,11 @@ class RulerSelectionScreen(UIContainer):
 
         self._selected_province: int | None = None
         self._selected_ruler: str | None = None
-        self._callback: Callable[[str | None], None] | None = None
+        self._selected_result: RulerSelectionResult | None = None
+        self._callback: Callable[[RulerSelectionResult | None], None] | None = None
         self._showing_popup: bool = False
 
-        self._playable_provinces: list[int] = list(range(1, 42))  # All 41 provinces
+        self._playable_provinces: list[int] = self._get_playable_provinces()
 
         # Focus management for popup
         self._popup_buttons: list[UIButton] = []
@@ -198,19 +181,35 @@ class RulerSelectionScreen(UIContainer):
             parent=self,
         )
 
-        sample_rulers = [
-            (1, 0, "Cao Cao"),
-            (2, 1, "Liu Bei"),
-            (3, 2, "Sun Quan"),
-            (4, 6, "Yuan Shao"),
-            (5, 3, "Dong Zhuo"),
-            (6, 7, "Ma Teng"),
-            (7, 9, "Liu Biao"),
-            (8, 12, "Liu Zhang"),
-        ]
+        for province in Province.GetList():
+            if province.RulerNo != 0xFF:
+                self._province_selector.map_renderer.set_province_ruler(
+                    province.No, province.RulerNo
+                )
 
-        for province_id, ruler_no, _ruler_name in sample_rulers:
-            self._province_selector.map_renderer.set_province_ruler(province_id, ruler_no)
+    def _get_playable_provinces(self) -> list[int]:
+        """Return provinces controlled by a ruler in the loaded scenario."""
+        return [province.No for province in Province.GetList() if province.RulerNo != 0xFF]
+
+    def _build_selection_result(self, province_id: int) -> RulerSelectionResult | None:
+        """Build real scenario selection data for the chosen province."""
+        province = Province.FromSequence(province_id)
+        if province.RulerNo == 0xFF:
+            return None
+
+        ruler = Ruler.FromNo(province.RulerNo)
+        if ruler is None or ruler.RulerSelf is None:
+            return None
+
+        return RulerSelectionResult(
+            province_no=province.No,
+            ruler_no=province.RulerNo,
+            ruler_name=self._get_display_name(ruler.RulerSelf),
+        )
+
+    def _get_display_name(self, officer: Officer) -> str:
+        """Get a display-safe officer name for the modern UI."""
+        return get_officer_display_name(officer)
 
     def _create_popup(self) -> None:
         """Create the ruler info popup (initially hidden)."""
@@ -356,14 +355,19 @@ class RulerSelectionScreen(UIContainer):
         if province_id is None:
             self._selected_province = None
             self._selected_ruler = None
+            self._selected_result = None
+            return
+
+        result = self._build_selection_result(province_id)
+        if result is None:
+            self._selected_province = None
+            self._selected_ruler = None
+            self._selected_result = None
             return
 
         self._selected_province = province_id
-
-        # Get ruler for this province
-        ruler_names = list(self.RULER_BIOS.keys())
-        ruler_idx = (province_id - 1) % len(ruler_names)
-        self._selected_ruler = ruler_names[ruler_idx]
+        self._selected_ruler = result.ruler_name
+        self._selected_result = result
 
     def _on_province_confirmed(self, province_id: int) -> None:
         """Show the ruler popup when the current province is confirmed."""
@@ -385,23 +389,35 @@ class RulerSelectionScreen(UIContainer):
         self._popup_ruler_name.text = self._selected_ruler
         self._popup_province.text = f"Province {self._selected_province}"
 
-        # Random stats for demo
-        import random
-
-        officers = random.randint(5, 20)
-        soldiers = random.randint(10000, 80000)
+        province = Province.FromSequence(self._selected_province)
+        officers = len(province.GetOfficerList())
+        soldiers = province.Soldiers
         self._popup_stats.text = f"Officers: {officers}\nSoldiers: {soldiers:,}"
 
-        # Bio
-        bio = self.RULER_BIOS.get(self._selected_ruler, "No biography available.")
+        bio = self._build_ruler_bio(province)
         self._popup_bio.text = bio
 
         # Load and display portrait
         self._update_portrait()
 
+    def _build_ruler_bio(self, province: Province) -> str:
+        """Build a lightweight real-data bio for the selected ruler."""
+        ruler = Ruler.FromNo(province.RulerNo)
+        governor = Officer.FromOffset(province.GovernorOffset)
+        if ruler is None or ruler.RulerSelf is None or governor is None:
+            return "No ruler information available."
+
+        trust = getattr(ruler, "TrustRating", 0)
+        return (
+            f"Ruler of province {province.No}. "
+            f"Governor: {self._get_display_name(governor)}. "
+            f"Trust: {trust}. "
+            f"Home province: {ruler.HomeCity.No if ruler.HomeCity else province.No}."
+        )
+
     def _update_portrait(self) -> None:
         """Load and display the ruler's portrait."""
-        if not self._selected_ruler or not self._portrait_loader:
+        if not self._selected_result or not self._portrait_loader:
             return
 
         # Remove existing portrait image if any
@@ -410,8 +426,12 @@ class RulerSelectionScreen(UIContainer):
                 self._popup.children.remove(self._portrait_image)
             self._portrait_image = None
 
-        # Get officer ID for this ruler
-        officer_id = self.RULER_OFFICER_IDS.get(self._selected_ruler, 0)
+        province = Province.FromSequence(self._selected_result.province_no)
+        governor = Officer.FromOffset(province.GovernorOffset)
+        if governor is None:
+            return
+
+        officer_id = (governor.Offset - Data.OFFICER_START) // Data.OFFICER_SIZE
 
         # Load portrait
         portrait_size = (100, 100)
@@ -452,9 +472,9 @@ class RulerSelectionScreen(UIContainer):
 
     def _on_confirm_selection(self) -> None:
         """Confirm ruler selection."""
-        if self._selected_ruler and self._callback:
+        if self._selected_result and self._callback:
             print(f"Confirmed ruler: {self._selected_ruler}")
-            self._callback(self._selected_ruler)
+            self._callback(self._selected_result)
 
     def _on_cancel_popup(self) -> None:
         """Cancel/hide popup."""
@@ -464,6 +484,9 @@ class RulerSelectionScreen(UIContainer):
     def _on_random(self) -> None:
         """Select random ruler."""
         import random
+
+        if not self._playable_provinces:
+            return
 
         province_id = random.choice(self._playable_provinces)
         manager = UIManager.get_instance()
@@ -479,13 +502,13 @@ class RulerSelectionScreen(UIContainer):
         if self._callback:
             self._callback(None)
 
-    def set_callback(self, callback: Callable[[str | None], None]) -> None:
+    def set_callback(self, callback: Callable[[RulerSelectionResult | None], None]) -> None:
         """Set callback for ruler selection."""
         self._callback = callback
 
-    def get_selected_ruler(self) -> str | None:
-        """Get the selected ruler name."""
-        return self._selected_ruler
+    def get_selected_ruler(self) -> RulerSelectionResult | None:
+        """Get the selected ruler result."""
+        return self._selected_result
 
     def handle_gamepad_button(self, button: GamepadButton) -> bool:
         """Handle gamepad input for province selection and popup navigation."""
@@ -611,11 +634,11 @@ def test_ruler_selection():
 
     selected_ruler = None
 
-    def on_select(ruler: str | None):
+    def on_select(ruler: RulerSelectionResult | None):
         nonlocal selected_ruler
         selected_ruler = ruler
         if ruler:
-            print(f"\n>>> Ruler selected: {ruler}")
+            print(f"\n>>> Ruler selected: {ruler.ruler_name}")
         else:
             print("\n>>> Back to scenario selection")
 

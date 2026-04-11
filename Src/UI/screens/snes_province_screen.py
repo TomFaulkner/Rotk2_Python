@@ -10,13 +10,16 @@ Layout similar to the SNES version with:
 
 from __future__ import annotations
 
+from collections.abc import Callable
 from typing import TYPE_CHECKING
 from pathlib import Path
 
 import pygame
 
+from officer_display import get_officer_display_name
 from UI.core.anchor import Anchor
 from UI.core.container import UIContainer
+from UI.core.manager import UIManager
 from UI.components.basic import UILabel, UIButton
 
 if TYPE_CHECKING:
@@ -123,14 +126,62 @@ class SnesProvinceScreen(UIContainer):
 
     # View submenu items
     VIEW_SUBMENU = [
+        ("Back", "back"),
         ("Other Province", "other_province"),
         ("General", "general"),
-        ("Summary 1", "summary1"),
-        ("Summary 2", "summary2"),
+        ("Summary", "summary"),
         ("Territory", "territory"),
     ]
 
-    def __init__(self, province: Province | None = None):
+    ARMY_SUBMENU = [
+        ("Army Overview", "army_overview"),
+        ("Training", "army_training"),
+        ("Recruit", "army_recruit"),
+    ]
+
+    PERSON_SUBMENU = [
+        ("Officer List", "person_officers"),
+        ("Awards", "person_awards"),
+        ("Search", "person_search"),
+    ]
+
+    INTERNAL_SUBMENU = [
+        ("Develop Land", "internal_land"),
+        ("Flood Control", "internal_flood"),
+        ("Give Food", "internal_loyalty"),
+    ]
+
+    MOVE_SUBMENU = [
+        ("Move Officers", "move_officers"),
+        ("Transport", "move_transport"),
+        ("Travel", "move_travel"),
+    ]
+
+    MENU_SUBMENUS = {
+        "view": VIEW_SUBMENU,
+        "army": ARMY_SUBMENU,
+        "person": PERSON_SUBMENU,
+        "internal": INTERNAL_SUBMENU,
+        "move": MOVE_SUBMENU,
+    }
+
+    DEFAULT_ENABLED_MENUS = {"view", "army", "person", "internal", "move"}
+
+    DEFAULT_ENABLED_SUBMENU_ACTIONS = {
+        "general",
+        "other_province",
+        "summary",
+        "territory",
+    }
+
+    def __init__(
+        self,
+        province: Province | None = None,
+        enabled_menus: set[str] | None = None,
+        enabled_submenu_actions: set[str] | None = None,
+        prompt_text: str | None = None,
+        on_back: Callable[[], None] | None = None,
+    ):
         """
         Initialize SNES-style province screen.
 
@@ -142,12 +193,33 @@ class SnesProvinceScreen(UIContainer):
         )
 
         self.province = province
+        self.enabled_menus = enabled_menus or self.DEFAULT_ENABLED_MENUS.copy()
+        self.enabled_submenu_actions = (
+            enabled_submenu_actions or self.DEFAULT_ENABLED_SUBMENU_ACTIONS.copy()
+        )
+        self._prompt_override = prompt_text
+        self._on_back_callback = on_back
         self.portrait_loader = SnesPortraitLoader()
         self._selected_menu: str | None = None
         self._submenu_container: UIContainer | None = None
         self._submenu_parent_button: UIButton | None = None
         self._menu_buttons: dict[str, UIButton] = {}
+        self._submenu_actions: dict[str, UIButton] = {}
+        self._menu_action_callback: Callable[[str], None] | None = None
         self._create_ui()
+        self._set_initial_focus()
+
+    def _set_initial_focus(self) -> None:
+        """Set initial focus to the first enabled top-level menu button."""
+        manager = UIManager.get_instance()
+        if not manager:
+            return
+
+        for action in self.MENUS_ROW1 + self.MENUS_ROW2:
+            button = self._menu_buttons.get(action[1])
+            if button and button.enabled:
+                manager.set_focus(button)
+                return
 
     def _create_ui(self) -> None:
         """Create the SNES-style UI layout."""
@@ -274,6 +346,11 @@ class SnesProvinceScreen(UIContainer):
                 on_click=lambda act=action: self._on_menu_click(act),
                 parent=self,
             )
+            if action not in self.enabled_menus:
+                btn.enabled = False
+                btn.normal_color = (45, 45, 55)
+                btn.hover_color = (45, 45, 55)
+                btn.text_color = (140, 140, 150)
             self._menu_buttons[action] = btn
 
         # Row 2
@@ -290,6 +367,11 @@ class SnesProvinceScreen(UIContainer):
                 on_click=lambda act=action: self._on_menu_click(act),
                 parent=self,
             )
+            if action not in self.enabled_menus:
+                btn.enabled = False
+                btn.normal_color = (45, 45, 55)
+                btn.hover_color = (45, 45, 55)
+                btn.text_color = (140, 140, 150)
             self._menu_buttons[action] = btn
 
     def _create_main_content(self) -> None:
@@ -441,7 +523,9 @@ class SnesProvinceScreen(UIContainer):
                 ruler_name = self._get_officer_display_name(ruler.RulerSelf)
 
         province_num = self.province.No if self.province else "?"
-        prompt_text = f"{ruler_name}, your orders for Province {province_num}?"
+        prompt_text = (
+            self._prompt_override or f"{ruler_name}, your orders for Province {province_num}?"
+        )
 
         prompt = UILabel(
             text=prompt_text,
@@ -509,29 +593,7 @@ class SnesProvinceScreen(UIContainer):
 
     def _get_officer_display_name(self, officer: Officer) -> str:
         """Get a displayable name for an officer (English only for UI)."""
-        if not officer:
-            return "Unknown"
-
-        try:
-            # Try to get English name directly
-            from Battle.officer_names import get_officer_name
-            from Data import Data
-
-            officer_id = (officer.Offset - Data.OFFICER_START) // Data.OFFICER_SIZE
-            english_name = get_officer_name(officer_id)
-
-            # If it's not the default "Officer_X" format, use it
-            if not english_name.startswith("Officer_"):
-                return english_name
-
-            # Fall back to any name attribute
-            if hasattr(officer, "Name") and officer.Name:
-                return officer.Name
-
-            return f"Officer {officer_id}"
-        except Exception:
-            # Last resort
-            return getattr(officer, "Name", "Unknown")
+        return get_officer_display_name(officer)
 
     def _get_ruler(self):
         """Get the ruler of this province."""
@@ -631,6 +693,7 @@ class SnesProvinceScreen(UIContainer):
         )
 
         # Add submenu buttons
+        self._submenu_actions.clear()
         first_button = None
         for i, (label, action) in enumerate(items):
             btn = UIButton(
@@ -643,8 +706,14 @@ class SnesProvinceScreen(UIContainer):
                 on_click=lambda act=action: self._on_submenu_click(act),
                 parent=self._submenu_container,
             )
-            if first_button is None:
+            if action not in self.enabled_submenu_actions:
+                btn.enabled = False
+                btn.normal_color = (45, 45, 55)
+                btn.hover_color = (45, 45, 55)
+                btn.text_color = (140, 140, 150)
+            if first_button is None and btn.enabled:
                 first_button = btn
+            self._submenu_actions[action] = btn
 
         # Move focus to first submenu item
         if first_button:
@@ -666,6 +735,11 @@ class SnesProvinceScreen(UIContainer):
                 if ui_manager:
                     ui_manager.set_focus(self._submenu_parent_button)
             return True
+
+        if self._on_back_callback:
+            self._on_back_callback()
+            return True
+
         return False
 
     def is_submenu_open(self) -> bool:
@@ -680,7 +754,9 @@ class SnesProvinceScreen(UIContainer):
 
     def _on_submenu_click(self, action: str) -> None:
         """Handle submenu item click."""
-        print(f"Submenu selected: {action}")
+        if action not in self.enabled_submenu_actions:
+            return
+
         self._hide_submenu()
         # Return focus to the parent button
         if self._submenu_parent_button:
@@ -690,41 +766,28 @@ class SnesProvinceScreen(UIContainer):
             if ui_manager:
                 ui_manager.set_focus(self._submenu_parent_button)
 
-        # Handle specific submenu actions
-        if action == "other_province":
-            print("View Other Province - TODO: Implement province selection")
-        elif action == "general":
-            print("View General - TODO: Show general info")
-        elif action == "summary1":
-            print("View Summary 1 - TODO: Show summary 1")
-        elif action == "summary2":
-            print("View Summary 2 - TODO: Show summary 2")
-        elif action == "territory":
-            print("View Territory - TODO: Show territory map")
+        if self._menu_action_callback:
+            self._menu_action_callback(action)
 
     def _on_menu_click(self, action: str) -> None:
         """Handle menu button click."""
+        if action not in self.enabled_menus:
+            return
+
         self._selected_menu = action
-        print(f"Menu selected: {action}")
 
         # Hide any existing submenu
         self._hide_submenu()
 
-        # Handle menu-specific actions
-        if action == "view":
-            # Show View submenu under the View button (position 80, 60 + button height)
-            self._show_submenu("view", self.VIEW_SUBMENU, 80, 115)
-        elif action == "army":
-            print("Army menu - TODO: Implement")
-        elif action == "person":
-            print("Person menu - TODO: Implement")
-        elif action == "trade":
-            print("Trade menu - TODO: Implement")
-        elif action == "internal":
-            print("Internal Affairs menu - TODO: Implement")
-        elif action == "diplomacy":
-            print("Diplomacy menu - TODO: Implement")
-        elif action == "espionage":
-            print("Espionage menu - TODO: Implement")
-        elif action == "move":
-            print("Move menu - TODO: Implement")
+        items = self.MENU_SUBMENUS.get(action)
+        button = self._menu_buttons.get(action)
+        if items and button:
+            self._show_submenu(action, items, button.rect.x, button.rect.y + 55)
+            return
+
+        if self._menu_action_callback:
+            self._menu_action_callback(action)
+
+    def set_action_callback(self, callback: Callable[[str], None]) -> None:
+        """Set callback for enabled menu and submenu actions."""
+        self._menu_action_callback = callback

@@ -62,6 +62,12 @@ from MainMenu import MainMenu
 
 # Import configuration
 from config import get_settings, UIMode
+from game_start import (
+    clear_player_rulers,
+    initialize_new_game_state,
+    load_scenario_into_buffer,
+    mark_player_ruler,
+)
 
 
 class KeyboardDrivenFramework(object):
@@ -210,10 +216,10 @@ class KeyboardDrivenFramework(object):
         if ret == -1:
             return
 
-        Helper.MainMap = Helper.GetMap()
+        self.run_game_loop()
 
-        # Helper.ShowMap(Province.GetActiveNo())
-
+    def run_game_loop(self):
+        """Run the classic in-game command loop using the current active state."""
         while True:
             cmd = (
                 Helper.GetBuiltinText(0x5CEB)
@@ -290,6 +296,8 @@ def start_modern_ui():
     # Import UI components
     sys.path.insert(0, str(Path(__file__).parent / "UI"))
     from UI.screens.main_menu_screen import MainMenuScreen
+    from UI.screens.modern_game_hub import ModernGameHub
+    from UI.screens.new_game_options_screen import NewGameOptionsScreen
     from UI.screens.scenario_selection_screen import ScenarioSelectionScreen
     from UI.screens.ruler_selection_screen import RulerSelectionScreen
     from UI.core.manager import UIManager
@@ -432,6 +440,7 @@ def start_modern_ui():
 
         if scenario_result and scenario_result > 0:
             print(f"Selected scenario: {scenario_result}")
+            load_scenario_into_buffer(scenario_result - 1)
 
             # 4. Ruler Selection (with full-screen map and popup)
             print("Showing ruler selection...")
@@ -441,7 +450,7 @@ def start_modern_ui():
 
             ruler_result = None
 
-            def on_ruler_select(ruler: str | None):
+            def on_ruler_select(ruler):
                 nonlocal ruler_result
                 ruler_result = ruler
 
@@ -480,12 +489,103 @@ def start_modern_ui():
                     running = False
 
             if ruler_result:
-                print(f"Selected ruler: {ruler_result}")
                 print(
-                    f"TODO: Initialize game with scenario {scenario_result} and ruler {ruler_result}"
+                    f"Selected ruler: {ruler_result.ruler_name} "
+                    f"(province {ruler_result.province_no}, ruler {ruler_result.ruler_no})"
                 )
-                # TODO: Start the actual game here
-                print("Game initialization not yet complete - exiting for now")
+
+                print("Showing new game options...")
+                options_screen = NewGameOptionsScreen()
+                manager.root_component = options_screen
+                manager.current_screen = options_screen
+
+                options_result = None
+
+                def on_options_select(options):
+                    nonlocal options_result
+                    options_result = options
+
+                options_screen.set_callback(on_options_select)
+
+                running = True
+                while running and options_result is None:
+                    dt = clock.tick(60) / 1000.0
+
+                    try:
+                        events = pygame.event.get()
+                    except (SystemError, KeyError) as e:
+                        print(f"Warning: Event hiccup: {e}")
+                        events = []
+
+                    for event in events:
+                        if event.type == pygame.QUIT:
+                            running = False
+                        elif event.type == pygame.KEYDOWN:
+                            if event.key == pygame.K_q and pygame.key.get_mods() & pygame.KMOD_CTRL:
+                                running = False
+
+                        try:
+                            manager.handle_event(event)
+                        except Exception as e:
+                            print(f"Event error (non-fatal): {e}")
+
+                    try:
+                        manager.update(dt)
+                        screen.fill((26, 26, 46))
+                        manager.render(screen)
+                        pygame.display.flip()
+                    except Exception as e:
+                        print(f"Loop error: {e}")
+                        running = False
+
+                if options_result is None:
+                    pygame.quit()
+                    return
+
+                clear_player_rulers()
+                mark_player_ruler(ruler_result.ruler_no, 1)
+                initialize_new_game_state(
+                    level=options_result.level,
+                    see_war=options_result.see_war,
+                    history=options_result.history,
+                )
+
+                print("Starting modern province hub...")
+                game_hub = ModernGameHub()
+
+                running = True
+                while running:
+                    dt = clock.tick(60) / 1000.0
+
+                    try:
+                        events = pygame.event.get()
+                    except (SystemError, KeyError) as e:
+                        print(f"Warning: Event hiccup: {e}")
+                        events = []
+
+                    for event in events:
+                        if event.type == pygame.QUIT:
+                            running = False
+                        elif event.type == pygame.KEYDOWN:
+                            if event.key == pygame.K_q and pygame.key.get_mods() & pygame.KMOD_CTRL:
+                                running = False
+
+                        try:
+                            manager.handle_event(event)
+                        except Exception as e:
+                            print(f"Event error (non-fatal): {e}")
+
+                    try:
+                        manager.update(dt)
+                        screen.fill((15, 15, 25))
+                        manager.render(screen)
+                        pygame.display.flip()
+                    except Exception as e:
+                        print(f"Modern hub loop error: {e}")
+                        running = False
+
+                pygame.quit()
+                return
 
     elif menu_result == "continue":
         print("Continue not yet implemented in Modern UI")

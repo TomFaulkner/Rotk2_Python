@@ -78,6 +78,7 @@ def main() -> None:
     province_map.add_animation(
         MapTravelAnimation(
             round_trip_route,
+            loop=True,
             on_hop=demo_on_hop,
             on_arrive=demo_on_arrive,
             initial_color=(255, 80, 80),

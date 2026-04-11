@@ -51,6 +51,7 @@ class MapTravelAnimation(ProvinceMapAnimation):
         speed: float = 220.0,
         pause_duration: float = 0.4,
         radius: int = 10,
+        loop: bool = False,
         on_hop: HopCallback | None = None,
         on_arrive: ArrivalCallback | None = None,
         initial_color: tuple[int, int, int] = (255, 80, 80),
@@ -63,6 +64,7 @@ class MapTravelAnimation(ProvinceMapAnimation):
         self.speed = speed
         self.pause_duration = pause_duration
         self.radius = radius
+        self.loop = loop
         self.on_hop = on_hop
         self.on_arrive = on_arrive
 
@@ -183,7 +185,11 @@ class MapTravelAnimation(ProvinceMapAnimation):
             self._pause_remaining = self.pause_duration
 
             if self._segment_index >= len(self._active_route) - 1:
-                self.reset()
+                if self.loop:
+                    self.reset()
+                else:
+                    self.state.status = "completed"
+                    self._travel_active = False
                 return
 
     def _invoke_hop_callback(self, from_province: int, to_province: int) -> TravelDirective | None:
