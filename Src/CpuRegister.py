@@ -8,9 +8,9 @@ class CommenRegister(object):
         return self.__X
 
     def setX(self, value):
-        self.__X = value & 0xffff
-        self.__H = self.__X >> 8 & 0xff
-        self.__L = self.__X & 0xff
+        self.__X = value & 0xFFFF
+        self.__H = self.__X >> 8 & 0xFF
+        self.__L = self.__X & 0xFF
 
     X = property(getX, setX)
 
@@ -18,8 +18,8 @@ class CommenRegister(object):
         return self.__H
 
     def setH(self, value):
-        self.__H = value & 0xff
-        self.__X = ((self.__H << 8) + self.__L) & 0xffff
+        self.__H = value & 0xFF
+        self.__X = ((self.__H << 8) + self.__L) & 0xFFFF
 
     H = property(getH, setH)
 
@@ -27,10 +27,11 @@ class CommenRegister(object):
         return self.__L
 
     def setL(self, value):
-        self.__L = value & 0xff
-        self.__X = ((self.__H << 8) + self.__L) & 0xffff
+        self.__L = value & 0xFF
+        self.__X = ((self.__H << 8) + self.__L) & 0xFFFF
 
     L = property(getL, setL)
+
 
 class CpuRegister(object):
     def __init__(self):
@@ -81,14 +82,13 @@ class CpuRegister(object):
     def Pop(self):
         return self.stack.pop()
 
-
     def getAX(self):
         return self.__AX
 
     def setAX(self, value):
-        self.__AX = value & 0xffff
-        self.__AH = self.__AX >> 8 & 0xff
-        self.__AL = self.__AX & 0xff
+        self.__AX = value & 0xFFFF
+        self.__AH = self.__AX >> 8 & 0xFF
+        self.__AL = self.__AX & 0xFF
 
     AX = property(getAX, setAX)
 
@@ -96,8 +96,8 @@ class CpuRegister(object):
         return self.__AH
 
     def setAH(self, value):
-        self.__AH = value & 0xff
-        self.__AX = ((self.__AH << 8) + self.__AL) & 0xffff
+        self.__AH = value & 0xFF
+        self.__AX = ((self.__AH << 8) + self.__AL) & 0xFFFF
 
     AH = property(getAH, setAH)
 
@@ -105,8 +105,8 @@ class CpuRegister(object):
         return self.__AL
 
     def setAL(self, value):
-        self.__AL = value & 0xff
-        self.__AX = ((self.__AH << 8) + self.__AL) & 0xffff
+        self.__AL = value & 0xFF
+        self.__AX = ((self.__AH << 8) + self.__AL) & 0xFFFF
 
     AL = property(getAL, setAL)
 
@@ -114,9 +114,9 @@ class CpuRegister(object):
         return self.__BX
 
     def setBX(self, value):
-        self.__BX = value & 0xffff
-        self.__BH = self.__BX >> 8 & 0xff
-        self.__BL = self.__BX & 0xff
+        self.__BX = value & 0xFFFF
+        self.__BH = self.__BX >> 8 & 0xFF
+        self.__BL = self.__BX & 0xFF
 
     BX = property(getBX, setBX)
 
@@ -124,8 +124,8 @@ class CpuRegister(object):
         return self.__BH
 
     def setBH(self, value):
-        self.__BH = value & 0xff
-        self.__BX = ((self.__BH << 8) + self.__BL) & 0xffff
+        self.__BH = value & 0xFF
+        self.__BX = ((self.__BH << 8) + self.__BL) & 0xFFFF
 
     BH = property(getBH, setBH)
 
@@ -133,8 +133,8 @@ class CpuRegister(object):
         return self.__BL
 
     def setBL(self, value):
-        self.__BL = value & 0xff
-        self.__BX = ((self.__BH << 8) + self.__BL) & 0xffff
+        self.__BL = value & 0xFF
+        self.__BX = ((self.__BH << 8) + self.__BL) & 0xFFFF
 
     BL = property(getBL, setBL)
 
@@ -142,9 +142,9 @@ class CpuRegister(object):
         return self.__CX
 
     def setCX(self, value):
-        self.__CX = value & 0xffff
-        self.__CH = self.__CX >> 8 & 0xff
-        self.__CL = self.__CX & 0xff
+        self.__CX = value & 0xFFFF
+        self.__CH = self.__CX >> 8 & 0xFF
+        self.__CL = self.__CX & 0xFF
 
     CX = property(getCX, setCX)
 
@@ -152,8 +152,8 @@ class CpuRegister(object):
         return self.__CH
 
     def setCH(self, value):
-        self.__CH = value & 0xff
-        self.__CX = ((self.__CH << 8) + self.__CL) & 0xffff
+        self.__CH = value & 0xFF
+        self.__CX = ((self.__CH << 8) + self.__CL) & 0xFFFF
 
     CH = property(getCH, setCH)
 
@@ -161,8 +161,8 @@ class CpuRegister(object):
         return self.__CL
 
     def setCL(self, value):
-        self.__CL = value & 0xff
-        self.__CX = ((self.__CH << 8) + self.__CL) & 0xffff
+        self.__CL = value & 0xFF
+        self.__CX = ((self.__CH << 8) + self.__CL) & 0xFFFF
 
     CL = property(getCL, setCL)
 
@@ -170,9 +170,9 @@ class CpuRegister(object):
         return self.__DX
 
     def setDX(self, value):
-        self.__DX = value & 0xffff
-        self.__DH = self.__DX >> 8 & 0xff
-        self.__DL = self.__DX & 0xff
+        self.__DX = value & 0xFFFF
+        self.__DH = self.__DX >> 8 & 0xFF
+        self.__DL = self.__DX & 0xFF
 
     DX = property(getDX, setDX)
 
@@ -180,8 +180,8 @@ class CpuRegister(object):
         return self.__DH
 
     def setDH(self, value):
-        self.__DH = value & 0xff
-        self.__DX = ((self.__DH << 8) + self.__DL) & 0xffff
+        self.__DH = value & 0xFF
+        self.__DX = ((self.__DH << 8) + self.__DL) & 0xFFFF
 
     DH = property(getDH, setDH)
 
@@ -189,7 +189,7 @@ class CpuRegister(object):
         return self.__DL
 
     def setDL(self, value):
-        self.__DL = value & 0xff
-        self.__DX = ((self.__DH << 8) + self.__DL) & 0xffff
+        self.__DL = value & 0xFF
+        self.__DX = ((self.__DH << 8) + self.__DL) & 0xFFFF
 
     DL = property(getDL, setDL)

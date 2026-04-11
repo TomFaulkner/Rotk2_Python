@@ -56,15 +56,11 @@ def test_placement_restrictions():
     if attacker_zones:
         valid_coord = attacker_zones[0]
         is_valid = battle.is_valid_placement(valid_coord, is_attacker=True)
-        print(
-            f"   Attacker zone {valid_coord}: {'✓ Valid' if is_valid else '✗ Invalid'}"
-        )
+        print(f"   Attacker zone {valid_coord}: {'✓ Valid' if is_valid else '✗ Invalid'}")
 
         # Try castle position (should be invalid for attacker)
         if battle.defender_castle_pos:
-            is_valid = battle.is_valid_placement(
-                battle.defender_castle_pos, is_attacker=True
-            )
+            is_valid = battle.is_valid_placement(battle.defender_castle_pos, is_attacker=True)
             print(
                 f"   Castle position for attacker: {'✓ Valid' if is_valid else '✗ Invalid (correct)'}"
             )
@@ -73,9 +69,7 @@ def test_placement_restrictions():
     if defender_zones:
         valid_coord = defender_zones[0]
         is_valid = battle.is_valid_placement(valid_coord, is_attacker=False)
-        print(
-            f"   Defender zone {valid_coord}: {'✓ Valid' if is_valid else '✗ Invalid'}"
-        )
+        print(f"   Defender zone {valid_coord}: {'✓ Valid' if is_valid else '✗ Invalid'}")
 
     # Add units and test placement
     print("\n6. Testing actual unit placement:")

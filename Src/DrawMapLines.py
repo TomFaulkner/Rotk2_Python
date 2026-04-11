@@ -1,12 +1,13 @@
 from CpuRegister import CpuRegister
 
+
 class DrawMapLines(object):
-    def __init__(self,map,dsbuf, width, height,color):
+    def __init__(self, map, dsbuf, width, height, color):
         self.log = []
         self.display_buf = [0] * 0x4000  # 640*200的尺寸为640/8*200=16000字节=0x3E80字节
 
         self.map = map
-        self.DS_BUF= dsbuf
+        self.DS_BUF = dsbuf
         self.w = width
         self.h = height
         self.ruler_color = color
@@ -14,16 +15,16 @@ class DrawMapLines(object):
         self.index = 0x00
 
         self.r = CpuRegister()
-        self.r.AX = 0xffff
+        self.r.AX = 0xFFFF
         self.r.BX = self.h
         self.r.CX = self.w
         self.r.DX = 0
         self.r.SI = 0x342B
         self.r.DI = 0x1059
 
-        self.SP = 0xe424
+        self.SP = 0xE424
 
-        self.rcr_mappings = [0, 0x80, 0xc0, 0xe0, 0xf0, 0xf8, 0xfc, 0xfe, 0xff]
+        self.rcr_mappings = [0, 0x80, 0xC0, 0xE0, 0xF0, 0xF8, 0xFC, 0xFE, 0xFF]
 
     def init(self):
         # 76c:939
@@ -46,7 +47,7 @@ class DrawMapLines(object):
         self.WriteDSBufferWord(self.SP, 0x3417)
         self.WriteDSBufferWord(self.SP, 0x3419)
 
-        self.SP -= 0x1c2
+        self.SP -= 0x1C2
         self.WriteDSBufferWord(self.SP, 0x3413)
         self.WriteDSBufferWord(self.SP, 0x340D)
         self.WriteDSBufferWord(self.SP, 0x340F)
@@ -72,11 +73,11 @@ class DrawMapLines(object):
         # a6b
         # self.r.Push(self.r.CS)
 
-        self.r.DI = 0x340b
+        self.r.DI = 0x340B
         self.func_9XX()
         self.r.CH = 0x00
         # self.r.Push(self.r.CS)
-        self.r.DI = 0x340b
+        self.r.DI = 0x340B
         self.func_9XX()
 
         break_to_a7c = False
@@ -109,7 +110,7 @@ class DrawMapLines(object):
                             # self.r.Push(self.r.CS)#a9d
                             if self.func_A1E() is True:
                                 # ac7,copy ac7 to here, because of below ac7 is belong to a if ch==0 code snippet
-                                self.r.CH = 0xff  # ac7
+                                self.r.CH = 0xFF  # ac7
                                 call_ac7 = True
                                 break
                                 # call ac7
@@ -136,13 +137,13 @@ class DrawMapLines(object):
                                 self.r.CH, carry = self.rcl(self.r.CH, "1")
                             else:
                                 break
-                        self.r.CH |= self.r.CH #abb
+                        self.r.CH |= self.r.CH  # abb
                         if self.r.CH == 0:
                             self.r.BX += 1  # abe
                             # self.r.Push(self.r.CS)
                             self.func_C28()
                             self.r.CL = self.r.AL
-                            self.r.CH = 0xff  # ac7
+                            self.r.CH = 0xFF  # ac7
                     else:
                         call_ac7 = False
                     # ac9
@@ -190,8 +191,8 @@ class DrawMapLines(object):
                             self.r.BX += 0x2000
 
                         self.r.DH = self.r.CH
-                        self.r.DH = 0xff - self.r.DH  # b22
-                        if self.r.BX < 0x1fb0 or self.r.BX >= 0x2000:
+                        self.r.DH = 0xFF - self.r.DH  # b22
+                        if self.r.BX < 0x1FB0 or self.r.BX >= 0x2000:
                             # self.r.Push(self.r.CS)#b33
                             self.func_A38()
 
@@ -210,11 +211,11 @@ class DrawMapLines(object):
                                     self.r.BX -= 0x2000
                                 self.r.CH = self.r.DH
                                 self.r.CH = 0xFF - self.r.CH
-                                if ((self.r.CH & 0x01) == 0x01):
+                                if (self.r.CH & 0x01) == 0x01:
                                     # b6e
                                     self.r.BX += 1
                                     # self.r.Push(self.r.CS)
-                                    if self.func_A1E() is True: # game中，以下这个分支从来没走过
+                                    if self.func_A1E() is True:  # game中，以下这个分支从来没走过
                                         # jmp ae7, below is ae7
                                         self.r.BX -= 1  # ae7
                                         # self.r.Push(self.r.CS)
@@ -225,7 +226,7 @@ class DrawMapLines(object):
                                         # jmp a7c
                                     else:
                                         self.r.DH = self.r.CH  # b79
-                                        self.r.CH = 0xff
+                                        self.r.CH = 0xFF
                                         # self.r.Push(self.r.CS)
                                         self.func_C28()
                                         break
@@ -241,7 +242,7 @@ class DrawMapLines(object):
                     # a85: jmp b85
                     # below is b85
                     # self.r.Push(self.r.CS)
-                    self.r.DI = 0x340b
+                    self.r.DI = 0x340B
                     self.func_9XX()
                     # self.r.Push(self.r.CS)
 
@@ -336,7 +337,7 @@ class DrawMapLines(object):
         return int(num_new, 2), carry
 
     def func_A1E(self):
-        if ((self.r.BX & 0x0f) != 0x00):
+        if (self.r.BX & 0x0F) != 0x00:
             return False
         else:
             self.r.AX = self.r.BX  # a25
@@ -363,9 +364,9 @@ class DrawMapLines(object):
             while True:
                 self.r.AL, carry = self.rcl(self.r.AL, "0")  # a45, always "CLC" before RCL
                 if carry == "0":
-                    if ((self.r.CL & 0x01) == 0x01):
+                    if (self.r.CL & 0x01) == 0x01:
                         # self.r.Push(self.r.CS) #a50
-                        self.r.DI = 0x340b
+                        self.r.DI = 0x340B
                         self.func_9XX()
                         self.r.CL &= 0xFE
                     self.r.AL |= self.r.AL  # a57
@@ -382,7 +383,6 @@ class DrawMapLines(object):
                         # jmp a45
                         continue
                     return
-
 
         else:
             self.r.CL |= 1  # a67

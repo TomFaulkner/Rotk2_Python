@@ -44,9 +44,7 @@ class PortraitLoader:
         self._load_csv_mapping()
         self._build_portrait_index()
 
-        print(
-            f"PortraitLoader: Loaded {len(self.officer_to_portrait)} officer mappings"
-        )
+        print(f"PortraitLoader: Loaded {len(self.officer_to_portrait)} officer mappings")
         print(f"PortraitLoader: Found {len(self.portrait_to_file)} portrait files")
 
     def _load_csv_mapping(self):
@@ -57,9 +55,7 @@ class PortraitLoader:
             Path(
                 "../download/romance-of-the-three-kingdoms-ii-portraits-snes/data/officer-data.csv"
             ),
-            Path(
-                "download/romance-of-the-three-kingdoms-ii-portraits-snes/data/officer-data.csv"
-            ),
+            Path("download/romance-of-the-three-kingdoms-ii-portraits-snes/data/officer-data.csv"),
         ]
 
         csv_file = None
@@ -280,9 +276,7 @@ def test_portrait_loader():
                 f"  Officer {officer_id} ({name}): Portrait {portrait_id}, Size {portrait.get_size()} - ✓"
             )
         else:
-            print(
-                f"  Officer {officer_id} ({name}): Portrait {portrait_id} - ✗ Not found"
-            )
+            print(f"  Officer {officer_id} ({name}): Portrait {portrait_id} - ✗ Not found")
 
     # Test generic fallback
     print("\nTesting generic fallback (officer 100):")

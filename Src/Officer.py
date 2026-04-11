@@ -217,9 +217,7 @@ class Officer(object):
         """
         return self.yewang - self.yili
 
-    def can_be_tiger_wolfed(
-        self, current_loyalty: int = None, bribe_amount: int = 0
-    ) -> bool:
+    def can_be_tiger_wolfed(self, current_loyalty: int = None, bribe_amount: int = 0) -> bool:
         """
         Check if this officer can be flipped with Tiger-Wolf tactics.
 
@@ -245,16 +243,13 @@ class Officer(object):
 
     @staticmethod
     def GetAdvisor():
-        current_ruler_offset = Data.GetWordFromOffset(
-            Data.BUF, Data.CURRENT_RULER_OFFSET
-        )
+        current_ruler_offset = Data.GetWordFromOffset(Data.BUF, Data.CURRENT_RULER_OFFSET)
         advisor_offset = Data.GetWordFromOffset(Data.BUF, current_ruler_offset + 4)
         return Officer.FromOffset(advisor_offset)
 
     def SetAdvisor(self):
         current_ruler_offset = (
-            Data.BUF[Data.CURRENT_RULER_OFFSET + 1] * 256
-            + Data.BUF[Data.CURRENT_RULER_OFFSET]
+            Data.BUF[Data.CURRENT_RULER_OFFSET + 1] * 256 + Data.BUF[Data.CURRENT_RULER_OFFSET]
         )
         Data.BUF[current_ruler_offset + 5] = self.Offset >> 8
         Data.BUF[current_ruler_offset + 4] = self.Offset % 256

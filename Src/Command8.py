@@ -1,26 +1,43 @@
 import pygame.display
 
-from Helper import Helper,Province,Officer,Ruler
-from Data import Data,ShowOfficerFlag
+from Helper import Helper, Province, Officer, Ruler
+from Data import Data, ShowOfficerFlag
 
 
 class Command8(object):
     def __init__(self):
-        self.cmds = Helper.GetBuiltinText(0x7978,0x797D)+","+Helper.GetBuiltinText(0x7983,0x7986)+","+Helper.GetBuiltinText(0x798C,0x7991)+","+Helper.GetBuiltinText(0x7998,0x799D)+","+Helper.GetBuiltinText(0x79A3,0x79A6)+","+Helper.GetBuiltinText(0x79AC,0x79B3)
+        self.cmds = (
+            Helper.GetBuiltinText(0x7978, 0x797D)
+            + ","
+            + Helper.GetBuiltinText(0x7983, 0x7986)
+            + ","
+            + Helper.GetBuiltinText(0x798C, 0x7991)
+            + ","
+            + Helper.GetBuiltinText(0x7998, 0x799D)
+            + ","
+            + Helper.GetBuiltinText(0x79A3, 0x79A6)
+            + ","
+            + Helper.GetBuiltinText(0x79AC, 0x79B3)
+        )
         self.commands = self.cmds.split(",")
         self.palette_no = 5
 
-    def Start(self,province_no):
+    def Start(self, province_no):
         view_other_rulers = False
         province_no_original = province_no
 
         while True:
             Helper.ClearInputArea()
             Helper.ShowMap(province_no)
-            Helper.ShowCommandsInInputArea(self.commands,3,palette_no=self.palette_no)
-            cmd = Helper.GetInput(Helper.GetBuiltinText(0x9365)+" (1-{0})? ".format(len(self.commands)), row=2,required_number_min=1,required_number_max=6)
+            Helper.ShowCommandsInInputArea(self.commands, 3, palette_no=self.palette_no)
+            cmd = Helper.GetInput(
+                Helper.GetBuiltinText(0x9365) + " (1-{0})? ".format(len(self.commands)),
+                row=2,
+                required_number_min=1,
+                required_number_max=6,
+            )
 
-            if cmd==-1:
+            if cmd == -1:
                 if view_other_rulers is True:
                     self.commands = self.cmds.split(",")
                     self.palette_no = 5
@@ -28,16 +45,24 @@ class Command8(object):
                     view_other_rulers = False
                 else:
                     break
-            if cmd==1:
+            if cmd == 1:
                 Helper.ClearInputArea()
-                p_no = Helper.GetInput(Helper.GetBuiltinText(0x689F)+"(1-41)? ",required_number_min=1,required_number_max=41)
-                if p_no==-1:
+                p_no = Helper.GetInput(
+                    Helper.GetBuiltinText(0x689F) + "(1-41)? ",
+                    required_number_min=1,
+                    required_number_max=41,
+                )
+                if p_no == -1:
                     continue
 
-                is_same_ruler = Province.Is2ProvincesBelongToSameRuler(province_no_original,int(p_no))
+                is_same_ruler = Province.Is2ProvincesBelongToSameRuler(
+                    province_no_original, int(p_no)
+                )
                 if is_same_ruler is False:
-                    who = Helper.SelectOfficer(province_no_original,Helper.GetBuiltinText(0x6896),ShowOfficerFlag.Empty)
-                    if who==0:
+                    who = Helper.SelectOfficer(
+                        province_no_original, Helper.GetBuiltinText(0x6896), ShowOfficerFlag.Empty
+                    )
+                    if who == 0:
                         continue
 
                 view_other_rulers = True
@@ -46,24 +71,28 @@ class Command8(object):
                 self.commands.pop(4)
                 self.palette_no = 3
 
-            if cmd==2:
+            if cmd == 2:
                 while True:
-                    who = Helper.SelectOfficer(province_no, Helper.GetBuiltinText(0x650A), ShowOfficerFlag.Empty,
-                                               check_can_action=False)
-                    #print("Selected {0}".format(who))
-                    if who==0:
+                    who = Helper.SelectOfficer(
+                        province_no,
+                        Helper.GetBuiltinText(0x650A),
+                        ShowOfficerFlag.Empty,
+                        check_can_action=False,
+                    )
+                    # print("Selected {0}".format(who))
+                    if who == 0:
                         break
 
                     officer_list = Province.FromSequence(province_no).GetOfficerList()
-                    if who>=1 and who<=len(officer_list):
-                        bmp = self.GetOfficerDetailedInformation(officer_list[who-1])
+                    if who >= 1 and who <= len(officer_list):
+                        bmp = self.GetOfficerDetailedInformation(officer_list[who - 1])
                         Helper.Screen.blit(bmp, (300 * Helper.Scale, 130 * Helper.Scale))
                         pygame.display.flip()
 
                         Helper.ClearInputArea()
-                        Helper.GetInput(Helper.GetBuiltinText(0x588A),required_number=False)
+                        Helper.GetInput(Helper.GetBuiltinText(0x588A), required_number=False)
 
-            if cmd==3 or cmd==4:
+            if cmd == 3 or cmd == 4:
                 page = 0
                 while True:
                     Helper.ClearInputArea()
@@ -74,16 +103,18 @@ class Command8(object):
 
                     Helper.Screen.blit(bmp, (296 * Helper.Scale, 8 * Helper.Scale))
                     if have_more_pages is False:
-                        Helper.GetInput(Helper.GetBuiltinText(0x588A),required_number=False)
+                        Helper.GetInput(Helper.GetBuiltinText(0x588A), required_number=False)
                         break
                     else:
-                        yn = Helper.GetInput(Helper.GetBuiltinText(0x6685)+"(Y/N)? ",required_number=False)
-                        if yn in [-1,"n"]:
+                        yn = Helper.GetInput(
+                            Helper.GetBuiltinText(0x6685) + "(Y/N)? ", required_number=False
+                        )
+                        if yn in [-1, "n"]:
                             break
-                        elif yn in ["0","y"]:
+                        elif yn in ["0", "y"]:
                             page += 1
 
-            if cmd==5:
+            if cmd == 5:
                 if view_other_rulers is True:
                     self.Command8_6(province_no)
                 else:
@@ -91,7 +122,7 @@ class Command8(object):
                     province = Province.FromSequence(province_no)
                     ruler_no = province.RulerNo
                     province_list = Province.GetListByRulerNo(province.RulerNo)
-                    only_one_page = (len(province_list) <= 7)
+                    only_one_page = len(province_list) <= 7
 
                     while True:
                         Helper.ClearInputArea()
@@ -100,25 +131,29 @@ class Command8(object):
                         pygame.display.flip()
 
                         if 7 * (page + 1) < len(province_list):
-                            yn = Helper.GetInput(Helper.GetBuiltinText(0x6685)+"(Y/N)? ",required_number=False)
+                            yn = Helper.GetInput(
+                                Helper.GetBuiltinText(0x6685) + "(Y/N)? ", required_number=False
+                            )
                             if yn in [-1, "n"]:
                                 break
                             elif yn in ["0", "y"] and only_one_page is False:
                                 page += 1
                         else:
-                            Helper.GetInput(Helper.GetBuiltinText(0x588A),required_number=False)
+                            Helper.GetInput(Helper.GetBuiltinText(0x588A), required_number=False)
                             break
 
-            if cmd==6:
+            if cmd == 6:
                 self.Command8_6(province_no)
 
-    def Command8_6(self,province_no):
+    def Command8_6(self, province_no):
         bmp = self.ShowCommand8_Sort()
         Helper.Screen.blit(bmp, (300 * Helper.Scale, 295 * Helper.Scale))
 
-        #Helper.ClearInputArea(3)
-        cmd = Helper.GetInput(Helper.GetBuiltinText(0x63EF),row=2,required_number_min=1,required_number_max=5)
-        if cmd>0:
+        # Helper.ClearInputArea(3)
+        cmd = Helper.GetInput(
+            Helper.GetBuiltinText(0x63EF), row=2, required_number_min=1, required_number_max=5
+        )
+        if cmd > 0:
             Province.ReOrderOfficers(province_no, int(cmd))
 
     def ShowCommand8_Sort(self):
@@ -129,39 +164,61 @@ class Command8(object):
         top = 2
 
         p_no = 5
-        command8 = [Helper.GetBuiltinText(0x63B6, 0x63B9), Helper.GetBuiltinText(0x63C2, 0x63C7),
-                    Helper.GetBuiltinText(0x63CE, 0x63D3), Helper.GetBuiltinText(0x63D7, 0x63DC),
-                    Helper.GetBuiltinText(0x63E3, 0x63E8)]
+        command8 = [
+            Helper.GetBuiltinText(0x63B6, 0x63B9),
+            Helper.GetBuiltinText(0x63C2, 0x63C7),
+            Helper.GetBuiltinText(0x63CE, 0x63D3),
+            Helper.GetBuiltinText(0x63D7, 0x63DC),
+            Helper.GetBuiltinText(0x63E3, 0x63E8),
+        ]
 
         for i in range(0, len(command8)):
             row = int(i / 3)
             col = i % 3
 
-            cmd_bmp = Helper.DrawText("{0}.{1}".format(i + 1, command8[i]), back_color=(0, 0, 0), palette_no=p_no)
+            cmd_bmp = Helper.DrawText(
+                "{0}.{1}".format(i + 1, command8[i]), back_color=(0, 0, 0), palette_no=p_no
+            )
             bmp.blit(cmd_bmp, (left + 90 * col, top + 30 * row))
 
-        return pygame.transform.scale(bmp, (bmp.get_width() * Helper.Scale, bmp.get_height() * Helper.Scale))
+        return pygame.transform.scale(
+            bmp, (bmp.get_width() * Helper.Scale, bmp.get_height() * Helper.Scale)
+        )
 
-    def GetOfficersSummary(self,prov_no, page):
+    def GetOfficersSummary(self, prov_no, page):
         bmp = pygame.Surface((335, 284))
         bmp.fill((0, 0, 0))
 
         header = pygame.Surface((335, 40))
         header.fill((255, 255, 255))
 
-        guanjie = Helper.DrawText(Helper.GetBuiltinText(0x651f, 0x6522), back_color=(255, 255, 255), palette_no=0)
-        jiangling = Helper.DrawText(" {0}   ".format(Helper.GetBuiltinText(0x6528)), back_color=(255, 255, 255),
-                                    palette_no=4)
-        zhongcheng = Helper.DrawText(" {0}  ".format(Helper.GetBuiltinText(0x6532)), back_color=(255, 255, 255),
-                                     palette_no=2)
-        caizhi = Helper.DrawText(" {0}  ".format(Helper.GetBuiltinText(0x653B, 0x653E)), back_color=(255, 255, 255),
-                                 palette_no=6)
-        zhanli = Helper.DrawText(" {0}  ".format(Helper.GetBuiltinText(0x6540)), back_color=(255, 255, 255),
-                                 palette_no=6)
-        haozhao = Helper.DrawText(" {0}  ".format(Helper.GetBuiltinText(0x6545)), back_color=(255, 255, 255),
-                                  palette_no=6)
-        shibing = Helper.DrawText(" {0}".format(Helper.GetBuiltinText(0x654E, 0x6552).replace(" ","")), back_color=(255, 255, 255),
-                                  palette_no=0)
+        guanjie = Helper.DrawText(
+            Helper.GetBuiltinText(0x651F, 0x6522), back_color=(255, 255, 255), palette_no=0
+        )
+        jiangling = Helper.DrawText(
+            " {0}   ".format(Helper.GetBuiltinText(0x6528)),
+            back_color=(255, 255, 255),
+            palette_no=4,
+        )
+        zhongcheng = Helper.DrawText(
+            " {0}  ".format(Helper.GetBuiltinText(0x6532)), back_color=(255, 255, 255), palette_no=2
+        )
+        caizhi = Helper.DrawText(
+            " {0}  ".format(Helper.GetBuiltinText(0x653B, 0x653E)),
+            back_color=(255, 255, 255),
+            palette_no=6,
+        )
+        zhanli = Helper.DrawText(
+            " {0}  ".format(Helper.GetBuiltinText(0x6540)), back_color=(255, 255, 255), palette_no=6
+        )
+        haozhao = Helper.DrawText(
+            " {0}  ".format(Helper.GetBuiltinText(0x6545)), back_color=(255, 255, 255), palette_no=6
+        )
+        shibing = Helper.DrawText(
+            " {0}".format(Helper.GetBuiltinText(0x654E, 0x6552).replace(" ", "")),
+            back_color=(255, 255, 255),
+            palette_no=0,
+        )
 
         name_list = [guanjie, jiangling, zhongcheng, caizhi, zhanli, haozhao, shibing]
         x_list = [0, 36, 99, 146, 194, 241, 292]
@@ -170,7 +227,9 @@ class Command8(object):
         for i in range(0, len(name_list)):
             header.blit(name_list[i], (x_list[i], 8))
             if i < len(name_list) - 1:
-                pygame.draw.line(header, (0, 0, 0), (x_list[i + 1] - 1, 0), (x_list[i + 1] - 1, 40), 1)
+                pygame.draw.line(
+                    header, (0, 0, 0), (x_list[i + 1] - 1, 0), (x_list[i + 1] - 1, 40), 1
+                )
 
         bmp.blit(header, (0, 0))
 
@@ -180,8 +239,13 @@ class Command8(object):
         index = 0
         for i in range(0, len(name_list)):
             if i < len(name_list) - 1:
-                pygame.draw.line(body, Helper.Palettes[3], (x_list[i + 1] - 1, 0),
-                                 (x_list[i + 1] - 1, body.get_height()), 1)
+                pygame.draw.line(
+                    body,
+                    Helper.Palettes[3],
+                    (x_list[i + 1] - 1, 0),
+                    (x_list[i + 1] - 1, body.get_height()),
+                    1,
+                )
 
         height = 2
         official_officer_list = Province.FromSequence(prov_no).GetOfficerList()
@@ -196,26 +260,38 @@ class Command8(object):
                 continue
 
             if officer.IsRuler():
-                ruler_bmp = Helper.DrawText(Helper.GetBuiltinText(0x6400), back_color=(0, 0, 0), palette_no=2)
+                ruler_bmp = Helper.DrawText(
+                    Helper.GetBuiltinText(0x6400), back_color=(0, 0, 0), palette_no=2
+                )
                 body.blit(ruler_bmp, (0, height + 2))
             elif officer.IsGovernor() is True and officer.IsRuler() is False:
-                officer_bmp = Helper.DrawText(Helper.GetBuiltinText(0x6405), back_color=(0, 0, 0), palette_no=5)
+                officer_bmp = Helper.DrawText(
+                    Helper.GetBuiltinText(0x6405), back_color=(0, 0, 0), palette_no=5
+                )
                 body.blit(officer_bmp, (0, height + 2))
             elif officer.IsAdvisor():
-                advisor_bmp = Helper.DrawText(Helper.GetBuiltinText(0x640A), back_color=(0, 0, 0), palette_no=1)
+                advisor_bmp = Helper.DrawText(
+                    Helper.GetBuiltinText(0x640A), back_color=(0, 0, 0), palette_no=1
+                )
                 body.blit(advisor_bmp, (0, height + 2))
             else:
                 if officer.IsUnClaimed is False and officer.IsFree is False:
-                    is_online_bmp = Helper.DrawText(Helper.GetBuiltinText(0x640F), back_color=(0, 0, 0), palette_no=7)
+                    is_online_bmp = Helper.DrawText(
+                        Helper.GetBuiltinText(0x640F), back_color=(0, 0, 0), palette_no=7
+                    )
                 else:
-                    is_online_bmp = Helper.DrawText(Helper.GetBuiltinText(0x6414), back_color=(0, 0, 0), palette_no=6)
+                    is_online_bmp = Helper.DrawText(
+                        Helper.GetBuiltinText(0x6414), back_color=(0, 0, 0), palette_no=6
+                    )
                 body.blit(is_online_bmp, (0, height + 2))
 
             general_name_data = officer.GetName()
             p_no = 7
             if officer.IsUnClaimed is True or officer.IsFree is True or officer.IsSick is True:
                 p_no = 6
-            general_name_bmp = Helper.DrawText(general_name_data, back_color=(0, 0, 0), palette_no=p_no)
+            general_name_bmp = Helper.DrawText(
+                general_name_data, back_color=(0, 0, 0), palette_no=p_no
+            )
             body.blit(general_name_bmp, (x_list[1] + 10, height + 2))
 
             if officer.IsRuler() or officer.IsUnClaimed is True:
@@ -244,29 +320,45 @@ class Command8(object):
         have_more_pages = False
         if len(officer_list) > 7 * (page + 1):
             have_more_pages = True
-        return pygame.transform.scale(bmp, (
-            bmp.get_width() * Helper.Scale, bmp.get_height() * Helper.Scale)), have_more_pages
+        return pygame.transform.scale(
+            bmp, (bmp.get_width() * Helper.Scale, bmp.get_height() * Helper.Scale)
+        ), have_more_pages
 
-    def GetOfficersSummary2(self,prov_no, page):
+    def GetOfficersSummary2(self, prov_no, page):
         bmp = pygame.Surface((335, 284))
         bmp.fill((0, 0, 0))
 
         header = pygame.Surface((335, 40))
         header.fill((255, 255, 255))
 
-        guanjie = Helper.DrawText(Helper.GetBuiltinText(0x651f, 0x6522), back_color=(255, 255, 255), palette_no=0)
-        jiangling = Helper.DrawText(" {0}   ".format(Helper.GetBuiltinText(0x6528)), back_color=(255, 255, 255),
-                                    palette_no=4)
+        guanjie = Helper.DrawText(
+            Helper.GetBuiltinText(0x651F, 0x6522), back_color=(255, 255, 255), palette_no=0
+        )
+        jiangling = Helper.DrawText(
+            " {0}   ".format(Helper.GetBuiltinText(0x6528)),
+            back_color=(255, 255, 255),
+            palette_no=4,
+        )
 
-        shiwei = Helper.DrawText(" {0}  ".format(Helper.GetBuiltinText(0x6567, 0x656A)), back_color=(255, 255, 255),
-                                 palette_no=2)
-        wuzhuang = Helper.DrawText(" {0}  ".format(Helper.GetBuiltinText(0x6575)), back_color=(255, 255, 255),
-                                   palette_no=6)
-        wuqi = Helper.DrawText(" {0}  ".format(Helper.GetBuiltinText(0x657A)), back_color=(255, 255, 255), palette_no=6)
-        xunlian = Helper.DrawText(" {0}  ".format(Helper.GetBuiltinText(0x6570)), back_color=(255, 255, 255),
-                                  palette_no=6)
-        shibing = Helper.DrawText(" {0}".format(Helper.GetBuiltinText(0x6583).replace(" ","")), back_color=(255, 255, 255),
-                                  palette_no=0)
+        shiwei = Helper.DrawText(
+            " {0}  ".format(Helper.GetBuiltinText(0x6567, 0x656A)),
+            back_color=(255, 255, 255),
+            palette_no=2,
+        )
+        wuzhuang = Helper.DrawText(
+            " {0}  ".format(Helper.GetBuiltinText(0x6575)), back_color=(255, 255, 255), palette_no=6
+        )
+        wuqi = Helper.DrawText(
+            " {0}  ".format(Helper.GetBuiltinText(0x657A)), back_color=(255, 255, 255), palette_no=6
+        )
+        xunlian = Helper.DrawText(
+            " {0}  ".format(Helper.GetBuiltinText(0x6570)), back_color=(255, 255, 255), palette_no=6
+        )
+        shibing = Helper.DrawText(
+            " {0}".format(Helper.GetBuiltinText(0x6583).replace(" ", "")),
+            back_color=(255, 255, 255),
+            palette_no=0,
+        )
 
         name_list = [guanjie, jiangling, shiwei, xunlian, wuzhuang, wuqi, shibing]
         x_list = [0, 36, 99, 146, 194, 241, 292]
@@ -275,7 +367,9 @@ class Command8(object):
         for i in range(0, len(name_list)):
             header.blit(name_list[i], (x_list[i], 8))
             if i < len(name_list) - 1:
-                pygame.draw.line(header, (0, 0, 0), (x_list[i + 1] - 1, 0), (x_list[i + 1] - 1, 40), 1)
+                pygame.draw.line(
+                    header, (0, 0, 0), (x_list[i + 1] - 1, 0), (x_list[i + 1] - 1, 40), 1
+                )
 
         bmp.blit(header, (0, 0))
 
@@ -285,8 +379,13 @@ class Command8(object):
         index = 0
         for i in range(0, len(name_list)):
             if i < len(name_list) - 1:
-                pygame.draw.line(body, Helper.Palettes[3], (x_list[i + 1] - 1, 0),
-                                 (x_list[i + 1] - 1, body.get_height()), 1)
+                pygame.draw.line(
+                    body,
+                    Helper.Palettes[3],
+                    (x_list[i + 1] - 1, 0),
+                    (x_list[i + 1] - 1, body.get_height()),
+                    1,
+                )
 
         height = 2
         i = 0
@@ -301,26 +400,38 @@ class Command8(object):
                 continue
 
             if officer.IsRuler():
-                ruler_bmp = Helper.DrawText(Helper.GetBuiltinText(0x6400), back_color=(0, 0, 0), palette_no=2)
+                ruler_bmp = Helper.DrawText(
+                    Helper.GetBuiltinText(0x6400), back_color=(0, 0, 0), palette_no=2
+                )
                 body.blit(ruler_bmp, (0, height + 2))
             elif officer.IsGovernor() is True and officer.IsRuler() is False:
-                officer_bmp = Helper.DrawText(Helper.GetBuiltinText(0x6405), back_color=(0, 0, 0), palette_no=5)
+                officer_bmp = Helper.DrawText(
+                    Helper.GetBuiltinText(0x6405), back_color=(0, 0, 0), palette_no=5
+                )
                 body.blit(officer_bmp, (0, height + 2))
             elif officer.IsAdvisor():
-                advisor_bmp = Helper.DrawText(Helper.GetBuiltinText(0x640A), back_color=(0, 0, 0), palette_no=1)
+                advisor_bmp = Helper.DrawText(
+                    Helper.GetBuiltinText(0x640A), back_color=(0, 0, 0), palette_no=1
+                )
                 body.blit(advisor_bmp, (0, height + 2))
             else:
                 if officer.IsUnClaimed is False and officer.IsFree is False:
-                    is_online_bmp = Helper.DrawText(Helper.GetBuiltinText(0x640F), back_color=(0, 0, 0), palette_no=7)
+                    is_online_bmp = Helper.DrawText(
+                        Helper.GetBuiltinText(0x640F), back_color=(0, 0, 0), palette_no=7
+                    )
                 else:
-                    is_online_bmp = Helper.DrawText(Helper.GetBuiltinText(0x6414), back_color=(0, 0, 0), palette_no=6)
+                    is_online_bmp = Helper.DrawText(
+                        Helper.GetBuiltinText(0x6414), back_color=(0, 0, 0), palette_no=6
+                    )
                 body.blit(is_online_bmp, (0, height + 2))
 
             general_name_data = officer.GetName()
             p_no = 7
             if officer.IsUnClaimed is True or officer.IsFree is True or officer.IsSick is True:
                 p_no = 6
-            general_name_bmp = Helper.DrawText(general_name_data, back_color=(0, 0, 0), palette_no=p_no)
+            general_name_bmp = Helper.DrawText(
+                general_name_data, back_color=(0, 0, 0), palette_no=p_no
+            )
             body.blit(general_name_bmp, (x_list[1] + 10, height + 2))
 
             shiwei_text = "---" if officer.IsUnClaimed else str(officer.shiwei)
@@ -346,10 +457,11 @@ class Command8(object):
         have_more_pages = False
         if len(officer_list) > 7 * (page + 1):
             have_more_pages = True
-        return pygame.transform.scale(bmp, (
-            bmp.get_width() * Helper.Scale, bmp.get_height() * Helper.Scale)), have_more_pages
+        return pygame.transform.scale(
+            bmp, (bmp.get_width() * Helper.Scale, bmp.get_height() * Helper.Scale)
+        ), have_more_pages
 
-    def GetOfficerDetailedInformation(self,officer):
+    def GetOfficerDetailedInformation(self, officer):
         bmp = pygame.Surface((330, 160))
         bmp.fill((0, 0, 0))
 
@@ -370,11 +482,15 @@ class Command8(object):
                 marriage_status = Helper.GetBuiltinText(0x6422)
             else:
                 marriage_ruler = Ruler.FromNo(
-                    Data.BUF[Ruler.FromNo(officer.RulerNo).Offset + 0x21]).RulerSelf
+                    Data.BUF[Ruler.FromNo(officer.RulerNo).Offset + 0x21]
+                ).RulerSelf
                 marriage_status = marriage_ruler.GetName()
 
-            marry_bmp = Helper.DrawText(Helper.GetBuiltinText(0x6425).replace("%s", marriage_status), palette_no=2,
-                                        scaled=False)
+            marry_bmp = Helper.DrawText(
+                Helper.GetBuiltinText(0x6425).replace("%s", marriage_status),
+                palette_no=2,
+                scaled=False,
+            )
             bmp.blit(marry_bmp, (80, 8))
         else:
             if ruler_offset > 0:
@@ -384,12 +500,17 @@ class Command8(object):
                 buxia_bmp = Helper.DrawText(Helper.GetBuiltinText(0x6448, 0x644B), scaled=False)
                 bmp.blit(buxia_bmp, (80 + name_bmp.get_width(), 8))
             else:
-                bmp.blit(Helper.DrawText(Helper.GetBuiltinText(0x6439), palette_no=6, scaled=False), (80, 8))
+                bmp.blit(
+                    Helper.DrawText(Helper.GetBuiltinText(0x6439), palette_no=6, scaled=False),
+                    (80, 8),
+                )
 
         # 531
         wuzhuang = Helper.DrawText(Helper.GetBuiltinText(0x6575), palette_no=5, scaled=False)
         xunlian = Helper.DrawText(Helper.GetBuiltinText(0x6570), palette_no=5, scaled=False)
-        shibing = Helper.DrawText(Helper.GetBuiltinText(0x6583).replace(" ",""), palette_no=5, scaled=False)
+        shibing = Helper.DrawText(
+            Helper.GetBuiltinText(0x6583).replace(" ", ""), palette_no=5, scaled=False
+        )
         bmp.blit(wuzhuang, (80, 40))
         bmp.blit(xunlian, (80, 75))
         bmp.blit(shibing, (80, 110))
@@ -446,4 +567,6 @@ class Command8(object):
         haozhao = Helper.DrawText(str(officer.Chm))
         bmp.blit(haozhao, (320 - haozhao.get_width(), 110))
 
-        return pygame.transform.scale(bmp, (bmp.get_width() * Helper.Scale, bmp.get_height() * Helper.Scale))
+        return pygame.transform.scale(
+            bmp, (bmp.get_width() * Helper.Scale, bmp.get_height() * Helper.Scale)
+        )

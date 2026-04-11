@@ -215,9 +215,7 @@ class BattleRenderer:
         }
         return color_map.get(terrain, self.COLORS["plains"])
 
-    def render_grid(
-        self, grid: HexGrid, highlight_hexes: Optional[List[HexCoord]] = None
-    ):
+    def render_grid(self, grid: HexGrid, highlight_hexes: Optional[List[HexCoord]] = None):
         """
         Render the grid using terrain images (staggered square tiles).
 
@@ -240,9 +238,7 @@ class BattleRenderer:
             else:
                 # Fallback to colored rectangle
                 color = self.get_terrain_color(hex_obj.terrain)
-                pygame.draw.rect(
-                    self.screen, color, (x, y, self.tile_width, self.tile_height)
-                )
+                pygame.draw.rect(self.screen, color, (x, y, self.tile_width, self.tile_height))
 
             # Highlight if needed
             if coord in highlight_set:
@@ -286,10 +282,7 @@ class BattleRenderer:
         # Check if unit is hidden
         if unit.is_hidden():
             # Hidden units are invisible to enemies
-            if (
-                viewer_is_attacker is not None
-                and unit.is_attacker != viewer_is_attacker
-            ):
+            if viewer_is_attacker is not None and unit.is_attacker != viewer_is_attacker:
                 return  # Don't render enemy hidden units
             # Owner sees hidden units semi-transparent
             is_hidden_visible = True
@@ -312,9 +305,7 @@ class BattleRenderer:
         # For hidden units, make semi-transparent
         if is_hidden_visible:
             # Create semi-transparent surface for the unit
-            unit_surface = pygame.Surface(
-                (self.tile_width, self.tile_height), pygame.SRCALPHA
-            )
+            unit_surface = pygame.Surface((self.tile_width, self.tile_height), pygame.SRCALPHA)
             # Draw unit circle on the surface with transparency
             pygame.draw.circle(
                 unit_surface,
@@ -427,12 +418,8 @@ class BattleRenderer:
         panel_y = 10
 
         # Draw panel background
-        pygame.draw.rect(
-            self.screen, (32, 32, 32), (panel_x - 10, panel_y - 10, 190, 400)
-        )
-        pygame.draw.rect(
-            self.screen, (100, 100, 100), (panel_x - 10, panel_y - 10, 190, 400), 2
-        )
+        pygame.draw.rect(self.screen, (32, 32, 32), (panel_x - 10, panel_y - 10, 190, 400))
+        pygame.draw.rect(self.screen, (100, 100, 100), (panel_x - 10, panel_y - 10, 190, 400), 2)
 
         # Battle info
         y = panel_y
@@ -501,9 +488,7 @@ class BattleRenderer:
         surface = self.small_font.render(def_rice_text, True, rice_color)
         self.screen.blit(surface, (panel_x, y))
 
-    def render_selected_unit_info(
-        self, unit: Optional[BattleUnit], x: int = 10, y: int = 10
-    ):
+    def render_selected_unit_info(self, unit: Optional[BattleUnit], x: int = 10, y: int = 10):
         """
         Render info for selected unit with portrait.
 
@@ -519,9 +504,7 @@ class BattleRenderer:
         panel_width = 200
         panel_height = 220
         pygame.draw.rect(self.screen, (32, 32, 32), (x, y, panel_width, panel_height))
-        pygame.draw.rect(
-            self.screen, (100, 100, 100), (x, y, panel_width, panel_height), 2
-        )
+        pygame.draw.rect(self.screen, (100, 100, 100), (x, y, panel_width, panel_height), 2)
 
         # Get officer ID for portrait
         officer_id = getattr(unit.officer, "Id", None)
@@ -580,9 +563,7 @@ class BattleRenderer:
                 self.screen.blit(surface, (x + 5, y_offset))
                 y_offset += 18
 
-    def get_tile_at_pixel(
-        self, grid: HexGrid, pixel_x: int, pixel_y: int
-    ) -> Optional[HexCoord]:
+    def get_tile_at_pixel(self, grid: HexGrid, pixel_x: int, pixel_y: int) -> Optional[HexCoord]:
         """
         Find tile coordinate at pixel position (for staggered square grid).
 

@@ -309,9 +309,7 @@ class TurnManager:
         """Execute fire attack."""
         # Fire attack sets hex on fire, not unit
         # Simplified for now
-        self.engine.log.append(
-            f"{self.selected_unit.get_officer_name()} attempts fire attack"
-        )
+        self.engine.log.append(f"{self.selected_unit.get_officer_name()} attempts fire attack")
         attacker.has_attacked = True
         return True
 

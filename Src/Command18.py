@@ -8,8 +8,11 @@ from Data import DelegateMode
 
 class Command18(object):
     def __init__(self):
-        self.commands = [Helper.GetBuiltinText(0x89DE, 0x89E1), Helper.GetBuiltinText(0x89EB, 0x89EE),
-                         Helper.GetBuiltinText(0x89F8, 0x89FB)]
+        self.commands = [
+            Helper.GetBuiltinText(0x89DE, 0x89E1),
+            Helper.GetBuiltinText(0x89EB, 0x89EE),
+            Helper.GetBuiltinText(0x89F8, 0x89FB),
+        ]
         self.palette_no = 5
         self.commands_color = [self.palette_no] * 3
         self.province_no = -1
@@ -41,24 +44,31 @@ class Command18(object):
         if passenger_no < 3:
             if passenger_no < 2:
                 passenger_name = Helper.GetBuiltinText(
-                    Data.DSBUF[0x8710 + 2 * passenger_no + 1] * 256 + Data.DSBUF[0x8710 + 2 * passenger_no + 0])
+                    Data.DSBUF[0x8710 + 2 * passenger_no + 1] * 256
+                    + Data.DSBUF[0x8710 + 2 * passenger_no + 0]
+                )
                 passenger_name = Helper.GetBuiltinText(0x6189).replace("%s", passenger_name)
             else:
-                passenger_name = Helper.GetBuiltinText(Data.DSBUF[0x8714 + 1] * 256 + Data.DSBUF[0x8714 + 0])
+                passenger_name = Helper.GetBuiltinText(
+                    Data.DSBUF[0x8714 + 1] * 256 + Data.DSBUF[0x8714 + 0]
+                )
                 passenger_name = Helper.GetBuiltinText(0x6192).replace("%s", passenger_name)
-            passenger_face = Data.DSBUF[0x871C + 2 * passenger_no + 1] * 256 + Data.DSBUF[
-                0x871C + 2 * passenger_no + 0] - 1
+            passenger_face = (
+                Data.DSBUF[0x871C + 2 * passenger_no + 1] * 256
+                + Data.DSBUF[0x871C + 2 * passenger_no + 0]
+                - 1
+            )
         else:
             advisor = Officer.GetAdvisor()
             passenger_name = advisor.GetName()
-            passenger_name = Helper.GetBuiltinText(0x619b).replace("%s", passenger_name)
+            passenger_name = Helper.GetBuiltinText(0x619B).replace("%s", passenger_name)
             passenger_face = advisor.Portrait
 
         max_length = 0
 
         for i in range(0, len(talk_data)):
             img = Helper.DrawText(talk_data[i], back_color=(255, 255, 255), palette_no=0)
-            if img.get_width()>max_length:
+            if img.get_width() > max_length:
                 max_length = img.get_width()
 
         max_length += 8
@@ -79,12 +89,13 @@ class Command18(object):
         pygame.draw.rect(bmp, (255, 255, 255), (left + 7, top - 6, 2, 12))
         pygame.draw.rect(bmp, (255, 255, 255), (left + 9, top - 9, 2, 18))
 
-
         for i in range(0, len(talk_data)):
             img = Helper.DrawText(talk_data[i], back_color=(255, 255, 255), palette_no=0)
             bmp.blit(img, (105, 50 + 30 * i))
 
-        bmp = pygame.transform.scale(bmp, (bmp.get_width() * Helper.Scale, bmp.get_height() * Helper.Scale))
+        bmp = pygame.transform.scale(
+            bmp, (bmp.get_width() * Helper.Scale, bmp.get_height() * Helper.Scale)
+        )
 
         Helper.Screen.blit(bmp, (300 * Helper.Scale, 130 * Helper.Scale))
         pygame.display.flip()
@@ -119,14 +130,27 @@ class Command18(object):
         if passenger > 2:
             self.commands_color[2] = 4
 
-        Helper.ShowCommandsInInputArea(self.commands, 3, palette_no=self.palette_no, width=70,
-                                       commands_color=self.commands_color)
+        Helper.ShowCommandsInInputArea(
+            self.commands,
+            3,
+            palette_no=self.palette_no,
+            width=70,
+            commands_color=self.commands_color,
+        )
 
-        cmd = Helper.GetInput(Helper.GetBuiltinText(0x5342) + "(1-{0})?".format(len(self.commands)), row=1,
-                              required_number_min=1, required_number_max=3, allow_enter_exit=True)
+        cmd = Helper.GetInput(
+            Helper.GetBuiltinText(0x5342) + "(1-{0})?".format(len(self.commands)),
+            row=1,
+            required_number_min=1,
+            required_number_max=3,
+            allow_enter_exit=True,
+        )
 
         if cmd == 1:
-            ruler_offset = Data.BUF[Data.CURRENT_RULER_OFFSET + 1] * 256 + Data.BUF[Data.CURRENT_RULER_OFFSET + 0]
+            ruler_offset = (
+                Data.BUF[Data.CURRENT_RULER_OFFSET + 1] * 256
+                + Data.BUF[Data.CURRENT_RULER_OFFSET + 0]
+            )
             advisor_offset = Data.BUF[ruler_offset + 1] * 256 + Data.BUF[ruler_offset + 0]
 
             if advisor_offset == 0 or Province.GetAdvisorProvince() != province_no:
@@ -134,9 +158,12 @@ class Command18(object):
                 return
 
             if ((Data.BUF[ruler_offset + 7] & 0x20) == 0x20) or (
-                    Data.BUF[advisor_offset + 0x0B] <= random.randint(0, 100)):
+                Data.BUF[advisor_offset + 0x0B] <= random.randint(0, 100)
+            ):
                 choice = random.randint(0, 1)
-                text = Data.DSBUF[0x89D4 + 2 * choice + 1] * 256 + Data.DSBUF[0x89D4 + 2 * choice + 0]
+                text = (
+                    Data.DSBUF[0x89D4 + 2 * choice + 1] * 256 + Data.DSBUF[0x89D4 + 2 * choice + 0]
+                )
                 self.ShowTalk(3, Helper.GetBuiltinText(text))
                 return
 
@@ -178,14 +205,20 @@ class Command18(object):
                     sick_officers.append(o)
 
             if len(sick_officers) == 0:
-                self.ShowTalk(2, Helper.GetBuiltinText(Data.DSBUF[0x8785] * 256 + Data.DSBUF[0x8784]))
+                self.ShowTalk(
+                    2, Helper.GetBuiltinText(Data.DSBUF[0x8785] * 256 + Data.DSBUF[0x8784])
+                )
             else:
-                self.ShowTalk(2, Helper.GetBuiltinText(Data.DSBUF[0x8787] * 256 + Data.DSBUF[0x8786]))
+                self.ShowTalk(
+                    2, Helper.GetBuiltinText(Data.DSBUF[0x8787] * 256 + Data.DSBUF[0x8786])
+                )
                 for o in sick_officers:
                     Data.BUF[o.Offset + 3] &= 0xF0
 
     def AdviceSetStatus(self):
-        ruler_offset = Data.BUF[Data.CURRENT_RULER_OFFSET + 1] * 256 + Data.BUF[Data.CURRENT_RULER_OFFSET + 0]
+        ruler_offset = (
+            Data.BUF[Data.CURRENT_RULER_OFFSET + 1] * 256 + Data.BUF[Data.CURRENT_RULER_OFFSET + 0]
+        )
         Data.BUF[ruler_offset + 7] &= 0x20
 
     def AdviceNo(self):
@@ -229,8 +262,12 @@ class Command18(object):
 
         choice = random.randint(0, 2)
         choice3 = random.randint(0, 6)
-        text2 = Data.DSBUF[0x8982 + 2 * choice3 + 0x01] * 256 + Data.DSBUF[0x8982 + 2 * choice3 + 0x00]
-        text = Helper.GetBuiltinText(0x896F) + str(war_province) + Helper.GetBuiltinText(text2) + "_"
+        text2 = (
+            Data.DSBUF[0x8982 + 2 * choice3 + 0x01] * 256 + Data.DSBUF[0x8982 + 2 * choice3 + 0x00]
+        )
+        text = (
+            Helper.GetBuiltinText(0x896F) + str(war_province) + Helper.GetBuiltinText(text2) + "_"
+        )
 
         # if choice2==2 and choice==0:
         #     text += Helper.GetBuiltinText(0x8963)
@@ -247,7 +284,11 @@ class Command18(object):
 
         province = Province.FromSequence(neighbor)
 
-        if province.RulerNo == Ruler.GetActiveNo() or province.RulerNo == 0xFF or province.WarRulerNo != 0xFF:
+        if (
+            province.RulerNo == Ruler.GetActiveNo()
+            or province.RulerNo == 0xFF
+            or province.WarRulerNo != 0xFF
+        ):
             return False
         return True
 
@@ -322,8 +363,11 @@ class Command18(object):
                     officer_list.append(officer)
 
         if len(officer_list) > 0:
-            text = [Data.DSBUF[0x88C7] * 256 + Data.DSBUF[0x88C6], Data.DSBUF[0x88C9] * 256 + Data.DSBUF[0x88C8],
-                    Data.DSBUF[0x88CB] * 256 + Data.DSBUF[0x88CA]]
+            text = [
+                Data.DSBUF[0x88C7] * 256 + Data.DSBUF[0x88C6],
+                Data.DSBUF[0x88C9] * 256 + Data.DSBUF[0x88C8],
+                Data.DSBUF[0x88CB] * 256 + Data.DSBUF[0x88CA],
+            ]
             choice2 = random.randint(0, len(officer_list) - 1)
             name = officer_list[choice2].GetName()
 
@@ -338,12 +382,17 @@ class Command18(object):
         province_list = Province.GetListByRulerNo(Ruler.GetActiveNo())
         for province in province_list:
             for officer in province.GetOfficerList():
-                if (Data.BUF[officer.Offset + 2] & 0x20 == 0x20) or (Data.BUF[officer.Offset + 3] & 0xF0 == 0xF0):
+                if (Data.BUF[officer.Offset + 2] & 0x20 == 0x20) or (
+                    Data.BUF[officer.Offset + 3] & 0xF0 == 0xF0
+                ):
                     officer_list.append(officer)
 
         if len(officer_list) > 0:
             choice = random.randint(0, 1)
-            text = [Data.DSBUF[0x887B] * 256 + Data.DSBUF[0x887A], Data.DSBUF[0x887D] * 256 + Data.DSBUF[0x887C]]
+            text = [
+                Data.DSBUF[0x887B] * 256 + Data.DSBUF[0x887A],
+                Data.DSBUF[0x887D] * 256 + Data.DSBUF[0x887C],
+            ]
             choice2 = random.randint(0, len(officer_list) - 1)
             name = officer_list[choice2].GetName()
 
@@ -381,18 +430,24 @@ class Command18(object):
             for i in range(0, 41):
                 province_offset = Data.PROVINCE_START + Data.PROVINCE_SIZE * i
                 if (Data.BUF[province_offset + 5] * 256 + Data.BUF[province_offset + 4] > 0) or (
-                        Data.BUF[province_offset + 7] * 256 + Data.BUF[province_offset + 6] > 0):
+                    Data.BUF[province_offset + 7] * 256 + Data.BUF[province_offset + 6] > 0
+                ):
                     choice = random.randint(0, 100)
                     if choice < 50:
                         province_name = Helper.GetProvinceName(i + 1, without_no=True)
                         self.ShowTalk(0, province_name + Helper.GetBuiltinText(0x87F0))
                         return
                     else:
-                        self.ShowTalk(0, Helper.GetBuiltinText(0x8803) + Helper.GetBuiltinText(0x880C))
+                        self.ShowTalk(
+                            0, Helper.GetBuiltinText(0x8803) + Helper.GetBuiltinText(0x880C)
+                        )
                         return
 
             choice = random.randint(0, 7)
-            text_offset = Data.DSBUF[0x8734 + 2 * choice + 0x01] * 256 + Data.DSBUF[0x8734 + 2 * choice + 0x00]
+            text_offset = (
+                Data.DSBUF[0x8734 + 2 * choice + 0x01] * 256
+                + Data.DSBUF[0x8734 + 2 * choice + 0x00]
+            )
             self.ShowTalk(Helper.GetBuiltinText(text_offset))
 
     def Xuzijiang(self):
@@ -405,7 +460,10 @@ class Command18(object):
             text = random.randint(0, 1)
             offset = [0x87DC, 0x87C0]
 
-            text_offset = Data.DSBUF[offset[choice] + 1 + 2 * text] * 256 + Data.DSBUF[offset[choice] + 0 + 2 * text]
+            text_offset = (
+                Data.DSBUF[offset[choice] + 1 + 2 * text] * 256
+                + Data.DSBUF[offset[choice] + 0 + 2 * text]
+            )
             self.ShowTalk(1, special_list[officer] + Helper.GetBuiltinText(text_offset))
 
             return
@@ -413,7 +471,10 @@ class Command18(object):
         num = random.randint(0, 100)
         if num < 50:
             choice = random.randint(0, 7)
-            text_offset = Data.DSBUF[0x8722 + 2 * choice + 0x01] * 256 + Data.DSBUF[0x8722 + 2 * choice + 0x00]
+            text_offset = (
+                Data.DSBUF[0x8722 + 2 * choice + 0x01] * 256
+                + Data.DSBUF[0x8722 + 2 * choice + 0x00]
+            )
             self.ShowTalk(1, Helper.GetBuiltinText(text_offset))
             return
 
@@ -441,7 +502,9 @@ class Command18(object):
                     if (Data.BUF[o.Offset + 0x02] >> 4) % 2 == 1:  # dead
                         special_list.append(o.GetName())
                 elif choice == 1:
-                    if ((Data.BUF[o.Offset + 0x02] & 2) == 2) or (Data.BUF[o.Offset + 0x03] >> 4) > 0:  # spy
+                    if ((Data.BUF[o.Offset + 0x02] & 2) == 2) or (
+                        Data.BUF[o.Offset + 0x03] >> 4
+                    ) > 0:  # spy
                         special_list.append(o.GetName())
                 elif choice == 2:
                     if Data.BUF[o.Offset + 0x09] >= 0x50:  # yewang

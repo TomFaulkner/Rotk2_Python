@@ -40,9 +40,7 @@ class CombatResult:
         self.messages.append(msg)
 
     def __repr__(self):
-        return (
-            f"CombatResult(A:{self.attacker_casualties}/D:{self.defender_casualties})"
-        )
+        return f"CombatResult(A:{self.attacker_casualties}/D:{self.defender_casualties})"
 
 
 class CombatSystem:
@@ -126,9 +124,7 @@ class CombatSystem:
         result.attacker_defeated = attacker.is_defeated()
 
         # Messages
-        result.add_message(
-            f"{attacker.get_officer_name()} attacks {defender.get_officer_name()}"
-        )
+        result.add_message(f"{attacker.get_officer_name()} attacks {defender.get_officer_name()}")
         result.add_message(
             f"Dealt {result.defender_casualties} damage, took {result.attacker_casualties}"
         )
@@ -140,9 +136,7 @@ class CombatSystem:
         return result
 
     @staticmethod
-    def calculate_simultaneous_attack(
-        attackers: List, defender, grid=None
-    ) -> CombatResult:
+    def calculate_simultaneous_attack(attackers: List, defender, grid=None) -> CombatResult:
         """
         Calculate simultaneous attack.
 
@@ -242,12 +236,7 @@ class CombatSystem:
 
         # Calculate pass-through chance based on strength difference
         # strength = war*3 + skill + arms + troops/1000
-        if (
-            not result.attacker_defeated
-            and grid
-            and attacker.position
-            and defender.position
-        ):
+        if not result.attacker_defeated and grid and attacker.position and defender.position:
             # Get unit stats for strength calculation
             att_war = attacker.get_war_ability()
             def_war = defender.get_war_ability()
@@ -294,9 +283,7 @@ class CombatSystem:
                 result.add_message("Charge stopped cold!")
 
         # Messages
-        result.add_message(
-            f"{attacker.get_officer_name()} CHARGES {defender.get_officer_name()}!"
-        )
+        result.add_message(f"{attacker.get_officer_name()} CHARGES {defender.get_officer_name()}!")
         result.add_message(
             f"Heavy casualties: A:{result.attacker_casualties} D:{result.defender_casualties}"
         )
@@ -483,9 +470,7 @@ class CombatSystem:
         return (True, message, [])
 
     @staticmethod
-    def process_fires(
-        grid, wind_direction: str = None, weather: str = "clear"
-    ) -> tuple:
+    def process_fires(grid, wind_direction: str = None, weather: str = "clear") -> tuple:
         """
         Process all fires: spread to adjacent hexes and try to extinguish.
         Called at the start of each day (every 2 turns).
@@ -510,31 +495,22 @@ class CombatSystem:
             if extinguished:
                 return (
                     [],
-                    [
-                        (coord, f"Storm extinguished fire at {coord}!")
-                        for coord in extinguished
-                    ],
+                    [(coord, f"Storm extinguished fire at {coord}!") for coord in extinguished],
                 )
             return ([], [])
 
         new_fires = []
         extinguished = []
-        burning_hexes = [
-            coord for coord, hex_obj in grid.hexes.items() if hex_obj.is_burning
-        ]
+        burning_hexes = [coord for coord, hex_obj in grid.hexes.items() if hex_obj.is_burning]
 
         # First, try to extinguish existing fires naturally
         for burning_coord in burning_hexes:
             hex_obj = grid.get_hex(burning_coord)
             if hex_obj.try_extinguish():
-                extinguished.append(
-                    (burning_coord, f"Fire at {burning_coord} died out naturally")
-                )
+                extinguished.append((burning_coord, f"Fire at {burning_coord} died out naturally"))
 
         # Get updated list of still-burning hexes
-        burning_hexes = [
-            coord for coord, hex_obj in grid.hexes.items() if hex_obj.is_burning
-        ]
+        burning_hexes = [coord for coord, hex_obj in grid.hexes.items() if hex_obj.is_burning]
 
         # Then spread remaining fires
         for burning_coord in burning_hexes:
@@ -595,11 +571,7 @@ class CombatSystem:
         allies = []
 
         for ally in all_units:
-            if (
-                ally.is_attacker == unit.is_attacker
-                and ally != unit
-                and not ally.is_defeated()
-            ):
+            if ally.is_attacker == unit.is_attacker and ally != unit and not ally.is_defeated():
                 if ally.position in adjacent:
                     allies.append(ally)
 
@@ -883,9 +855,7 @@ class CombatSystem:
             new_war = (winner_war + loser_war) // 2
             # Note: We can't actually modify the officer here, just report it
             war_gained = True
-            war_message = (
-                f"{winner.get_officer_name()} gains War ability from the experience!"
-            )
+            war_message = f"{winner.get_officer_name()} gains War ability from the experience!"
         else:
             war_message = ""
 
@@ -1221,9 +1191,7 @@ class CombatSystem:
             victory = battle_engine.check_victory()
             if victory:
                 result["battle_ended"] = True
-                result["victor"] = (
-                    "attacker" if captured_side == "defender" else "defender"
-                )
+                result["victor"] = "attacker" if captured_side == "defender" else "defender"
 
         return result
 

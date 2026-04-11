@@ -73,9 +73,7 @@ def create_test_battle(province_id: int = 10) -> BattleEngine:
             soldiers = 40 + ((i - 10) * 8)
             unit = BattleUnit(officer, soldiers=soldiers, is_attacker=False)
             battle.defender_reserve.add(unit)
-            print(
-                f"  {i - 9}. {unit.get_officer_name()} - {soldiers} soldiers (reserve)"
-            )
+            print(f"  {i - 9}. {unit.get_officer_name()} - {soldiers} soldiers (reserve)")
         except Exception as e:
             print(f"  Error loading officer {i}: {e}")
 
@@ -103,12 +101,8 @@ def create_test_battle(province_id: int = 10) -> BattleEngine:
     battle.defender_supplies["rice"] = (defender_troops // daily_consumption_rate) * 10
 
     print(f"\nSupplies:")
-    print(
-        f"  Attacker rice: {battle.attacker_supplies['rice']} (for {attacker_troops} troops)"
-    )
-    print(
-        f"  Defender rice: {battle.defender_supplies['rice']} (for {defender_troops} troops)"
-    )
+    print(f"  Attacker rice: {battle.attacker_supplies['rice']} (for {attacker_troops} troops)")
+    print(f"  Defender rice: {battle.defender_supplies['rice']} (for {defender_troops} troops)")
 
     if defender_units:
         battle.set_commander(defender_units[0], is_attacker=False)

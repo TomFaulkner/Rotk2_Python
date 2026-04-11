@@ -1,6 +1,7 @@
 from Officer import Officer
 from Data import Data, ShowOfficerFlag, DelegateMode
 
+
 class Province(object):
     # region properties
     No = 0  # 从1开始
@@ -65,13 +66,26 @@ class Province(object):
 
     @staticmethod
     def FromOffset(offset):
-        city_names = ["幽州", "幷州", "冀州", "青州", "兗州", "司州", "雍州", "涼州", "徐州", "予州", "荊州", "揚州",
-                      "益州", "交州"]
-
+        city_names = [
+            "幽州",
+            "幷州",
+            "冀州",
+            "青州",
+            "兗州",
+            "司州",
+            "雍州",
+            "涼州",
+            "徐州",
+            "予州",
+            "荊州",
+            "揚州",
+            "益州",
+            "交州",
+        ]
 
         p = Province()
 
-        province_buf = Data.BUF[offset: offset+Data.PROVINCE_SIZE]
+        province_buf = Data.BUF[offset : offset + Data.PROVINCE_SIZE]
 
         x = province_buf[0x20]
         y = province_buf[0x21]
@@ -99,15 +113,23 @@ class Province(object):
             p.DelegateControl = daili_mappings[daili]
 
         if yunshujun < 41:
-            name_index = Data.BUF[Data.PROVINCE_START + Data.PROVINCE_SIZE * yunshujun + Data.PROVINCE_SIZE - 1]
+            name_index = Data.BUF[
+                Data.PROVINCE_START + Data.PROVINCE_SIZE * yunshujun + Data.PROVINCE_SIZE - 1
+            ]
             p.ProvinceSendGoods = city_names[name_index] + "-" + str(yunshujun + 1)
         if zhanzhengjun < 41:
-            name_index = Data.BUF[Data.PROVINCE_START + Data.PROVINCE_SIZE * zhanzhengjun + Data.PROVINCE_SIZE - 1]
+            name_index = Data.BUF[
+                Data.PROVINCE_START + Data.PROVINCE_SIZE * zhanzhengjun + Data.PROVINCE_SIZE - 1
+            ]
             p.ProvinceInvade = city_names[name_index] + "-" + str(name_index + 1)
 
         p.Gold = Data.GetWordFromOffset(province_buf, 8)
-        p.Food = (province_buf[0x0D] << 24) + (province_buf[0x0C] << 16) + (province_buf[0x0B] << 8) + province_buf[
-            0x0A]
+        p.Food = (
+            (province_buf[0x0D] << 24)
+            + (province_buf[0x0C] << 16)
+            + (province_buf[0x0B] << 8)
+            + province_buf[0x0A]
+        )
         p.Population = (Data.GetWordFromOffset(province_buf, 0x0E)) * 100
         p.Land = province_buf[0x16]
         p.Loyalty = province_buf[0x17]
@@ -179,13 +201,13 @@ class Province(object):
 
     @staticmethod
     def GetListByRulerNo(ruler_no):
-        start = Data.RULER_START+Data.RULER_SIZE*ruler_no
-        province_offset = Data.GetWordFromOffset(Data.BUF,start+0x02)
+        start = Data.RULER_START + Data.RULER_SIZE * ruler_no
+        province_offset = Data.GetWordFromOffset(Data.BUF, start + 0x02)
 
         plist = []
-        while province_offset>0:
+        while province_offset > 0:
             plist.append(Province.FromOffset(province_offset))
-            province_offset = Data.GetWordFromOffset(Data.BUF,province_offset)
+            province_offset = Data.GetWordFromOffset(Data.BUF, province_offset)
 
         return plist
 
@@ -264,9 +286,7 @@ class Province(object):
             governor.NextOfficerOffset = new_list[0].Offset
             governor.Flush()
 
-
         p.Flush()
-
 
     @staticmethod
     def TransitOfficers(officer_list, from_province, to_province):
@@ -286,11 +306,9 @@ class Province(object):
             from_list[i].NextOfficerOffset = from_list[i + 1].Offset
             from_list[i].Flush()
 
-
         if len(from_list) > 0:
             from_list[i + 1].NextOfficerOffset = 0
             from_list[i + 1].Flush()
-
 
             # ensure all of the officers can be visited from this province
             # and, we MUST announce a new governor at 8.1 action
@@ -305,7 +323,6 @@ class Province(object):
         if len(to_list) > 0:
             to_list[i + 1].NextOfficerOffset = 0
             to_list[i + 1].Flush()
-
 
             # ensure all of the officers can be visited from this province
             # and, we MUST announce a new governor at 8.1 action

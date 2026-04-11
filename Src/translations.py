@@ -13,9 +13,7 @@ import os
 from typing import Any
 
 # Path to translation files
-TRANSLATION_FILE = os.path.join(
-    os.path.dirname(__file__), "..", "data", "text_en_translated.json"
-)
+TRANSLATION_FILE = os.path.join(os.path.dirname(__file__), "..", "data", "text_en_translated.json")
 UNTRANSLATED_LOG = os.path.join(os.path.dirname(__file__), "..", "untranslated.md")
 
 
@@ -25,9 +23,7 @@ class TranslationManager:
     def __init__(self) -> None:
         """Initialize the translation manager."""
         self._translations: dict[int, str] = {}  # offset -> english text
-        self._untranslated: set[int] = (
-            set()
-        )  # offsets we've seen that lack translations
+        self._untranslated: set[int] = set()  # offsets we've seen that lack translations
         self._untranslated_logged: set[int] = set()  # offsets already logged to file
         self._loaded = False
         self._language = "zh"  # Default to Chinese
@@ -46,11 +42,7 @@ class TranslationManager:
                 offset = entry.get("offset")
                 english = entry.get("english", "")
 
-                if (
-                    offset is not None
-                    and english
-                    and english != entry.get("chinese", "")
-                ):
+                if offset is not None and english and english != entry.get("chinese", ""):
                     self._translations[offset] = english
 
             self._loaded = True

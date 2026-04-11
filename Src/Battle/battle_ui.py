@@ -94,9 +94,7 @@ class ScrollableListOverlay:
             self._ensure_visible()
             return False
         elif key == pygame.K_PAGEDOWN:
-            self.selected_index = min(
-                len(self.items) - 1, self.selected_index + self.visible_count
-            )
+            self.selected_index = min(len(self.items) - 1, self.selected_index + self.visible_count)
             self._ensure_visible()
             return False
         elif key == pygame.K_HOME:
@@ -247,9 +245,7 @@ class ScrollableListOverlay:
         Returns:
             Selected item dict or None if cancelled
         """
-        if self.confirmed_selection is not None and self.confirmed_selection < len(
-            self.items
-        ):
+        if self.confirmed_selection is not None and self.confirmed_selection < len(self.items):
             return self.items[self.confirmed_selection]
         return None
 
@@ -334,11 +330,7 @@ class BattleUI:
 
         # Build highlight list
         highlight_hexes = self.reachable_hexes.copy()
-        if (
-            self.phase == BattlePhaseUI.BATTLE
-            and self.selected_unit
-            and self.adjacent_enemies
-        ):
+        if self.phase == BattlePhaseUI.BATTLE and self.selected_unit and self.adjacent_enemies:
             for enemy in self.adjacent_enemies:
                 # Skip hidden enemies - don't highlight their position
                 if enemy.is_hidden():
@@ -391,14 +383,8 @@ class BattleUI:
         # Draw placement zones (using rectangles for tiles)
         for coord in self.valid_placement_hexes:
             x, y, width, height = self.renderer.get_tile_rect(coord)
-            s = pygame.Surface(
-                (self.screen.get_width(), self.screen.get_height()), pygame.SRCALPHA
-            )
-            color = (
-                (0, 255, 0, 64)
-                if self.placement_side == "attacker"
-                else (255, 255, 0, 64)
-            )
+            s = pygame.Surface((self.screen.get_width(), self.screen.get_height()), pygame.SRCALPHA)
+            color = (0, 255, 0, 64) if self.placement_side == "attacker" else (255, 255, 0, 64)
             pygame.draw.rect(s, color, (x, y, width, height))
             self.screen.blit(s, (0, 0))
             pygame.draw.rect(
@@ -428,12 +414,8 @@ class BattleUI:
             req_met = placed >= total
         else:
             placed = len(self.battle.get_defending_units_on_map())
-            commander_placed = any(
-                u.is_commander for u in self.battle.get_defending_units_on_map()
-            )
-            counter_text = (
-                f"Placed: {placed} (Cmdr: {'OK' if commander_placed else 'NEEDED'})"
-            )
+            commander_placed = any(u.is_commander for u in self.battle.get_defending_units_on_map())
+            counter_text = f"Placed: {placed} (Cmdr: {'OK' if commander_placed else 'NEEDED'})"
             req_met = commander_placed
 
         # Background
@@ -476,7 +458,9 @@ class BattleUI:
         if self.placement_side == "attacker":
             zone_text = "Place on green edge zones (attack direction)"
         else:
-            zone_text = f"Place in yellow zones near castle ({len(self.valid_placement_hexes)} valid)"
+            zone_text = (
+                f"Place in yellow zones near castle ({len(self.valid_placement_hexes)} valid)"
+            )
 
         text = small_font.render(zone_text, True, (255, 255, 0))
         self.screen.blit(text, (20, y + 28))
@@ -533,9 +517,7 @@ class BattleUI:
         weather_color = weather_colors.get(self.battle.weather, (200, 200, 200))
 
         wind_text = (
-            f"Wind: {self.battle.wind_direction}"
-            if self.battle.wind_direction
-            else "Wind: Calm"
+            f"Wind: {self.battle.wind_direction}" if self.battle.wind_direction else "Wind: Calm"
         )
 
         turn_text = "ATTACKER" if self.battle.turn == 0 else "DEFENDER"
@@ -544,13 +526,7 @@ class BattleUI:
         can_reinforce = (
             self.battle.turn == 1  # Defender's turn
             and self.battle.defender_reserve.get_available()
-            and len(
-                [
-                    u
-                    for u in self.battle.get_defending_units_on_map()
-                    if not u.is_defeated()
-                ]
-            )
+            and len([u for u in self.battle.get_defending_units_on_map() if not u.is_defeated()])
             < self.battle.MAX_UNITS_ON_MAP
         )
 
@@ -649,9 +625,7 @@ class BattleUI:
         s.set_alpha(240)
         s.fill((30, 30, 30))
         self.screen.blit(s, (x, y))
-        pygame.draw.rect(
-            self.screen, (200, 200, 200), (x, y, menu_width, menu_height), 2
-        )
+        pygame.draw.rect(self.screen, (200, 200, 200), (x, y, menu_width, menu_height), 2)
 
         font = pygame.font.SysFont(None, 24)
         small_font = pygame.font.SysFont(None, 20)
@@ -669,14 +643,10 @@ class BattleUI:
 
         if "simultaneous" in self.attack_options:
             ally_count = len(self.helping_allies)
-            options.append(
-                ("3", f"Simultaneous ({ally_count} ally)", "Allies attack together")
-            )
+            options.append(("3", f"Simultaneous ({ally_count} ally)", "Allies attack together"))
 
         if "fire" in self.attack_options:
-            int_stat = (
-                self.selected_unit.get_intelligence() if self.selected_unit else 0
-            )
+            int_stat = self.selected_unit.get_intelligence() if self.selected_unit else 0
             options.append(("4", "Fire Attack", f"Set hex on fire (Int: {int_stat})"))
 
         for i, (key, name, desc) in enumerate(options):

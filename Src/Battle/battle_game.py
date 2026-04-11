@@ -296,24 +296,17 @@ class BattleGame:
                 idx = key_to_idx[key]
                 if self.personal_combat_step == "defender_select":
                     available = [
-                        u
-                        for u in self.battle.defending_units
-                        if not u.is_defeated() and u.position
+                        u for u in self.battle.defending_units if not u.is_defeated() and u.position
                     ]
                 else:
                     available = [
-                        u
-                        for u in self.battle.attacking_units
-                        if not u.is_defeated() and u.position
+                        u for u in self.battle.attacking_units if not u.is_defeated() and u.position
                     ]
 
                 if idx < len(available):
                     self._select_general_for_duel(available[idx])
             elif key == K_RETURN:
-                if (
-                    self.personal_combat_defender_general
-                    and self.personal_combat_attacker_general
-                ):
+                if self.personal_combat_defender_general and self.personal_combat_attacker_general:
                     self._resolve_duel()
 
     def _handle_attack_key(self, key):
@@ -443,15 +436,11 @@ class BattleGame:
                 # Get enemy units
                 if self.ui.selected_unit.is_attacker:
                     enemies = [
-                        u
-                        for u in self.battle.defending_units
-                        if not u.is_defeated() and u.position
+                        u for u in self.battle.defending_units if not u.is_defeated() and u.position
                     ]
                 else:
                     enemies = [
-                        u
-                        for u in self.battle.attacking_units
-                        if not u.is_defeated() and u.position
+                        u for u in self.battle.attacking_units if not u.is_defeated() and u.position
                     ]
 
                 if idx < len(enemies):
@@ -459,9 +448,7 @@ class BattleGame:
                     self.bribe_step = "enter_amount"
                     self.bribe_amount = 0
                     print(f"\nTarget: {self.bribe_target.get_officer_name()}")
-                    print(
-                        "Enter bribe amount (1-99), then press Y to confirm or N to cancel"
-                    )
+                    print("Enter bribe amount (1-99), then press Y to confirm or N to cancel")
 
         elif self.bribe_step == "enter_amount":
             if K_0 <= key <= K_9:
@@ -566,9 +553,7 @@ class BattleGame:
         )
 
         self.phase = BattleGamePhase.REINFORCEMENT_SELECT
-        print(
-            "Select a reinforcement (1-9,0 or navigate with arrows, Enter to confirm)"
-        )
+        print("Select a reinforcement (1-9,0 or navigate with arrows, Enter to confirm)")
 
     def _handle_reinforcement_selection(self):
         """Handle reinforcement selection from overlay."""
@@ -642,9 +627,7 @@ class BattleGame:
             return
 
         if self.battle.place_unit(self.reinforcement_unit, coord):
-            print(
-                f"Reinforcement {self.reinforcement_unit.get_officer_name()} placed at {coord}"
-            )
+            print(f"Reinforcement {self.reinforcement_unit.get_officer_name()} placed at {coord}")
             self.ui.add_combat_message(
                 f"Reinforcement: {self.reinforcement_unit.get_officer_name()}"
             )
@@ -653,9 +636,7 @@ class BattleGame:
             hex_obj = self.battle.grid.get_hex(coord)
             if hex_obj and hex_obj.terrain.name.lower() == "forest":
                 self.reinforcement_unit.hide()
-                print(
-                    f"{self.reinforcement_unit.get_officer_name()} is hidden in the forest"
-                )
+                print(f"{self.reinforcement_unit.get_officer_name()} is hidden in the forest")
 
             # Continue with reinforcements or return to battle
             self._continue_or_end_reinforcement()
@@ -678,9 +659,7 @@ class BattleGame:
         if self.reinforcement_unit:
             # Return unit to reserve
             self.reinforcement_unit.state = self.UnitState.IN_RESERVE
-            if self.reinforcement_unit not in [
-                u for u in self.battle.defender_reserve.units
-            ]:
+            if self.reinforcement_unit not in [u for u in self.battle.defender_reserve.units]:
                 self.battle.defender_reserve.add(self.reinforcement_unit)
             print(f"{self.reinforcement_unit.get_officer_name()} returned to reserve")
 
@@ -783,16 +762,12 @@ class BattleGame:
 
         if target and not target.is_defeated():
             # Perform normal attack
-            result = self.CombatSystem.calculate_normal_attack(
-                unit, target, self.battle.grid
-            )
+            result = self.CombatSystem.calculate_normal_attack(unit, target, self.battle.grid)
 
             # Apply damage
             if result.defender_casualties > 0:
                 if is_hidden_target:
-                    print(
-                        f"HIT! Hidden unit at {coord} takes {result.defender_casualties} damage!"
-                    )
+                    print(f"HIT! Hidden unit at {coord} takes {result.defender_casualties} damage!")
                     self.ui.add_combat_message(
                         f"Hit hidden unit for {result.defender_casualties} damage!"
                     )
@@ -871,15 +846,11 @@ class BattleGame:
         # Get next unplaced unit
         if is_attacker:
             unplaced = [
-                u
-                for u in self.battle.attacking_units
-                if u.state == self.UnitState.INACTIVE
+                u for u in self.battle.attacking_units if u.state == self.UnitState.INACTIVE
             ]
         else:
             unplaced = [
-                u
-                for u in self.battle.defending_units
-                if u.state == self.UnitState.INACTIVE
+                u for u in self.battle.defending_units if u.state == self.UnitState.INACTIVE
             ]
 
         if not unplaced:
@@ -899,9 +870,7 @@ class BattleGame:
             # Check if side is done
             if is_attacker:
                 remaining = [
-                    u
-                    for u in self.battle.attacking_units
-                    if u.state == self.UnitState.INACTIVE
+                    u for u in self.battle.attacking_units if u.state == self.UnitState.INACTIVE
                 ]
                 if not remaining:
                     self.placement_side = "defender"
@@ -910,9 +879,7 @@ class BattleGame:
                     print("\nDefender's turn to place units")
             else:
                 remaining = [
-                    u
-                    for u in self.battle.defending_units
-                    if u.state == self.UnitState.INACTIVE
+                    u for u in self.battle.defending_units if u.state == self.UnitState.INACTIVE
                 ]
                 if not remaining:
                     print("\nAll units placed! Press ENTER to start battle")
@@ -989,9 +956,7 @@ class BattleGame:
             self.ui.adjacent_enemies = []
 
             if unit.can_move():
-                self.ui.reachable_hexes = self.battle.grid.get_movement_range(
-                    coord, unit.mobility
-                )
+                self.ui.reachable_hexes = self.battle.grid.get_movement_range(coord, unit.mobility)
                 # Debug: count mountain hexes that would be reachable if not blocked
                 mountain_count = 0
                 for check_coord in self.ui.reachable_hexes:
@@ -999,9 +964,7 @@ class BattleGame:
                     if check_hex and check_hex.terrain.name.lower() == "mountain":
                         mountain_count += 1
                 if mountain_count > 0:
-                    print(
-                        f"  Warning: {mountain_count} mountain hexes in reachable_hexes!"
-                    )
+                    print(f"  Warning: {mountain_count} mountain hexes in reachable_hexes!")
 
             all_units = self.battle.get_all_units_on_map()
             self.ui.adjacent_enemies = self.CombatSystem.get_adjacent_enemies(
@@ -1025,9 +988,7 @@ class BattleGame:
         elif self.ui.selected_unit and self.ui.selected_unit.can_move():
             # Check if the clicked hex is adjacent to current position (step-by-step movement)
             if self.ui.selected_unit.position:
-                adjacent_coords = self.battle.grid.get_adjacent(
-                    self.ui.selected_unit.position
-                )
+                adjacent_coords = self.battle.grid.get_adjacent(self.ui.selected_unit.position)
                 is_adjacent = coord in adjacent_coords
             else:
                 is_adjacent = False
@@ -1050,9 +1011,7 @@ class BattleGame:
                     else self.battle.get_defending_units_on_map()
                 )
                 if self.battle.grid.is_adjacent_to_enemy(coord, friendly_units):
-                    print(
-                        "Cannot move directly to hex adjacent to enemy. Move one step at a time."
-                    )
+                    print("Cannot move directly to hex adjacent to enemy. Move one step at a time.")
                     return
 
             # Allow move if adjacent OR if in reachable_hexes (for longer moves)
@@ -1075,9 +1034,7 @@ class BattleGame:
 
         if self.personal_combat_step == "defender_select":
             self.personal_combat_defender_general = unit
-            print(
-                f"\nDefender: {unit.get_officer_name()} (War {unit.get_war_ability()})"
-            )
+            print(f"\nDefender: {unit.get_officer_name()} (War {unit.get_war_ability()})")
 
             if self.personal_combat_proposer == "defender":
                 self.personal_combat_step = "attacker_response"
@@ -1088,9 +1045,7 @@ class BattleGame:
 
         elif self.personal_combat_step == "attacker_select":
             self.personal_combat_attacker_general = unit
-            print(
-                f"\nAttacker: {unit.get_officer_name()} (War {unit.get_war_ability()})"
-            )
+            print(f"\nAttacker: {unit.get_officer_name()} (War {unit.get_war_ability()})")
 
             if self.personal_combat_proposer == "attacker":
                 self.personal_combat_step = "defender_response"
@@ -1101,10 +1056,7 @@ class BattleGame:
 
     def _check_personal_combat_ready(self):
         """Check if both generals selected."""
-        if (
-            self.personal_combat_defender_general
-            and self.personal_combat_attacker_general
-        ):
+        if self.personal_combat_defender_general and self.personal_combat_attacker_general:
             self._resolve_duel()
 
     def _resolve_duel(self):
@@ -1119,9 +1071,7 @@ class BattleGame:
         print(f"{defe.get_officer_name()} (War {defe.get_war_ability()})")
         print(f"{'=' * 50}")
 
-        result = self.CombatSystem.resolve_personal_combat_with_consequences(
-            att, defe, self.battle
-        )
+        result = self.CombatSystem.resolve_personal_combat_with_consequences(att, defe, self.battle)
         duel = result["duel_result"]
 
         # Show rounds
@@ -1288,9 +1238,7 @@ class BattleGame:
                 self.ui.reachable_hexes = []
             else:
                 # Unit can still move, update reachable hexes from new position
-                self.ui.reachable_hexes = self.battle.grid.get_movement_range(
-                    coord, unit.mobility
-                )
+                self.ui.reachable_hexes = self.battle.grid.get_movement_range(coord, unit.mobility)
                 print(
                     f"Remaining mobility: {unit.mobility}, reachable hexes: {len(self.ui.reachable_hexes)}"
                 )
@@ -1423,15 +1371,11 @@ class BattleGame:
 
         if is_attacker:
             unplaced = [
-                u
-                for u in self.battle.attacking_units
-                if u.state == self.UnitState.INACTIVE
+                u for u in self.battle.attacking_units if u.state == self.UnitState.INACTIVE
             ]
         else:
             unplaced = [
-                u
-                for u in self.battle.defending_units
-                if u.state == self.UnitState.INACTIVE
+                u for u in self.battle.defending_units if u.state == self.UnitState.INACTIVE
             ]
 
         valid_hexes = self.battle.get_valid_placement_hexes(is_attacker)
@@ -1491,9 +1435,7 @@ class BattleGame:
         self.phase = BattleGamePhase.BATTLE
         self.ui.set_phase(BattlePhaseUI.BATTLE)
         self.battle.phase = (
-            self.battle.BattlePhase.TACTICAL
-            if hasattr(self.battle, "BattlePhase")
-            else None
+            self.battle.BattlePhase.TACTICAL if hasattr(self.battle, "BattlePhase") else None
         )
         print("\n" + "=" * 50)
         print("TACTICAL BATTLE")
@@ -1532,9 +1474,7 @@ class BattleGame:
             for _, msg in fire_result.get("new_fires", []):
                 print(f"  {msg}")
             for dmg in fire_result.get("fire_damage", []):
-                print(
-                    f"  {dmg['unit'].get_officer_name()}: {dmg['casualties']} fire damage!"
-                )
+                print(f"  {dmg['unit'].get_officer_name()}: {dmg['casualties']} fire damage!")
 
         self.ui.clear_selection()
         side = "Attacker" if self.battle.turn == 0 else "Defender"
@@ -1606,9 +1546,7 @@ class BattleGame:
                 text = small_font.render(line, True, (220, 220, 220))
                 self.screen.blit(text, (x + 20, y + 50 + i * 18))
 
-            text = font.render(
-                "Defender: Propose personal combat?", True, (255, 255, 255)
-            )
+            text = font.render("Defender: Propose personal combat?", True, (255, 255, 255))
             self.screen.blit(text, (x + 20, y + 150))
             text = small_font.render("[Y] Yes  [N] No", True, (200, 200, 200))
             self.screen.blit(text, (x + 40, y + 175))
@@ -1622,9 +1560,7 @@ class BattleGame:
                 text = small_font.render(line, True, (220, 220, 220))
                 self.screen.blit(text, (x + 20, y + 50 + i * 18))
 
-            text = font.render(
-                "Attacker: Propose personal combat?", True, (255, 255, 255)
-            )
+            text = font.render("Attacker: Propose personal combat?", True, (255, 255, 255))
             self.screen.blit(text, (x + 20, y + 100))
             text = small_font.render("[Y] Yes  [N] No", True, (200, 200, 200))
             self.screen.blit(text, (x + 40, y + 125))
@@ -1637,18 +1573,14 @@ class BattleGame:
 
             # List available (up to 10, in two columns)
             available = [
-                u
-                for u in self.battle.defending_units
-                if not u.is_defeated() and u.position
+                u for u in self.battle.defending_units if not u.is_defeated() and u.position
             ]
             # First column (1-5)
             for i, unit in enumerate(available[:5]):
                 name = unit.get_officer_name()
                 war = unit.get_war_ability()
                 key_num = i + 1
-                text = small_font.render(
-                    f"[{key_num}] {name} (War {war})", True, (200, 200, 200)
-                )
+                text = small_font.render(f"[{key_num}] {name} (War {war})", True, (200, 200, 200))
                 self.screen.blit(text, (x + 40, y + 80 + i * 22))
             # Second column (6-10, key 0 for 10th)
             for i, unit in enumerate(available[5:10]):
@@ -1673,18 +1605,14 @@ class BattleGame:
                 self.screen.blit(text, (x + 20, y + 50 + i * 18))
 
             available = [
-                u
-                for u in self.battle.attacking_units
-                if not u.is_defeated() and u.position
+                u for u in self.battle.attacking_units if not u.is_defeated() and u.position
             ]
             # First column (1-5)
             for i, unit in enumerate(available[:5]):
                 name = unit.get_officer_name()
                 war = unit.get_war_ability()
                 key_num = i + 1
-                text = small_font.render(
-                    f"[{key_num}] {name} (War {war})", True, (200, 200, 200)
-                )
+                text = small_font.render(f"[{key_num}] {name} (War {war})", True, (200, 200, 200))
                 self.screen.blit(text, (x + 40, y + 80 + i * 22))
             # Second column (6-10, key 0 for 10th)
             for i, unit in enumerate(available[5:10]):
@@ -1778,15 +1706,11 @@ class BattleGame:
             # Get enemy units
             if self.ui.selected_unit.is_attacker:
                 enemies = [
-                    u
-                    for u in self.battle.defending_units
-                    if not u.is_defeated() and u.position
+                    u for u in self.battle.defending_units if not u.is_defeated() and u.position
                 ]
             else:
                 enemies = [
-                    u
-                    for u in self.battle.attacking_units
-                    if not u.is_defeated() and u.position
+                    u for u in self.battle.attacking_units if not u.is_defeated() and u.position
                 ]
 
             # First column (1-5)
@@ -1831,9 +1755,7 @@ class BattleGame:
                 self.screen.blit(text, (x + 20, y + 50 + i * 20))
 
             # Show entered amount
-            amount_text = font.render(
-                f"Amount: {self.bribe_amount} gold", True, (255, 255, 100)
-            )
+            amount_text = font.render(f"Amount: {self.bribe_amount} gold", True, (255, 255, 100))
             self.screen.blit(amount_text, (x + 40, y + 140))
 
             # Instructions
@@ -1852,9 +1774,7 @@ class BattleGame:
         # Draw valid placement zones
         for coord in self.reinforcement_valid_hexes:
             x, y_pos, width, height = self.ui.renderer.get_tile_rect(coord)
-            s = pygame.Surface(
-                (self.screen.get_width(), self.screen.get_height()), pygame.SRCALPHA
-            )
+            s = pygame.Surface((self.screen.get_width(), self.screen.get_height()), pygame.SRCALPHA)
             # Blue tint for reinforcements
             pygame.draw.rect(s, (0, 100, 255, 64), (x, y_pos, width, height))
             self.screen.blit(s, (0, 0))
@@ -1907,9 +1827,7 @@ class BattleGame:
             x, y_pos, width, height = self.ui.renderer.get_tile_rect(coord)
 
             # Red tint for attackable hexes
-            s = pygame.Surface(
-                (self.screen.get_width(), self.screen.get_height()), pygame.SRCALPHA
-            )
+            s = pygame.Surface((self.screen.get_width(), self.screen.get_height()), pygame.SRCALPHA)
             pygame.draw.rect(s, (255, 50, 50, 64), (x, y_pos, width, height))
             self.screen.blit(s, (0, 0))
             pygame.draw.rect(self.screen, (255, 100, 100), (x, y_pos, width, height), 2)
@@ -1917,12 +1835,8 @@ class BattleGame:
             # Draw sword icon in center
             cx = x + width // 2
             cy = y_pos + height // 2
-            pygame.draw.line(
-                self.screen, (255, 200, 200), (cx - 6, cy + 6), (cx + 6, cy - 6), 3
-            )
-            pygame.draw.line(
-                self.screen, (255, 200, 200), (cx - 6, cy - 6), (cx + 6, cy + 6), 3
-            )
+            pygame.draw.line(self.screen, (255, 200, 200), (cx - 6, cy + 6), (cx + 6, cy - 6), 3)
+            pygame.draw.line(self.screen, (255, 200, 200), (cx - 6, cy - 6), (cx + 6, cy + 6), 3)
 
         # Draw instruction panel
         y = self.screen.get_height() - 80

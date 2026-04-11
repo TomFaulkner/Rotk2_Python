@@ -2,13 +2,14 @@ from Officer import Officer
 from Province import Province
 from Data import Data
 
+
 class Ruler(object):
     # region properties
     Offset = 0
-    RulerSelf:Officer = None
+    RulerSelf: Officer = None
     HomeCity = None
     Advisor = None
-    No = 0xff
+    No = 0xFF
     TrustRating = 0
     RelationShips = {}
     IsWandering = False
@@ -18,20 +19,22 @@ class Ruler(object):
     @staticmethod
     def GetList():
         rlist = []
-        ruler_num = 0x0f
+        ruler_num = 0x0F
         start = Data.RULER_START
         size = Data.RULER_SIZE
 
         for i in range(0, 0x10):
-            ruler_offset = Data.GetWordFromOffset(Data.BUF,start + i * size + 0)
+            ruler_offset = Data.GetWordFromOffset(Data.BUF, start + i * size + 0)
             if ruler_offset == 0:
                 continue
-            ruler_city_offset = Data.GetWordFromOffset(Data.BUF,start + i * size + 2)
-            aa_offset = Data.GetWordFromOffset(Data.BUF,start + i * size + 4)
-            relationships_data = "{0:b}".format(Data.BUF[start + i * size + 0x0A]).zfill(8)[::-1] + "{0:b}".format(
-                Data.BUF[start + i * size + 0x0B]).zfill(8)[::-1]
+            ruler_city_offset = Data.GetWordFromOffset(Data.BUF, start + i * size + 2)
+            aa_offset = Data.GetWordFromOffset(Data.BUF, start + i * size + 4)
+            relationships_data = (
+                "{0:b}".format(Data.BUF[start + i * size + 0x0A]).zfill(8)[::-1]
+                + "{0:b}".format(Data.BUF[start + i * size + 0x0B]).zfill(8)[::-1]
+            )
 
-            order = Data.GetWordFromOffset(Data.BUF,start + i * size + 0x0C)
+            order = Data.GetWordFromOffset(Data.BUF, start + i * size + 0x0C)
 
             k = Ruler()
             k.Offset = start + i * size
@@ -48,16 +51,16 @@ class Ruler(object):
             for j in range(0, 16):
                 # key:   Alliance
                 # value: Hostility
-                k.RelationShips[j] = [relationships_data[j], Data.BUF[start + j * size + 0x0e + i]]
+                k.RelationShips[j] = [relationships_data[j], Data.BUF[start + j * size + 0x0E + i]]
 
-            k.IsWandering = (Data.BUF[start + j * size + 0x22] != 0xff)
+            k.IsWandering = Data.BUF[start + j * size + 0x22] != 0xFF
             rlist.append(k)
 
         return rlist
 
     @staticmethod
     def FromNo(no):
-        if no == 0xff:
+        if no == 0xFF:
             k = Ruler()
             k.RulerSelf = Officer()
             k.No = no
@@ -86,7 +89,3 @@ class Ruler(object):
         ruler_name_data = ruler.GetName()
 
         return ruler_name_data
-
-
-
-

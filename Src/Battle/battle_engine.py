@@ -136,8 +136,7 @@ class BattleEngine:
                 return
             # Fallback: check is_castle flag or CASTLE terrain name
             elif hex_obj.is_castle or (
-                hex_obj.terrain.name.lower() == "castle"
-                and not hasattr(hex_obj, "terrain_code")
+                hex_obj.terrain.name.lower() == "castle" and not hasattr(hex_obj, "terrain_code")
             ):
                 self.defender_castle_pos = coord
                 hex_obj.is_castle = True
@@ -194,14 +193,8 @@ class BattleEngine:
             1: [(0, c) for c in range(self.grid.cols // 2, self.grid.cols)]
             + [(1, c) for c in range(self.grid.cols // 2, self.grid.cols)],
             2: [(r, self.grid.cols - 1) for r in range(self.grid.rows)],  # East edge
-            3: [
-                (r, self.grid.cols - 1)
-                for r in range(self.grid.rows // 2, self.grid.rows)
-            ]
-            + [
-                (r, self.grid.cols - 2)
-                for r in range(self.grid.rows // 2, self.grid.rows)
-            ],
+            3: [(r, self.grid.cols - 1) for r in range(self.grid.rows // 2, self.grid.rows)]
+            + [(r, self.grid.cols - 2) for r in range(self.grid.rows // 2, self.grid.rows)],
             4: [(self.grid.rows - 1, c) for c in range(self.grid.cols)],  # South edge
             5: [(r, 0) for r in range(self.grid.rows // 2, self.grid.rows)]
             + [(r, 1) for r in range(self.grid.rows // 2, self.grid.rows)],
@@ -210,9 +203,7 @@ class BattleEngine:
             + [(1, c) for c in range(self.grid.cols // 2)],
         }
 
-        edge_positions = direction_edges.get(
-            self.attacker_direction, direction_edges[2]
-        )
+        edge_positions = direction_edges.get(self.attacker_direction, direction_edges[2])
 
         for row, col in edge_positions:
             coord = HexCoord(row, col)
@@ -270,10 +261,7 @@ class BattleEngine:
             to_reserve: True to put in reserve, False for battlefield
         """
         unit.is_attacker = True
-        if (
-            to_reserve
-            or len(self.get_attacking_units_on_map()) >= self.MAX_UNITS_ON_MAP
-        ):
+        if to_reserve or len(self.get_attacking_units_on_map()) >= self.MAX_UNITS_ON_MAP:
             self.attacker_reserve.add(unit)
         else:
             self.attacking_units.append(unit)
@@ -288,10 +276,7 @@ class BattleEngine:
             to_reserve: True to put in reserve, False for battlefield
         """
         unit.is_attacker = False
-        if (
-            to_reserve
-            or len(self.get_defending_units_on_map()) >= self.MAX_UNITS_ON_MAP
-        ):
+        if to_reserve or len(self.get_defending_units_on_map()) >= self.MAX_UNITS_ON_MAP:
             self.defender_reserve.add(unit)
         else:
             self.defending_units.append(unit)
@@ -388,9 +373,7 @@ class BattleEngine:
         """
         reserve = self.attacker_reserve if is_attacker else self.defender_reserve
         current_count = len(
-            self.get_attacking_units_on_map()
-            if is_attacker
-            else self.get_defending_units_on_map()
+            self.get_attacking_units_on_map() if is_attacker else self.get_defending_units_on_map()
         )
 
         called = []
@@ -476,9 +459,7 @@ class BattleEngine:
         """
         settings = get_settings()
         units = (
-            self.get_attacking_units_on_map()
-            if is_attacker
-            else self.get_defending_units_on_map()
+            self.get_attacking_units_on_map() if is_attacker else self.get_defending_units_on_map()
         )
         total_troops = sum(unit.soldiers for unit in units)
 
@@ -523,9 +504,7 @@ class BattleEngine:
                             if unit.position:
                                 self.grid.remove_unit(unit.position)
 
-                    self.log.append(
-                        f"{side_name} out of rice! {desertion} more troops deserted!"
-                    )
+                    self.log.append(f"{side_name} out of rice! {desertion} more troops deserted!")
             else:
                 # Force retreat mode: Apply retreat if units still present
                 # This handles cases where rice started at 0 or previous retreat didn't clear units
@@ -575,9 +554,7 @@ class BattleEngine:
                             if unit.position:
                                 self.grid.remove_unit(unit.position)
 
-                    self.log.append(
-                        f"{side_name} ran out of rice! {desertion} troops deserted!"
-                    )
+                    self.log.append(f"{side_name} ran out of rice! {desertion} troops deserted!")
 
         return result
 
@@ -614,18 +591,14 @@ class BattleEngine:
             # Check for out of rice and log appropriately
             if attacker_result["out_of_rice"]:
                 if attacker_result["forced_retreat"]:
-                    self.log.append(
-                        f"  *** ATTACKER OUT OF RICE - FORCED TO RETREAT! ***"
-                    )
+                    self.log.append(f"  *** ATTACKER OUT OF RICE - FORCED TO RETREAT! ***")
                 else:
                     self.log.append(
                         f"  *** ATTACKER OUT OF RICE - {attacker_result['desertion']} troops deserted! ***"
                     )
             if defender_result["out_of_rice"]:
                 if defender_result["forced_retreat"]:
-                    self.log.append(
-                        f"  *** DEFENDER OUT OF RICE - FORCED TO RETREAT! ***"
-                    )
+                    self.log.append(f"  *** DEFENDER OUT OF RICE - FORCED TO RETREAT! ***")
                 else:
                     self.log.append(
                         f"  *** DEFENDER OUT OF RICE - {defender_result['desertion']} troops deserted! ***"
@@ -656,9 +629,7 @@ class BattleEngine:
         """
         import random
 
-        transitions = self.WEATHER_TRANSITIONS.get(
-            self.weather, self.WEATHER_TRANSITIONS["sunny"]
-        )
+        transitions = self.WEATHER_TRANSITIONS.get(self.weather, self.WEATHER_TRANSITIONS["sunny"])
 
         r = random.random()
         cumulative = 0.0
@@ -678,9 +649,7 @@ class BattleEngine:
                     hex_obj.extinguish()
                     extinguished.append(coord)
             if extinguished:
-                self.log.append(
-                    f">>> Storm extinguishes all {len(extinguished)} fires!"
-                )
+                self.log.append(f">>> Storm extinguishes all {len(extinguished)} fires!")
 
         self.weather = new_weather
         return new_weather

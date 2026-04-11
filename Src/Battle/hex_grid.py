@@ -99,9 +99,7 @@ class Hex:
         """
         self.coord = coord
         self.terrain = terrain
-        self.terrain_code = (
-            terrain_code  # Store original code for castle/fort differentiation
-        )
+        self.terrain_code = terrain_code  # Store original code for castle/fort differentiation
         self.unit: Optional[Any] = None  # BattleUnit
         self.is_burning = False
         self.fire_age = 0  # Days the fire has been burning

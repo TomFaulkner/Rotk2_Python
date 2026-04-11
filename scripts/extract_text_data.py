@@ -264,9 +264,7 @@ def determine_category(offset, data):
         return "labels"
 
     # Prompts (questions)
-    if "?" in data["chinese"] or any(
-        kw in code_str for kw in ["input", "select", "choose"]
-    ):
+    if "?" in data["chinese"] or any(kw in code_str for kw in ["input", "select", "choose"]):
         return "prompts"
 
     # Messages (results, events)
@@ -326,9 +324,7 @@ def create_translation_template(categories, province_names, officer_names):
                 "category": category,
                 "chinese": item["chinese"],
                 "english": "",  # To be filled by LLM
-                "context": item["usages"][0]["context"]
-                if item["usages"]
-                else "unknown",
+                "context": item["usages"][0]["context"] if item["usages"] else "unknown",
                 "length": item["length"],
                 "files": list(set([u["file"] for u in item["usages"]])),
             }
@@ -450,9 +446,7 @@ def main():
         print()
 
         # Step 5: Create template
-        template = create_translation_template(
-            categories, province_names, officer_names
-        )
+        template = create_translation_template(categories, province_names, officer_names)
         print()
 
         # Step 6: Save output

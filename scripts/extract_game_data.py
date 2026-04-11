@@ -144,9 +144,7 @@ def extract_provinces(Data, Province):
                     "ruler_no": province.RulerNo,
                     "war_ruler_no": getattr(province, "WarRulerNo", None),
                     "governor_offset": getattr(province, "GovernorOffset", None),
-                    "free_officers_offset": getattr(
-                        province, "FreeOfficersOffset", None
-                    ),
+                    "free_officers_offset": getattr(province, "FreeOfficersOffset", None),
                 },
                 "resources": {
                     "gold": getattr(province, "Gold", 0),
@@ -174,11 +172,7 @@ def extract_provinces(Data, Province):
                     "war_province": getattr(province, "WarProvince", None),
                     "transport_target": getattr(province, "TransportTarget", None),
                 },
-                "links": {
-                    "next_province_offset": getattr(
-                        province, "NextProvinceOffset", None
-                    )
-                },
+                "links": {"next_province_offset": getattr(province, "NextProvinceOffset", None)},
             }
 
             provinces.append(province_data)
@@ -214,9 +208,7 @@ def extract_rulers(Data, Ruler, Officer):
                 "name": ruler.RulerSelf.GetName() if ruler.RulerSelf else None,
                 "leader": {
                     "ruler_offset": ruler.RulerSelf.Offset if ruler.RulerSelf else None,
-                    "ruler_name": ruler.RulerSelf.GetName()
-                    if ruler.RulerSelf
-                    else None,
+                    "ruler_name": ruler.RulerSelf.GetName() if ruler.RulerSelf else None,
                 },
                 "advisor": {
                     "advisor_offset": ruler.AdvisorOffset
@@ -238,9 +230,7 @@ def extract_rulers(Data, Ruler, Officer):
                     else [],
                 },
                 "diplomacy": {
-                    "trust_levels": list(ruler.TrustLevel)
-                    if hasattr(ruler, "TrustLevel")
-                    else [],
+                    "trust_levels": list(ruler.TrustLevel) if hasattr(ruler, "TrustLevel") else [],
                     "hostility_levels": list(ruler.HostilityLevel)
                     if hasattr(ruler, "HostilityLevel")
                     else [],
@@ -249,9 +239,7 @@ def extract_rulers(Data, Ruler, Officer):
                 "status": {
                     "magic": ruler.Magic if hasattr(ruler, "Magic") else 0,
                     "marriage": ruler.Marriage if hasattr(ruler, "Marriage") else 0,
-                    "is_wandering": ruler.IsWandering
-                    if hasattr(ruler, "IsWandering")
-                    else False,
+                    "is_wandering": ruler.IsWandering if hasattr(ruler, "IsWandering") else False,
                 },
             }
 
@@ -324,9 +312,7 @@ def extract_terrain_data(Data):
             terrain_data[province_no]["terrain_counts"] = terrain_counts
 
         except Exception as e:
-            print(
-                f"  Warning: Could not extract terrain for province {province_no}: {e}"
-            )
+            print(f"  Warning: Could not extract terrain for province {province_no}: {e}")
             continue
 
     print(f"  ✓ Extracted terrain data for {len(terrain_data)} provinces")
