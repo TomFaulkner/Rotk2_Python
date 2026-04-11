@@ -11,9 +11,9 @@ from typing import TYPE_CHECKING
 import pygame
 
 from .anchor import UIMode
-from .transform import Transform
 from .container import UIContainer
-from .gamepad_handler import GamepadHandler, FocusNavigator
+from .gamepad_handler import FocusNavigator, GamepadHandler
+from .transform import Transform
 
 if TYPE_CHECKING:
     from .component import UIComponent
@@ -196,10 +196,11 @@ class UIManager:
                 return True
             elif event.key == pygame.K_ESCAPE:
                 # Close submenu if open, otherwise exit
-                if self.current_screen and hasattr(self.current_screen, "close_submenu"):
-                    if self.current_screen.close_submenu():
-                        return True
-                return False  # Let caller handle exit
+                return (
+                    self.current_screen
+                    and hasattr(self.current_screen, "close_submenu")
+                    and self.current_screen.close_submenu()
+                )
             elif event.key in (pygame.K_RETURN, pygame.K_SPACE):
                 # Activate focused component
                 if self.focused_component and hasattr(self.focused_component, "on_click"):
@@ -258,9 +259,9 @@ class UIManager:
         if (
             hasattr(self.current_screen, "is_submenu_open")
             and self.current_screen.is_submenu_open()
+            and hasattr(self.current_screen, "_submenu_container")
         ):
-            if hasattr(self.current_screen, "_submenu_container"):
-                container = self.current_screen._submenu_container
+            container = self.current_screen._submenu_container
 
         navigator = FocusNavigator(container)
         next_component = navigator.find_next_focus(self.focused_component, direction)
@@ -294,6 +295,15 @@ class UIManager:
         buttons = self.gamepad.update(dt)
 
         for button in buttons:
+            if (
+                self.current_screen
+                and hasattr(self.current_screen, "handles_own_navigation")
+                and self.current_screen.handles_own_navigation
+                and hasattr(self.current_screen, "handle_gamepad_button")
+                and self.current_screen.handle_gamepad_button(button)
+            ):
+                continue
+
             # Navigation
             if button.name in ("DPAD_UP", "LEFT_STICK_UP"):
                 self.move_focus("up")
@@ -311,11 +321,14 @@ class UIManager:
                     self.focused_component.on_click()
             elif button.name == "B":
                 # Back action - close submenu if open
-                if self.current_screen and hasattr(self.current_screen, "close_submenu"):
-                    if self.current_screen.close_submenu():
-                        pass  # Submenu was closed
-                    elif hasattr(self.current_screen, "on_back"):
-                        self.current_screen.on_back()
+                if (
+                    self.current_screen
+                    and hasattr(self.current_screen, "close_submenu")
+                    and self.current_screen.close_submenu()
+                ):
+                    continue
+                if self.current_screen and hasattr(self.current_screen, "on_back"):
+                    self.current_screen.on_back()
 
     def render(self, surface: pygame.Surface) -> None:
         """

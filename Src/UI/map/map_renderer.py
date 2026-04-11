@@ -105,7 +105,7 @@ class MapRenderer:
 
     def _init_default_rulers(self) -> None:
         """Initialize all provinces as unruled (-1)."""
-        for province_id in self.shape_manager.shapes.keys():
+        for province_id in self.shape_manager.shapes:
             self.province_rulers[province_id] = -1
 
     def load_terrain_background(self, image_path: str) -> bool:
@@ -319,12 +319,29 @@ class MapRenderer:
             surface, self.HIGHLIGHT_COLOR, points, width=self.HIGHLIGHT_BORDER_WIDTH
         )
 
-    def render(self, surface: pygame.Surface, transform: Transform) -> None:
+    def _get_screen_map_origin(
+        self, transform: Transform, screen_offset: tuple[int, int] = (0, 0)
+    ) -> tuple[int, int]:
+        """Get the top-left screen position where the map is drawn."""
+        scale = transform.get_scale()
+        letterbox = transform.get_letterbox_rect()
+        map_offset_x, map_offset_y = self.DEFAULT_MAP_OFFSET
+        screen_x = int(letterbox.x + map_offset_x * scale + screen_offset[0])
+        screen_y = int(letterbox.y + map_offset_y * scale + screen_offset[1])
+        return (screen_x, screen_y)
+
+    def render(
+        self,
+        surface: pygame.Surface,
+        transform: Transform,
+        screen_offset: tuple[int, int] = (0, 0),
+    ) -> None:
         """Render the map to a surface.
 
         Args:
             surface: Target surface (screen or buffer)
             transform: Transform for scaling from design to screen coordinates
+            screen_offset: Additional screen-space offset in pixels
         """
         # Update cache if needed
         if self._cache_dirty or self._cached_map is None:
@@ -333,11 +350,7 @@ class MapRenderer:
 
         # Get the letterbox/scaling info
         scale = transform.get_scale()
-        letterbox = transform.get_letterbox_rect()
-
-        # Calculate map position within the letterboxed area
-        # Optimized for Steam Deck 1280x800 - centers the map with minimal padding
-        map_offset_x, map_offset_y = self.DEFAULT_MAP_OFFSET
+        screen_x, screen_y = self._get_screen_map_origin(transform, screen_offset)
 
         # Scale the cached map to screen size
         scaled_width = int(self.design_width * scale)
@@ -347,10 +360,6 @@ class MapRenderer:
             scaled_map = pygame.transform.scale(self._cached_map, (scaled_width, scaled_height))
         else:
             scaled_map = self._cached_map
-
-        # Position on screen
-        screen_x = int(letterbox.x + map_offset_x * scale)
-        screen_y = int(letterbox.y + map_offset_y * scale)
 
         # Draw the base map
         surface.blit(scaled_map, (screen_x, screen_y))
@@ -399,19 +408,25 @@ class MapRenderer:
         )
 
     def get_province_at_screen_point(
-        self, screen_point: tuple[int, int], transform: Transform
+        self,
+        screen_point: tuple[int, int],
+        transform: Transform,
+        screen_offset: tuple[int, int] = (0, 0),
     ) -> int | None:
         """Find which province is at a screen position.
 
         Args:
             screen_point: Screen coordinates (x, y)
             transform: Transform for coordinate conversion
+            screen_offset: Additional screen-space offset in pixels
 
         Returns:
             Province ID or None if not on a province
         """
+        adjusted_point = (screen_point[0] - screen_offset[0], screen_point[1] - screen_offset[1])
+
         # Convert screen to virtual coordinates
-        virtual_x, virtual_y = transform.to_virtual(screen_point)
+        virtual_x, virtual_y = transform.to_virtual(adjusted_point)
 
         # Adjust for map offset within virtual space
         map_offset_x, map_offset_y = self.DEFAULT_MAP_OFFSET
@@ -428,14 +443,20 @@ class MapRenderer:
         # Find province at point
         return self.shape_manager.get_province_at_point(map_x, map_y)
 
-    def get_province_center_screen(
-        self, province_id: int, transform: Transform
+    def get_province_screen_position(
+        self,
+        province_id: int,
+        transform: Transform,
+        anchor: str = "center",
+        screen_offset: tuple[int, int] = (0, 0),
     ) -> tuple[int, int] | None:
-        """Get the screen coordinates of a province center.
+        """Get the screen coordinates of a province anchor point.
 
         Args:
             province_id: Province number
             transform: Transform for coordinate conversion
+            anchor: Either "center" or "number"
+            screen_offset: Additional screen-space offset in pixels
 
         Returns:
             Screen coordinates (x, y) or None if province not found
@@ -444,15 +465,55 @@ class MapRenderer:
         if not shape:
             return None
 
+        if anchor == "number":
+            map_x, map_y = shape.number_position
+        else:
+            map_x, map_y = shape.center
+
         scale = transform.get_scale()
-        letterbox = transform.get_letterbox_rect()
-
-        map_offset_x, map_offset_y = self.DEFAULT_MAP_OFFSET
-
-        screen_x = int(letterbox.x + (map_offset_x + shape.center[0]) * scale)
-        screen_y = int(letterbox.y + (map_offset_y + shape.center[1]) * scale)
+        screen_origin_x, screen_origin_y = self._get_screen_map_origin(transform, screen_offset)
+        screen_x = int(screen_origin_x + map_x * scale)
+        screen_y = int(screen_origin_y + map_y * scale)
 
         return (screen_x, screen_y)
+
+    def get_province_center_screen(
+        self,
+        province_id: int,
+        transform: Transform,
+        screen_offset: tuple[int, int] = (0, 0),
+    ) -> tuple[int, int] | None:
+        """Get the screen coordinates of a province center."""
+        return self.get_province_screen_position(
+            province_id, transform, anchor="center", screen_offset=screen_offset
+        )
+
+    def get_province_number_screen(
+        self,
+        province_id: int,
+        transform: Transform,
+        screen_offset: tuple[int, int] = (0, 0),
+    ) -> tuple[int, int] | None:
+        """Get the screen coordinates of a province number position."""
+        return self.get_province_screen_position(
+            province_id, transform, anchor="number", screen_offset=screen_offset
+        )
+
+    def render_province_highlight(
+        self,
+        surface: pygame.Surface,
+        province_id: int,
+        transform: Transform,
+        screen_offset: tuple[int, int] = (0, 0),
+    ) -> None:
+        """Render a highlight overlay for a single province."""
+        shape = self.shape_manager.get_shape(province_id)
+        if not shape:
+            return
+
+        scale = transform.get_scale()
+        screen_x, screen_y = self._get_screen_map_origin(transform, screen_offset)
+        self._render_highlight_scaled(surface, shape, scale, screen_x, screen_y)
 
 
 def test_renderer():
