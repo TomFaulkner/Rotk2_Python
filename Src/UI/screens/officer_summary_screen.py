@@ -7,11 +7,11 @@ from typing import TYPE_CHECKING
 
 import pygame
 
-from officer_display import get_officer_display_name
 from UI.components.basic import UIButton, UILabel
 from UI.core.anchor import Anchor
 from UI.core.container import UIContainer
 from UI.core.gamepad_handler import GamepadButton
+from services import province_command_service as province_service
 
 if TYPE_CHECKING:
     from Officer import Officer
@@ -36,7 +36,7 @@ class OfficerSummaryScreen(UIContainer):
 
         self.province = province
         self._on_back_callback = on_back
-        self._officers = self.province.GetOfficerList()
+        self._officer_rows = province_service.build_officer_rows(self.province.No)
         self._page = 0
         self._row_labels: list[list[UILabel]] = []
         self._create_ui()
@@ -176,27 +176,27 @@ class OfficerSummaryScreen(UIContainer):
         return row_labels
 
     def _get_page_count(self) -> int:
-        return max(1, (len(self._officers) + self.PAGE_SIZE - 1) // self.PAGE_SIZE)
+        return max(1, (len(self._officer_rows) + self.PAGE_SIZE - 1) // self.PAGE_SIZE)
 
     def _refresh_page(self) -> None:
         start = self._page * self.PAGE_SIZE
-        page_officers = self._officers[start : start + self.PAGE_SIZE]
-        for row_labels, officer in zip(self._row_labels, page_officers, strict=False):
+        page_rows = self._officer_rows[start : start + self.PAGE_SIZE]
+        for row_labels, officer_row in zip(self._row_labels, page_rows, strict=False):
             values = [
-                self._get_officer_name(officer),
-                str(officer.Loyalty),
-                str(officer.Int),
-                str(officer.War),
-                str(officer.Chm),
-                str(getattr(officer, "Age", 0)),
-                f"{officer.Soldiers:,}",
-                str(officer.Arms),
-                str(officer.TrainingLevel),
+                officer_row.name,
+                str(officer_row.loyalty),
+                str(officer_row.intelligence),
+                str(officer_row.war),
+                str(officer_row.charm),
+                str(officer_row.service),
+                f"{officer_row.soldiers:,}",
+                str(officer_row.arms),
+                str(officer_row.training),
             ]
             for label, value in zip(row_labels, values, strict=True):
                 label.text = value
 
-        for row_labels in self._row_labels[len(page_officers) :]:
+        for row_labels in self._row_labels[len(page_rows) :]:
             for label in row_labels:
                 label.text = ""
 
@@ -213,9 +213,6 @@ class OfficerSummaryScreen(UIContainer):
             return
         self._page += 1
         self._refresh_page()
-
-    def _get_officer_name(self, officer: Officer) -> str:
-        return get_officer_display_name(officer)
 
     def _on_back(self) -> None:
         if self._on_back_callback:

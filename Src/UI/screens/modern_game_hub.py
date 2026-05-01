@@ -7,15 +7,15 @@ from typing import TYPE_CHECKING
 import pygame
 
 from Officer import Officer
-from Province import Province
-from Ruler import Ruler
 from UI.core.manager import UIManager
 from UI.screens.officer_list_screen import OfficerListScreen
+from UI.screens.internal_affairs_action_screen import InternalAffairsActionScreen
 from UI.screens.officer_selection_screen import OfficerSelectionScreen
 from UI.screens.officer_summary_screen import OfficerSummaryScreen
 from UI.screens.other_province_selection_screen import OtherProvinceSelectionScreen
 from UI.screens.snes_province_screen import SnesProvinceScreen
 from UI.screens.territory_screen import TerritoryScreen
+from services import province_command_service as province_service
 
 if TYPE_CHECKING:
     from UI.core.transform import Transform
@@ -35,7 +35,7 @@ class ModernGameHub:
 
     def refresh(self) -> None:
         """Rebuild the province hub from the current active province."""
-        province = Province.FromSequence(Province.GetActiveNo())
+        province = province_service.get_active_province()
         self._screen = SnesProvinceScreen(province)
         self._screen.set_action_callback(self._handle_action)
 
@@ -49,13 +49,22 @@ class ModernGameHub:
             self._show_other_province_selector()
             return
         if action == "summary":
-            self._show_officer_summary(Province.GetActiveNo(), self.refresh)
+            self._show_officer_summary(province_service.get_active_province_no(), self.refresh)
             return
         if action == "general":
-            self._show_officer_list(Province.GetActiveNo(), self.refresh)
+            self._show_officer_list(province_service.get_active_province_no(), self.refresh)
             return
         if action == "territory":
             self._show_territory(self.refresh)
+            return
+        if action == "internal_land":
+            self._show_improve_land(self.refresh)
+            return
+        if action == "internal_flood":
+            self._show_flood_control(self.refresh)
+            return
+        if action == "internal_loyalty":
+            self._show_give_food(self.refresh)
             return
 
         print(f"Unhandled modern hub action: {action}")
@@ -63,15 +72,13 @@ class ModernGameHub:
     def _show_other_province_selector(self) -> None:
         """Open province selection, then require an officer only for foreign provinces."""
         selector = OtherProvinceSelectionScreen()
-        active_ruler_no = Ruler.GetActiveNo()
 
         def on_select(province_no: int | None) -> None:
             if province_no is None:
                 self.refresh()
                 return
 
-            selected_province = Province.FromSequence(province_no)
-            if selected_province.RulerNo == active_ruler_no:
+            if province_service.can_view_province_freely(province_no):
                 self._show_other_province_view(province_no)
                 return
 
@@ -86,10 +93,9 @@ class ModernGameHub:
 
     def _show_other_province_officer_picker(self, province_no: int) -> None:
         """Choose the officer who will spend their action to inspect a foreign province."""
-        active_province = Province.FromSequence(Province.GetActiveNo())
-        available_officers = [
-            officer for officer in active_province.GetOfficerList() if officer.CanAction()
-        ]
+        available_officers = province_service.get_actionable_officers(
+            province_service.get_active_province_no()
+        )
 
         if not available_officers:
             print("No officers can act this month.")
@@ -121,12 +127,12 @@ class ModernGameHub:
             self._show_other_province_selector()
             return
 
-        officer.SetActionStatus()
+        province_service.consume_action_for_foreign_view(province_no, officer)
         self._show_other_province_view(province_no)
 
     def _show_other_province_view(self, province_no: int) -> None:
         """Show a restricted province view for a non-active province."""
-        province = Province.FromSequence(province_no)
+        province = province_service.get_province(province_no)
         view_screen = SnesProvinceScreen(
             province,
             enabled_menus={"view"},
@@ -156,7 +162,7 @@ class ModernGameHub:
 
     def _show_officer_summary(self, province_no: int, on_back) -> None:
         """Show the combined officer summary screen for a province."""
-        province = Province.FromSequence(province_no)
+        province = province_service.get_province(province_no)
         summary_screen = OfficerSummaryScreen(province, on_back=on_back)
 
         manager = UIManager.get_instance()
@@ -166,7 +172,7 @@ class ModernGameHub:
 
     def _show_officer_list(self, province_no: int, on_back) -> None:
         """Show the officer list screen for a province."""
-        province = Province.FromSequence(province_no)
+        province = province_service.get_province(province_no)
         officer_screen = OfficerListScreen(province, on_back=on_back)
 
         manager = UIManager.get_instance()
@@ -182,6 +188,60 @@ class ModernGameHub:
         manager.root_component = territory_screen
         manager.current_screen = territory_screen
         self._screen = territory_screen
+
+    def _show_improve_land(self, on_back) -> None:
+        """Show the modern Improve Land flow."""
+        screen = InternalAffairsActionScreen(
+            province_no=province_service.get_active_province_no(),
+            title="Improve Land",
+            action_name="Improve Land",
+            resource_name="Gold",
+            stat_name="Land",
+            calculate_estimate=province_service.calculate_improve_land,
+            apply_action=province_service.apply_improve_land_with_officers,
+            on_back=on_back,
+        )
+
+        manager = UIManager.get_instance()
+        manager.root_component = screen
+        manager.current_screen = screen
+        self._screen = screen
+
+    def _show_give_food(self, on_back) -> None:
+        """Show the modern Give Food flow."""
+        screen = InternalAffairsActionScreen(
+            province_no=province_service.get_active_province_no(),
+            title="Give Food",
+            action_name="Give Food",
+            resource_name="Food",
+            stat_name="Loyalty",
+            calculate_estimate=province_service.calculate_give_food,
+            apply_action=province_service.apply_give_food_with_officers,
+            on_back=on_back,
+        )
+
+        manager = UIManager.get_instance()
+        manager.root_component = screen
+        manager.current_screen = screen
+        self._screen = screen
+
+    def _show_flood_control(self, on_back) -> None:
+        """Show the modern Flood Control flow."""
+        screen = InternalAffairsActionScreen(
+            province_no=province_service.get_active_province_no(),
+            title="Flood Control",
+            action_name="Flood Control",
+            resource_name="Gold",
+            stat_name="Flood Control",
+            calculate_estimate=province_service.calculate_flood_control,
+            apply_action=province_service.apply_flood_control_with_officers,
+            on_back=on_back,
+        )
+
+        manager = UIManager.get_instance()
+        manager.root_component = screen
+        manager.current_screen = screen
+        self._screen = screen
 
     def handle_event(self, event: pygame.event.Event, transform: Transform | None = None) -> bool:
         """Forward events to the current province screen."""

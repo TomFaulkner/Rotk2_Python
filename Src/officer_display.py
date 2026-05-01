@@ -58,12 +58,42 @@ def _load_raw_name_map() -> dict[str, str]:
 RAW_NAME_MAP = _load_raw_name_map()
 
 
+def _get_raw_officer_name(officer) -> str | None:
+    """Read the officer's raw runtime name token from the legacy buffer."""
+    offset = getattr(officer, "Offset", 0)
+    if not isinstance(offset, int) or offset <= 0:
+        return None
+
+    raw_name = ""
+    index = 0
+    while True:
+        if index > 12:
+            break
+        value = Data.BUF[offset + 0x1C + index]
+        if value == 0:
+            break
+
+        if value < 0x80:
+            raw_name += chr(value)
+            index += 1
+            continue
+
+        pair = value * 256 + Data.BUF[offset + 0x1C + index + 1]
+        if pair not in [0xD8F0, 0xD8F1, 0xD8F2, 0xD8F3, 0xD8F4, 0xD8F5]:
+            raw_name += "$" + str(Data.CNINDEX[pair]) + "$"
+        else:
+            raw_name += "$" + str(pair) + "$"
+        index += 2
+
+    return raw_name or None
+
+
 def get_officer_display_name(officer) -> str:
     """Return a display-safe officer name, preferring English mappings."""
     if not officer:
         return "Unknown"
 
-    raw_name = getattr(officer, "Name", None)
+    raw_name = _get_raw_officer_name(officer) or getattr(officer, "Name", None)
     if isinstance(raw_name, str):
         mapped_name = RAW_NAME_MAP.get(raw_name)
         if mapped_name:

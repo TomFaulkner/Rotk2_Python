@@ -169,6 +169,9 @@ class SnesProvinceScreen(UIContainer):
 
     DEFAULT_ENABLED_SUBMENU_ACTIONS = {
         "general",
+        "internal_flood",
+        "internal_land",
+        "internal_loyalty",
         "other_province",
         "summary",
         "territory",

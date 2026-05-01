@@ -6,14 +6,12 @@ from collections.abc import Callable
 
 import pygame
 
-from Officer import Officer
-from Province import Province
-from Ruler import Ruler
 from officer_display import get_officer_display_name
 from UI.components.basic import UIButton, UILabel
 from UI.core.anchor import Anchor
 from UI.core.container import UIContainer
 from UI.core.gamepad_handler import GamepadButton
+from services import province_command_service as province_service
 
 
 class TerritoryScreen(UIContainer):
@@ -24,23 +22,6 @@ class TerritoryScreen(UIContainer):
     SCREEN_HEIGHT = 800
     PAGE_SIZE = 15
 
-    PROVINCE_NAMES = {
-        "幽州": "Youzhou",
-        "幷州": "Bingzhou",
-        "冀州": "Jizhou",
-        "青州": "Qingzhou",
-        "兗州": "Yanzhou",
-        "司州": "Sizhou",
-        "雍州": "Yongzhou",
-        "涼州": "Liangzhou",
-        "徐州": "Xuzhou",
-        "予州": "Yuzhou",
-        "荊州": "Jingzhou",
-        "揚州": "Yangzhou",
-        "益州": "Yizhou",
-        "交州": "Jiaozhou",
-    }
-
     def __init__(self, on_back: Callable[[], None] | None = None):
         super().__init__(
             position=(0, 0),
@@ -49,9 +30,8 @@ class TerritoryScreen(UIContainer):
             parent=None,
         )
 
-        active_ruler_no = Ruler.GetActiveNo()
-        self._ruler = Ruler.FromNo(active_ruler_no)
-        self._provinces = sorted(Province.GetListByRulerNo(active_ruler_no), key=lambda p: p.No)
+        self._ruler = province_service.get_active_ruler()
+        self._territory_rows = province_service.build_territory_rows()
         self._on_back_callback = on_back
         self._page = 0
         self._row_labels: list[list[UILabel]] = []
@@ -188,36 +168,25 @@ class TerritoryScreen(UIContainer):
         return row_labels
 
     def _get_page_count(self) -> int:
-        return max(1, (len(self._provinces) + self.PAGE_SIZE - 1) // self.PAGE_SIZE)
-
-    def _get_province_name(self, province: Province) -> str:
-        name = province.Name
-        for chinese, english in self.PROVINCE_NAMES.items():
-            if chinese in name:
-                return name.replace(chinese, english)
-        return name
-
-    def _get_governor_name(self, province: Province) -> str:
-        governor = Officer.FromOffset(province.GovernorOffset)
-        return get_officer_display_name(governor)
+        return max(1, (len(self._territory_rows) + self.PAGE_SIZE - 1) // self.PAGE_SIZE)
 
     def _refresh_page(self) -> None:
         start = self._page * self.PAGE_SIZE
-        page_provinces = self._provinces[start : start + self.PAGE_SIZE]
-        for row_labels, province in zip(self._row_labels, page_provinces, strict=False):
+        page_rows = self._territory_rows[start : start + self.PAGE_SIZE]
+        for row_labels, territory_row in zip(self._row_labels, page_rows, strict=False):
             values = [
-                self._get_province_name(province),
-                self._get_governor_name(province),
-                f"{province.Gold:,}",
-                f"{province.Food:,}",
-                f"{province.Soldiers:,}",
-                str(len(province.GetOfficerList())),
-                str(province.Loyalty),
+                territory_row.province_name,
+                territory_row.governor_name,
+                f"{territory_row.gold:,}",
+                f"{territory_row.rice:,}",
+                f"{territory_row.soldiers:,}",
+                str(territory_row.general_count),
+                str(territory_row.loyalty),
             ]
             for label, value in zip(row_labels, values, strict=True):
                 label.text = value
 
-        for row_labels in self._row_labels[len(page_provinces) :]:
+        for row_labels in self._row_labels[len(page_rows) :]:
             for label in row_labels:
                 label.text = ""
 
