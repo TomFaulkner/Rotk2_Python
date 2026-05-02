@@ -70,6 +70,13 @@ class BattleSettings(BaseSettings):
     max_units_on_map: int = 10
     """Maximum units allowed on battlefield per side"""
 
+    # Province command settings
+    reward_turns_per_month: int = 1
+    """How many rewards a provincial leader can issue before their action is consumed"""
+
+    horse_reward_gold_value: int = 100
+    """Effective gold value used when calculating horse rewards"""
+
     # Debug settings
     debug_mode: bool = False
     """Enable debug logging"""

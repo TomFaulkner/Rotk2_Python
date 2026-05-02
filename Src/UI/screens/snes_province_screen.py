@@ -141,7 +141,7 @@ class SnesProvinceScreen(UIContainer):
 
     PERSON_SUBMENU = [
         ("Officer List", "person_officers"),
-        ("Awards", "person_awards"),
+        ("Rewards", "person_awards"),
         ("Search", "person_search"),
     ]
 
@@ -173,6 +173,7 @@ class SnesProvinceScreen(UIContainer):
         "internal_land",
         "internal_loyalty",
         "other_province",
+        "person_awards",
         "summary",
         "territory",
     }

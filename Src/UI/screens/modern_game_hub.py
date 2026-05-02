@@ -13,6 +13,7 @@ from UI.screens.internal_affairs_action_screen import InternalAffairsActionScree
 from UI.screens.officer_selection_screen import OfficerSelectionScreen
 from UI.screens.officer_summary_screen import OfficerSummaryScreen
 from UI.screens.other_province_selection_screen import OtherProvinceSelectionScreen
+from UI.screens.reward_action_screen import RewardActionScreen
 from UI.screens.snes_province_screen import SnesProvinceScreen
 from UI.screens.territory_screen import TerritoryScreen
 from services import province_command_service as province_service
@@ -65,6 +66,9 @@ class ModernGameHub:
             return
         if action == "internal_loyalty":
             self._show_give_food(self.refresh)
+            return
+        if action == "person_awards":
+            self._show_rewards(self.refresh)
             return
 
         print(f"Unhandled modern hub action: {action}")
@@ -235,6 +239,18 @@ class ModernGameHub:
             stat_name="Flood Control",
             calculate_estimate=province_service.calculate_flood_control,
             apply_action=province_service.apply_flood_control_with_officers,
+            on_back=on_back,
+        )
+
+        manager = UIManager.get_instance()
+        manager.root_component = screen
+        manager.current_screen = screen
+        self._screen = screen
+
+    def _show_rewards(self, on_back) -> None:
+        """Show the modern reward flow."""
+        screen = RewardActionScreen(
+            province_no=province_service.get_active_province_no(),
             on_back=on_back,
         )
 
