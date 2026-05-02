@@ -180,12 +180,45 @@ class RewardActionScreen(UIContainer):
             horse_button.enabled = False
         self._buttons.append(horse_button)
 
+        book_button = UIButton(
+            text="Book Reward",
+            position=(30, 320),
+            size=(220, 44),
+            normal_color=(60, 60, 80),
+            hover_color=(80, 80, 110),
+            text_color=(232, 232, 232),
+            font=pygame.font.Font(None, 28),
+            on_click=lambda: self._open_target_selection("book"),
+            parent=self._body,
+        )
+        if not province_service.can_use_book_reward(self._province_no):
+            book_button.enabled = False
+        self._buttons.append(book_button)
+
         UILabel(
             text=(
                 f"Horse rewards use an effective gold value of {province_service.get_horse_reward_gold_value():,}."
             ),
             position=(300, 205),
             size=(700, 32),
+            font=pygame.font.Font(None, 26),
+            color=(190, 190, 190),
+            align="left",
+            parent=self._body,
+        )
+
+        advisor = province_service.get_advisor_in_province(self._province_no)
+        if advisor is not None:
+            book_text = (
+                f"Book rewards use advisor {get_officer_display_name(advisor)} (Int {advisor.Int}) and roll 1-"
+                f"{province_service.get_book_reward_max_increase()} before the advisor cap."
+            )
+        else:
+            book_text = "Book rewards require an advisor in this province."
+        UILabel(
+            text=book_text,
+            position=(300, 320),
+            size=(820, 48),
             font=pygame.font.Font(None, 26),
             color=(190, 190, 190),
             align="left",
@@ -421,6 +454,10 @@ class RewardActionScreen(UIContainer):
             self._estimate = province_service.calculate_gold_reward(
                 self._province_no, self._target_officer, self._spend_amount
             )
+        elif self._reward_type == "book":
+            self._estimate = province_service.calculate_book_reward(
+                self._province_no, self._target_officer
+            )
         else:
             self._estimate = province_service.calculate_horse_reward(
                 self._province_no, self._target_officer
@@ -450,7 +487,7 @@ class RewardActionScreen(UIContainer):
         UILabel(
             text=(
                 f"Cost: {estimate.cost_amount:,} {estimate.cost_field.lower()}  "
-                f"Loyalty: {estimate.current_loyalty} -> {estimate.projected_loyalty}"
+                f"{estimate.stat_name}: {estimate.current_value} -> {estimate.projected_value}"
             ),
             position=(30, 180),
             size=(960, 32),
@@ -460,11 +497,22 @@ class RewardActionScreen(UIContainer):
             parent=self._body,
         )
 
+        if estimate.detail_text:
+            UILabel(
+                text=estimate.detail_text,
+                position=(30, 220),
+                size=(1040, 32),
+                font=pygame.font.Font(None, 24),
+                color=(190, 190, 190),
+                align="left",
+                parent=self._body,
+            )
+
         UILabel(
             text=(
-                "If the reward fails to raise loyalty, the resource and reward use are still spent."
+                "If the reward fails to increase the target, the resource and reward use are still spent."
             ),
-            position=(30, 230),
+            position=(30, 260),
             size=(1000, 32),
             font=pygame.font.Font(None, 24),
             color=(255, 150, 150),
@@ -472,11 +520,22 @@ class RewardActionScreen(UIContainer):
             parent=self._body,
         )
 
+        if estimate.failure_reason:
+            UILabel(
+                text=estimate.failure_reason,
+                position=(30, 300),
+                size=(1040, 32),
+                font=pygame.font.Font(None, 24),
+                color=(255, 180, 140),
+                align="left",
+                parent=self._body,
+            )
+
         UILabel(
             text=(
                 f"After this reward: uses this month {estimate.reward_turns_used}, remaining {estimate.reward_turns_remaining}."
             ),
-            position=(30, 280),
+            position=(30, 340),
             size=(960, 32),
             font=pygame.font.Font(None, 24),
             color=(190, 190, 190),
@@ -486,7 +545,7 @@ class RewardActionScreen(UIContainer):
 
         confirm_button = UIButton(
             text="Confirm",
-            position=(30, 360),
+            position=(30, 420),
             size=(180, 40),
             normal_color=(70, 100, 70),
             hover_color=(90, 130, 90),
@@ -499,7 +558,7 @@ class RewardActionScreen(UIContainer):
 
         change_button = UIButton(
             text="Change",
-            position=(230, 360),
+            position=(230, 420),
             size=(180, 40),
             normal_color=(60, 60, 80),
             hover_color=(80, 80, 110),
@@ -528,6 +587,12 @@ class RewardActionScreen(UIContainer):
                 self._spend_amount,
                 self._estimate,
             )
+        elif self._reward_type == "book":
+            self._estimate = province_service.apply_book_reward(
+                self._province_no,
+                self._target_officer,
+                self._estimate,
+            )
         else:
             self._estimate = province_service.apply_horse_reward(
                 self._province_no,
@@ -544,7 +609,11 @@ class RewardActionScreen(UIContainer):
         if estimate is None:
             return
 
-        result_text = "Loyalty increased." if estimate.success else "No loyalty increase."
+        result_text = (
+            f"{estimate.stat_name} increased."
+            if estimate.success
+            else f"No {estimate.stat_name.lower()} increase."
+        )
         result_color = (100, 220, 120) if estimate.success else (255, 160, 160)
 
         UILabel(
@@ -559,7 +628,7 @@ class RewardActionScreen(UIContainer):
 
         UILabel(
             text=(
-                f"{estimate.target_officer_name}: loyalty {estimate.current_loyalty} -> {estimate.projected_loyalty}."
+                f"{estimate.target_officer_name}: {estimate.stat_name.lower()} {estimate.current_value} -> {estimate.projected_value}."
             ),
             position=(30, 180),
             size=(900, 32),
@@ -569,12 +638,23 @@ class RewardActionScreen(UIContainer):
             parent=self._body,
         )
 
+        if estimate.detail_text:
+            UILabel(
+                text=estimate.detail_text,
+                position=(30, 220),
+                size=(1020, 32),
+                font=pygame.font.Font(None, 24),
+                color=(190, 190, 190),
+                align="left",
+                parent=self._body,
+            )
+
         UILabel(
             text=(
                 f"{estimate.cost_amount:,} {estimate.cost_field.lower()} spent. {result_text} "
                 f"Reward uses remaining this month: {estimate.reward_turns_remaining}."
             ),
-            position=(30, 230),
+            position=(30, 260),
             size=(1020, 32),
             font=pygame.font.Font(None, 26),
             color=(232, 232, 232),
@@ -582,9 +662,20 @@ class RewardActionScreen(UIContainer):
             parent=self._body,
         )
 
+        if estimate.failure_reason:
+            UILabel(
+                text=estimate.failure_reason,
+                position=(30, 300),
+                size=(1020, 32),
+                font=pygame.font.Font(None, 24),
+                color=(255, 180, 140),
+                align="left",
+                parent=self._body,
+            )
+
         back_button = UIButton(
             text="Back to Province",
-            position=(30, 320),
+            position=(30, 380),
             size=(240, 40),
             normal_color=(60, 60, 80),
             hover_color=(80, 80, 110),

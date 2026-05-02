@@ -16,6 +16,7 @@ from UI.screens.other_province_selection_screen import OtherProvinceSelectionScr
 from UI.screens.reward_action_screen import RewardActionScreen
 from UI.screens.snes_province_screen import SnesProvinceScreen
 from UI.screens.territory_screen import TerritoryScreen
+from UI.screens.training_action_screen import TrainingActionScreen
 from services import province_command_service as province_service
 
 if TYPE_CHECKING:
@@ -34,10 +35,10 @@ class ModernGameHub:
         """Return the active province hub screen."""
         return self._screen
 
-    def refresh(self) -> None:
+    def refresh(self, prompt_text: str | None = None) -> None:
         """Rebuild the province hub from the current active province."""
         province = province_service.get_active_province()
-        self._screen = SnesProvinceScreen(province)
+        self._screen = SnesProvinceScreen(province, prompt_text=prompt_text)
         self._screen.set_action_callback(self._handle_action)
 
         manager = UIManager.get_instance()
@@ -67,11 +68,26 @@ class ModernGameHub:
         if action == "internal_loyalty":
             self._show_give_food(self.refresh)
             return
+        if action == "army_training":
+            self._show_training(self.refresh)
+            return
         if action == "person_awards":
             self._show_rewards(self.refresh)
             return
+        if action == "move_next_province":
+            self._advance_to_next_province()
+            return
 
         print(f"Unhandled modern hub action: {action}")
+
+    def _advance_to_next_province(self) -> None:
+        """Advance to the next province in the active ruler's province chain."""
+        result = province_service.advance_to_next_owned_province()
+        if result.advanced:
+            self.refresh()
+            return
+
+        self.refresh("All provinces have acted. Month-end processing is not implemented yet.")
 
     def _show_other_province_selector(self) -> None:
         """Open province selection, then require an officer only for foreign provinces."""
@@ -250,6 +266,18 @@ class ModernGameHub:
     def _show_rewards(self, on_back) -> None:
         """Show the modern reward flow."""
         screen = RewardActionScreen(
+            province_no=province_service.get_active_province_no(),
+            on_back=on_back,
+        )
+
+        manager = UIManager.get_instance()
+        manager.root_component = screen
+        manager.current_screen = screen
+        self._screen = screen
+
+    def _show_training(self, on_back) -> None:
+        """Show the modern training flow."""
+        screen = TrainingActionScreen(
             province_no=province_service.get_active_province_no(),
             on_back=on_back,
         )

@@ -77,6 +77,9 @@ class BattleSettings(BaseSettings):
     horse_reward_gold_value: int = 100
     """Effective gold value used when calculating horse rewards"""
 
+    book_reward_max_increase: int = 1
+    """Maximum random intelligence gain for book rewards before advisor cap is applied"""
+
     # Debug settings
     debug_mode: bool = False
     """Enable debug logging"""

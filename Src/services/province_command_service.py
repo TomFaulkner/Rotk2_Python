@@ -73,7 +73,7 @@ class AdvisorOpinion:
 
 @dataclass(frozen=True)
 class RewardEstimate:
-    """Calculated result for a loyalty reward before or after apply."""
+    """Calculated result for a reward before or after apply."""
 
     province_no: int
     governor: Officer
@@ -83,11 +83,38 @@ class RewardEstimate:
     reward_type: str
     cost_field: str
     cost_amount: int
-    current_loyalty: int
-    projected_loyalty: int
+    stat_name: str
+    current_value: int
+    projected_value: int
     success: bool
     reward_turns_used: int
     reward_turns_remaining: int
+    detail_text: str = ""
+    failure_reason: str = ""
+
+
+@dataclass(frozen=True)
+class TrainingEstimate:
+    """Calculated result for province training before or after apply."""
+
+    province_no: int
+    officer: Officer
+    officer_name: str
+    officer_count: int
+    current_training: int
+    projected_training: int
+    projected_gain: int
+    total_soldier_hundreds: int
+
+
+@dataclass(frozen=True)
+class ProvinceAdvanceResult:
+    """Result of advancing the active province within the ruler's province chain."""
+
+    advanced: bool
+    current_province_no: int
+    next_province_no: int | None
+    reached_end_of_cycle: bool
 
 
 PROVINCE_NAMES = {
@@ -141,6 +168,55 @@ def get_ruler_provinces(ruler_no: int | None = None) -> list[Province]:
     return Province.GetListByRulerNo(target_ruler_no)
 
 
+def set_active_province_no(province_no: int) -> Province:
+    """Set the active province pointer to the given province."""
+    province = Province.FromSequence(province_no)
+    Data.SetWordToOffset(Data.BUF, province.Offset, Data.CURRENT_PROVINCE_OFFSET)
+    return province
+
+
+def advance_to_next_owned_province() -> ProvinceAdvanceResult:
+    """Advance to the next owned province in the active ruler's linked province chain."""
+    current_province_no = get_active_province_no()
+    provinces = get_ruler_provinces()
+    province_numbers = [province.No for province in provinces]
+
+    try:
+        current_index = province_numbers.index(current_province_no)
+    except ValueError:
+        if provinces:
+            next_province = set_active_province_no(provinces[0].No)
+            return ProvinceAdvanceResult(
+                advanced=True,
+                current_province_no=current_province_no,
+                next_province_no=next_province.No,
+                reached_end_of_cycle=False,
+            )
+
+        return ProvinceAdvanceResult(
+            advanced=False,
+            current_province_no=current_province_no,
+            next_province_no=None,
+            reached_end_of_cycle=True,
+        )
+
+    if current_index + 1 >= len(provinces):
+        return ProvinceAdvanceResult(
+            advanced=False,
+            current_province_no=current_province_no,
+            next_province_no=None,
+            reached_end_of_cycle=True,
+        )
+
+    next_province = set_active_province_no(provinces[current_index + 1].No)
+    return ProvinceAdvanceResult(
+        advanced=True,
+        current_province_no=current_province_no,
+        next_province_no=next_province.No,
+        reached_end_of_cycle=False,
+    )
+
+
 def get_province_officers(province_no: int) -> list[Officer]:
     """Return officers currently assigned to a province."""
     return get_province(province_no).GetOfficerList()
@@ -152,13 +228,19 @@ def get_actionable_officers(province_no: int) -> list[Officer]:
 
 
 def get_rewardable_officers(province_no: int) -> list[Officer]:
-    """Return officers who can receive a reward."""
+    """Return officers who can receive a reward.
+
+    Legacy Command11 behavior only hides the governor when the governor is the
+    current ruler. A non-ruler governor remains a valid reward target.
+    """
     province = get_province(province_no)
-    return [
-        officer
-        for officer in province.GetOfficerList()
-        if officer.Offset != province.GovernorOffset
-    ]
+    current_ruler_officer_offset = Data.GetWordFromOffset(
+        Data.BUF, Data.CURRENT_RULER_OFFICER_OFFSET
+    )
+    officer_list = province.GetOfficerList()
+    if province.GovernorOffset == current_ruler_officer_offset:
+        return [officer for officer in officer_list if officer.Offset != province.GovernorOffset]
+    return officer_list
 
 
 def can_view_province_freely(province_no: int) -> bool:
@@ -197,6 +279,12 @@ def get_horse_reward_gold_value() -> int:
     """Return the effective gold value used for horse rewards."""
     settings = get_settings()
     return max(1, settings.horse_reward_gold_value)
+
+
+def get_book_reward_max_increase() -> int:
+    """Return the maximum random increase for book rewards."""
+    settings = get_settings()
+    return max(1, settings.book_reward_max_increase)
 
 
 def _get_current_month_key() -> tuple[int, int]:
@@ -250,6 +338,11 @@ def get_reward_governor(province_no: int) -> Officer:
     return Officer.FromOffset(get_province(province_no).GovernorOffset)
 
 
+def can_use_book_reward(province_no: int) -> bool:
+    """Return True if book reward may be used in the province."""
+    return get_advisor_in_province(province_no) is not None
+
+
 def get_province_name(province: Province) -> str:
     """Return an English-friendly province name."""
     name = province.Name
@@ -300,12 +393,72 @@ def build_territory_rows(ruler_no: int | None = None) -> list[TerritoryRow]:
     return rows
 
 
+def can_train_province(province_no: int) -> bool:
+    """Return True if province training can still improve at least one officer."""
+    return any(officer.TrainingLevel < 100 for officer in get_province_officers(province_no))
+
+
+def get_training_candidates(province_no: int) -> list[Officer]:
+    """Return officers who can lead training this month."""
+    return get_actionable_officers(province_no)
+
+
+def calculate_training(
+    province_no: int, officer: Officer, officers: list[Officer] | None = None
+) -> TrainingEstimate:
+    """Calculate projected province training using the legacy formula."""
+    province_officers = get_province_officers(province_no)
+    acting_officers = _resolve_internal_officers(officers, officer)
+    current_training = min(
+        (
+            min(officer_item.TrainingLevel for officer_item in province_officers)
+            if province_officers
+            else 0
+        ),
+        100,
+    )
+    total_soldier_hundreds = sum(
+        int(officer_item.Soldiers / 100) for officer_item in province_officers
+    )
+    soldier_factor = int(math.sqrt(total_soldier_hundreds + 1))
+    avg_war = _average_officer_stat(acting_officers, "War")
+    projected_gain = int(avg_war * 2 / soldier_factor) if soldier_factor > 0 else 0
+    highest_current_training = max(
+        (officer_item.TrainingLevel for officer_item in province_officers), default=0
+    )
+    projected_training = min(100, highest_current_training + projected_gain)
+    return TrainingEstimate(
+        province_no=province_no,
+        officer=officer,
+        officer_name=get_officer_display_name(officer),
+        officer_count=len(acting_officers),
+        current_training=highest_current_training,
+        projected_training=projected_training,
+        projected_gain=projected_gain,
+        total_soldier_hundreds=total_soldier_hundreds,
+    )
+
+
+def apply_training(
+    province_no: int, officer: Officer, selected_officers: list[Officer] | None = None
+) -> TrainingEstimate:
+    """Apply province training to all officers and consume the trainer's action."""
+    acting_officers = _resolve_internal_officers(selected_officers, officer)
+    estimate = calculate_training(province_no, officer, acting_officers)
+    for province_officer in get_province_officers(province_no):
+        province_officer.TrainingLevel = min(
+            100, province_officer.TrainingLevel + estimate.projected_gain
+        )
+        province_officer.Flush()
+    consume_officer_actions(acting_officers)
+    return estimate
+
+
 def calculate_gold_reward(province_no: int, target_officer: Officer, gold: int) -> RewardEstimate:
     """Calculate projected loyalty change for a gold reward."""
-    province = get_province(province_no)
     governor = get_reward_governor(province_no)
-    current_loyalty = target_officer.Loyalty
-    projected_loyalty = _calculate_reward_loyalty(governor.Chm, current_loyalty, gold)
+    current_value = target_officer.Loyalty
+    projected_value = _calculate_reward_loyalty(governor.Chm, current_value, gold)
     used = get_reward_turns_used(province_no)
     remaining = max(0, get_reward_turn_limit() - (used + 1))
     return RewardEstimate(
@@ -317,11 +470,13 @@ def calculate_gold_reward(province_no: int, target_officer: Officer, gold: int) 
         reward_type="Gold",
         cost_field="Gold",
         cost_amount=gold,
-        current_loyalty=current_loyalty,
-        projected_loyalty=projected_loyalty,
-        success=projected_loyalty > current_loyalty,
+        stat_name="Loyalty",
+        current_value=current_value,
+        projected_value=projected_value,
+        success=projected_value > current_value,
         reward_turns_used=used + 1,
         reward_turns_remaining=remaining,
+        detail_text=f"Governor charm {governor.Chm} determines the loyalty gain.",
     )
 
 
@@ -337,11 +492,88 @@ def calculate_horse_reward(province_no: int, target_officer: Officer) -> RewardE
         reward_type="Horse",
         cost_field="Horse",
         cost_amount=1,
-        current_loyalty=estimate.current_loyalty,
-        projected_loyalty=estimate.projected_loyalty,
+        stat_name=estimate.stat_name,
+        current_value=estimate.current_value,
+        projected_value=estimate.projected_value,
         success=estimate.success,
         reward_turns_used=estimate.reward_turns_used,
         reward_turns_remaining=estimate.reward_turns_remaining,
+        detail_text=(
+            f"Horse rewards use an effective gold value of {get_horse_reward_gold_value():,}."
+        ),
+        failure_reason=estimate.failure_reason,
+    )
+
+
+def calculate_book_reward(province_no: int, target_officer: Officer) -> RewardEstimate:
+    """Calculate projected intelligence change for a book reward."""
+    governor = get_reward_governor(province_no)
+    advisor = get_advisor_in_province(province_no)
+    current_value = target_officer.Int
+    used = get_reward_turns_used(province_no)
+    remaining = max(0, get_reward_turn_limit() - (used + 1))
+
+    if advisor is None:
+        return RewardEstimate(
+            province_no=province_no,
+            governor=governor,
+            governor_name=get_officer_display_name(governor),
+            target_officer=target_officer,
+            target_officer_name=get_officer_display_name(target_officer),
+            reward_type="Book",
+            cost_field="Reward Use",
+            cost_amount=1,
+            stat_name="Intelligence",
+            current_value=current_value,
+            projected_value=current_value,
+            success=False,
+            reward_turns_used=used + 1,
+            reward_turns_remaining=remaining,
+            failure_reason="No advisor is present in this province.",
+        )
+
+    max_allowed = min(100, advisor.Int - 1)
+    if current_value + 1 > max_allowed:
+        return RewardEstimate(
+            province_no=province_no,
+            governor=governor,
+            governor_name=get_officer_display_name(governor),
+            target_officer=target_officer,
+            target_officer_name=get_officer_display_name(target_officer),
+            reward_type="Book",
+            cost_field="Reward Use",
+            cost_amount=1,
+            stat_name="Intelligence",
+            current_value=current_value,
+            projected_value=current_value,
+            success=False,
+            reward_turns_used=used + 1,
+            reward_turns_remaining=remaining,
+            detail_text=f"Advisor {get_officer_display_name(advisor)} has Int {advisor.Int}.",
+            failure_reason="This officer cannot gain even 1 Intelligence without reaching the advisor cap.",
+        )
+
+    rolled_increase = random.randint(1, get_book_reward_max_increase())
+    projected_value = min(current_value + rolled_increase, max_allowed)
+    return RewardEstimate(
+        province_no=province_no,
+        governor=governor,
+        governor_name=get_officer_display_name(governor),
+        target_officer=target_officer,
+        target_officer_name=get_officer_display_name(target_officer),
+        reward_type="Book",
+        cost_field="Reward Use",
+        cost_amount=1,
+        stat_name="Intelligence",
+        current_value=current_value,
+        projected_value=projected_value,
+        success=projected_value > current_value,
+        reward_turns_used=used + 1,
+        reward_turns_remaining=remaining,
+        detail_text=(
+            f"Advisor {get_officer_display_name(advisor)} has Int {advisor.Int}. "
+            f"Book gain rolls 1-{get_book_reward_max_increase()}, capped below the advisor's Int."
+        ),
     )
 
 
@@ -357,7 +589,7 @@ def apply_gold_reward(
     province = get_province(province_no)
     province.Gold -= gold
     province.Flush()
-    target_officer.Loyalty = estimate.projected_loyalty
+    target_officer.Loyalty = estimate.projected_value
     target_officer.Flush()
     used, remaining = _register_reward_use(province_no)
     return RewardEstimate(
@@ -369,11 +601,14 @@ def apply_gold_reward(
         reward_type=estimate.reward_type,
         cost_field=estimate.cost_field,
         cost_amount=estimate.cost_amount,
-        current_loyalty=estimate.current_loyalty,
-        projected_loyalty=estimate.projected_loyalty,
+        stat_name=estimate.stat_name,
+        current_value=estimate.current_value,
+        projected_value=estimate.projected_value,
         success=estimate.success,
         reward_turns_used=used,
         reward_turns_remaining=remaining,
+        detail_text=estimate.detail_text,
+        failure_reason=estimate.failure_reason,
     )
 
 
@@ -388,7 +623,7 @@ def apply_horse_reward(
     province = get_province(province_no)
     province.Horses -= 1
     province.Flush()
-    target_officer.Loyalty = estimate.projected_loyalty
+    target_officer.Loyalty = estimate.projected_value
     target_officer.Flush()
     used, remaining = _register_reward_use(province_no)
     return RewardEstimate(
@@ -400,11 +635,45 @@ def apply_horse_reward(
         reward_type=estimate.reward_type,
         cost_field=estimate.cost_field,
         cost_amount=estimate.cost_amount,
-        current_loyalty=estimate.current_loyalty,
-        projected_loyalty=estimate.projected_loyalty,
+        stat_name=estimate.stat_name,
+        current_value=estimate.current_value,
+        projected_value=estimate.projected_value,
         success=estimate.success,
         reward_turns_used=used,
         reward_turns_remaining=remaining,
+        detail_text=estimate.detail_text,
+        failure_reason=estimate.failure_reason,
+    )
+
+
+def apply_book_reward(
+    province_no: int,
+    target_officer: Officer,
+    estimate: RewardEstimate | None = None,
+) -> RewardEstimate:
+    """Apply a book reward and consume one reward use."""
+    if estimate is None:
+        estimate = calculate_book_reward(province_no, target_officer)
+    target_officer.Int = estimate.projected_value
+    target_officer.Flush()
+    used, remaining = _register_reward_use(province_no)
+    return RewardEstimate(
+        province_no=estimate.province_no,
+        governor=estimate.governor,
+        governor_name=estimate.governor_name,
+        target_officer=estimate.target_officer,
+        target_officer_name=estimate.target_officer_name,
+        reward_type=estimate.reward_type,
+        cost_field=estimate.cost_field,
+        cost_amount=estimate.cost_amount,
+        stat_name=estimate.stat_name,
+        current_value=estimate.current_value,
+        projected_value=estimate.projected_value,
+        success=estimate.success,
+        reward_turns_used=used,
+        reward_turns_remaining=remaining,
+        detail_text=estimate.detail_text,
+        failure_reason=estimate.failure_reason,
     )
 
 

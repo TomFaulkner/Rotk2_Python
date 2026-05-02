@@ -152,6 +152,7 @@ class SnesProvinceScreen(UIContainer):
     ]
 
     MOVE_SUBMENU = [
+        ("Next Province", "move_next_province"),
         ("Move Officers", "move_officers"),
         ("Transport", "move_transport"),
         ("Travel", "move_travel"),
@@ -168,10 +169,12 @@ class SnesProvinceScreen(UIContainer):
     DEFAULT_ENABLED_MENUS = {"view", "army", "person", "internal", "move"}
 
     DEFAULT_ENABLED_SUBMENU_ACTIONS = {
+        "army_training",
         "general",
         "internal_flood",
         "internal_land",
         "internal_loyalty",
+        "move_next_province",
         "other_province",
         "person_awards",
         "summary",

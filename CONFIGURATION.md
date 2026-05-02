@@ -25,6 +25,11 @@ MAX_BATTLE_DAYS=30
 # Maximum units on battlefield per side
 MAX_UNITS_ON_MAP=10
 
+# Province reward settings
+REWARD_TURNS_PER_MONTH=1
+HORSE_REWARD_GOLD_VALUE=100
+BOOK_REWARD_MAX_INCREASE=1
+
 # Debug mode
 DEBUG_MODE=false
 
@@ -89,8 +94,30 @@ RICE_DEPLETION_MODE=desertion DESERTION_PERCENTAGE=0.25 python3 battle_test.py
 | `DESERTION_PERCENTAGE` | `0.15` | Fraction of troops that desert daily when out of rice (0.15 = 15%) |
 | `MAX_BATTLE_DAYS` | `30` | Maximum days a battle can last |
 | `MAX_UNITS_ON_MAP` | `10` | Maximum units per side on battlefield |
+| `REWARD_TURNS_PER_MONTH` | `1` | How many rewards a provincial leader can issue before their normal action is consumed |
+| `HORSE_REWARD_GOLD_VALUE` | `100` | Effective gold value used in the horse reward formula |
+| `BOOK_REWARD_MAX_INCREASE` | `1` | Maximum random Intelligence gain for book rewards before advisor cap is applied |
 | `DEBUG_MODE` | `false` | Enable debug logging |
 | `LOG_BATTLE_EVENTS` | `true` | Log battle events to console |
+
+## Province Reward Settings
+
+### `REWARD_TURNS_PER_MONTH`
+- Default: `1`
+- Controls how many times a province governor may use the `Rewards` command in a month
+- The governor's normal action is consumed only after this quota is exhausted
+
+### `HORSE_REWARD_GOLD_VALUE`
+- Default: `100`
+- Sets the effective gold value used by horse rewards in the loyalty formula
+- Values above `100` are supported and increase the horse reward's strength
+
+### `BOOK_REWARD_MAX_INCREASE`
+- Default: `1`
+- Book rewards roll a random Intelligence gain from `1` to this value
+- The final result is still capped below the in-province advisor's Intelligence
+- If a higher roll would exceed the advisor cap, the reward still grants the capped increase
+- If even `+1` would reach the advisor cap, the book reward fails but still spends one monthly reward use
 
 ## Programmatic Access
 
