@@ -75,6 +75,13 @@ class RulerSelectionResult:
     ruler_name: str
 
 
+@dataclass
+class RulerSelectionSessionResult:
+    """Structured result returned from multi-ruler selection."""
+
+    selected_rulers: list[RulerSelectionResult]
+
+
 class RulerSelectionScreen(UIContainer):
     """Ruler selection screen with full-screen map and popup overlay."""
 
@@ -96,6 +103,7 @@ class RulerSelectionScreen(UIContainer):
     TEXT_COLOR = (232, 232, 232)
     HIGHLIGHT_COLOR = (100, 200, 100)
     HIGHLIGHT_BORDER = (255, 255, 100)
+    MAX_HUMAN_PLAYERS = 41
 
     def __init__(self):
         """Initialize the ruler selection screen."""
@@ -109,7 +117,8 @@ class RulerSelectionScreen(UIContainer):
         self._selected_province: int | None = None
         self._selected_ruler: str | None = None
         self._selected_result: RulerSelectionResult | None = None
-        self._callback: Callable[[RulerSelectionResult | None], None] | None = None
+        self._selected_rulers: list[RulerSelectionResult] = []
+        self._callback: Callable[[RulerSelectionSessionResult | None], None] | None = None
         self._showing_popup: bool = False
 
         self._playable_provinces: list[int] = self._get_playable_provinces()
@@ -154,7 +163,7 @@ class RulerSelectionScreen(UIContainer):
         )
 
         UILabel(
-            text="Select Your Ruler - Click on Map or Use ↑↓←→ to Navigate",
+            text="Select Human Rulers - Add Players, Then Press Done",
             position=(self.SCREEN_WIDTH // 2, 25),
             size=(1000, 40),
             font=pygame.font.Font(None, 36),
@@ -337,6 +346,29 @@ class RulerSelectionScreen(UIContainer):
             parent=self,
         )
 
+        self._selection_count_label = UILabel(
+            text=self._get_selection_count_text(),
+            position=(self.SCREEN_WIDTH // 2, button_y + button_height // 2),
+            size=(360, 40),
+            font=pygame.font.Font(None, 24),
+            color=self.TEXT_COLOR,
+            align="center",
+            anchor=Anchor.CENTER,
+            parent=self,
+        )
+
+        self._done_button = UIButton(
+            text="Done",
+            position=(self.SCREEN_WIDTH - 30 - button_width * 2 - 20, button_y),
+            size=(button_width, button_height),
+            normal_color=self.BUTTON_SELECT,
+            hover_color=(100, 210, 200),
+            text_color=(0, 0, 0),
+            font=pygame.font.Font(None, 22),
+            on_click=self._on_done,
+            parent=self,
+        )
+
         # Back button
         UIButton(
             text="← Back",
@@ -349,6 +381,20 @@ class RulerSelectionScreen(UIContainer):
             on_click=self._on_back,
             parent=self,
         )
+
+    def _get_selection_count_text(self) -> str:
+        """Return footer text describing selected human rulers."""
+        return f"Selected {len(self._selected_rulers)}/{self.MAX_HUMAN_PLAYERS} human rulers"
+
+    def _update_selection_summary(self) -> None:
+        """Refresh selection count and popup action label."""
+        self._selection_count_label.text = self._get_selection_count_text()
+        if self._selected_result and any(
+            result.ruler_no == self._selected_result.ruler_no for result in self._selected_rulers
+        ):
+            self._popup_select_btn.text = "Remove"
+        else:
+            self._popup_select_btn.text = "Add Player"
 
     def _on_province_changed(self, province_id: int | None) -> None:
         """Update ruler preview state when the selected province changes."""
@@ -396,6 +442,7 @@ class RulerSelectionScreen(UIContainer):
 
         bio = self._build_ruler_bio(province)
         self._popup_bio.text = bio
+        self._update_selection_summary()
 
         # Load and display portrait
         self._update_portrait()
@@ -471,10 +518,27 @@ class RulerSelectionScreen(UIContainer):
                 pass
 
     def _on_confirm_selection(self) -> None:
-        """Confirm ruler selection."""
-        if self._selected_result and self._callback:
-            print(f"Confirmed ruler: {self._selected_ruler}")
-            self._callback(self._selected_result)
+        """Toggle the selected ruler in the human-player list."""
+        if self._selected_result is None:
+            return
+
+        existing_index = next(
+            (
+                index
+                for index, result in enumerate(self._selected_rulers)
+                if result.ruler_no == self._selected_result.ruler_no
+            ),
+            -1,
+        )
+
+        if existing_index >= 0:
+            self._selected_rulers.pop(existing_index)
+        elif len(self._selected_rulers) < self.MAX_HUMAN_PLAYERS:
+            self._selected_rulers.append(self._selected_result)
+
+        print("Selected human rulers:", [result.ruler_name for result in self._selected_rulers])
+        self._update_selection_summary()
+        self._on_cancel_popup()
 
     def _on_cancel_popup(self) -> None:
         """Cancel/hide popup."""
@@ -496,19 +560,25 @@ class RulerSelectionScreen(UIContainer):
         print(f"Random selection: {self._selected_ruler} (Province {self._selected_province})")
         self._show_popup()
 
+    def _on_done(self) -> None:
+        """Finish multi-ruler selection and return chosen rulers."""
+        if self._callback is None or not self._selected_rulers:
+            return
+        self._callback(RulerSelectionSessionResult(selected_rulers=self._selected_rulers.copy()))
+
     def _on_back(self) -> None:
         """Handle back button."""
         print("Back to scenario selection")
         if self._callback:
             self._callback(None)
 
-    def set_callback(self, callback: Callable[[RulerSelectionResult | None], None]) -> None:
+    def set_callback(self, callback: Callable[[RulerSelectionSessionResult | None], None]) -> None:
         """Set callback for ruler selection."""
         self._callback = callback
 
-    def get_selected_ruler(self) -> RulerSelectionResult | None:
-        """Get the selected ruler result."""
-        return self._selected_result
+    def get_selected_rulers(self) -> list[RulerSelectionResult]:
+        """Get the selected human rulers."""
+        return self._selected_rulers.copy()
 
     def handle_gamepad_button(self, button: GamepadButton) -> bool:
         """Handle gamepad input for province selection and popup navigation."""
@@ -537,6 +607,9 @@ class RulerSelectionScreen(UIContainer):
 
         if button == GamepadButton.B:
             self._on_back()
+            return True
+        if button == GamepadButton.Y:
+            self._on_done()
             return True
 
         return bool(transform and self._province_selector.handle_gamepad_button(button, transform))
@@ -600,6 +673,9 @@ class RulerSelectionScreen(UIContainer):
             if event.key == pygame.K_r:
                 self._on_random()
                 return True
+            if event.key == pygame.K_d:
+                self._on_done()
+                return True
 
         if self._province_selector.handle_event(event, transform):
             return True
@@ -632,13 +708,16 @@ def test_ruler_selection():
     manager.root_component = screen_obj
     manager.current_screen = screen_obj
 
-    selected_ruler = None
+    selected_rulers = None
 
-    def on_select(ruler: RulerSelectionResult | None):
-        nonlocal selected_ruler
-        selected_ruler = ruler
-        if ruler:
-            print(f"\n>>> Ruler selected: {ruler.ruler_name}")
+    def on_select(result: RulerSelectionSessionResult | None):
+        nonlocal selected_rulers
+        selected_rulers = result
+        if result:
+            print(
+                "\n>>> Human rulers selected:",
+                ", ".join(ruler.ruler_name for ruler in result.selected_rulers),
+            )
         else:
             print("\n>>> Back to scenario selection")
 
@@ -681,7 +760,7 @@ def test_ruler_selection():
             except Exception as e:
                 print(f"Event error (non-fatal): {e}")
 
-        if selected_ruler is not None:
+        if selected_rulers is not None:
             running = False
 
         # Update and render

@@ -299,7 +299,7 @@ def start_modern_ui():
     from UI.screens.modern_game_hub import ModernGameHub
     from UI.screens.new_game_options_screen import NewGameOptionsScreen
     from UI.screens.scenario_selection_screen import ScenarioSelectionScreen
-    from UI.screens.ruler_selection_screen import RulerSelectionScreen
+    from UI.screens.ruler_selection_screen import RulerSelectionScreen, RulerSelectionSessionResult
     from UI.core.manager import UIManager
     from UI.core.transform import Transform
 
@@ -450,7 +450,7 @@ def start_modern_ui():
 
             ruler_result = None
 
-            def on_ruler_select(ruler):
+            def on_ruler_select(ruler: RulerSelectionSessionResult | None):
                 nonlocal ruler_result
                 ruler_result = ruler
 
@@ -489,9 +489,13 @@ def start_modern_ui():
                     running = False
 
             if ruler_result:
+                selected_rulers = ruler_result.selected_rulers
                 print(
-                    f"Selected ruler: {ruler_result.ruler_name} "
-                    f"(province {ruler_result.province_no}, ruler {ruler_result.ruler_no})"
+                    "Selected human rulers: "
+                    + ", ".join(
+                        f"{result.ruler_name} (province {result.province_no}, ruler {result.ruler_no})"
+                        for result in selected_rulers
+                    )
                 )
 
                 print("Showing new game options...")
@@ -543,7 +547,8 @@ def start_modern_ui():
                     return
 
                 clear_player_rulers()
-                mark_player_ruler(ruler_result.ruler_no, 1)
+                for player_number, result in enumerate(selected_rulers, start=1):
+                    mark_player_ruler(result.ruler_no, player_number)
                 initialize_new_game_state(
                     level=options_result.level,
                     see_war=options_result.see_war,

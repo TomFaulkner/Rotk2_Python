@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 
-from Data import Data
+from Data import Data, DelegateMode
 from Helper import Helper
 from Province import Province
 from Ruler import Ruler
@@ -77,6 +77,25 @@ def is_human_ruler(ruler_no: int) -> bool:
     return Data.BUF[PLAYER_SEQUENCE_OFFSET + ruler_no] > 0
 
 
+def is_delegated_province(province_no: int) -> bool:
+    """Return True when a province is delegated to its governor."""
+    return Province.GetDelegateStatus(province_no) != DelegateMode.No
+
+
+def get_turn_provinces_for_ruler(
+    ruler_no: int, allow_delegated_fallback: bool = False
+) -> list[Province]:
+    """Return the provinces a ruler should manually visit this turn."""
+    provinces = province_service.get_ruler_provinces(ruler_no)
+    if not is_human_ruler(ruler_no):
+        return provinces
+
+    direct_control = [province for province in provinces if not is_delegated_province(province.No)]
+    if direct_control or not allow_delegated_fallback:
+        return direct_control
+    return provinces
+
+
 def get_ordered_ruler_nos() -> list[int]:
     """Return rulers in the cached monthly play order."""
     offset_to_no = {ruler.Offset: ruler.No for ruler in Ruler.GetList()}
@@ -115,14 +134,35 @@ def set_active_ruler_no(ruler_no: int) -> Ruler:
     return ruler
 
 
-def _set_active_ruler_and_first_province(ruler_no: int) -> tuple[Ruler, Province]:
+def _set_active_ruler_and_first_province(
+    ruler_no: int, allow_delegated_fallback: bool = False
+) -> tuple[Ruler, Province]:
     """Set active pointers to a ruler and that ruler's first owned province."""
     ruler = set_active_ruler_no(ruler_no)
-    provinces = province_service.get_ruler_provinces(ruler_no)
+    provinces = get_turn_provinces_for_ruler(ruler_no, allow_delegated_fallback)
     if not provinces:
         raise ValueError(f"Ruler {ruler_no} has no provinces to activate")
     province = province_service.set_active_province_no(provinces[0].No)
     return ruler, province
+
+
+def _advance_to_next_turn_province(current_ruler_no: int, current_province_no: int) -> int | None:
+    """Advance to the next manually controlled province for the active ruler."""
+    provinces = get_turn_provinces_for_ruler(current_ruler_no)
+    if not provinces:
+        return None
+
+    province_numbers = [province.No for province in provinces]
+    if current_province_no not in province_numbers:
+        next_province = province_service.set_active_province_no(province_numbers[0])
+        return next_province.No
+
+    current_index = province_numbers.index(current_province_no)
+    if current_index + 1 >= len(province_numbers):
+        return None
+
+    next_province = province_service.set_active_province_no(province_numbers[current_index + 1])
+    return next_province.No
 
 
 def reset_monthly_officer_actions() -> None:
@@ -177,25 +217,27 @@ def _find_order_index(ordered_ruler_nos: list[int], current_ruler_no: int) -> in
 
 
 def _find_next_human_ruler(
-    ordered_ruler_nos: list[int], start_index: int
+    ordered_ruler_nos: list[int], start_index: int, allow_delegated_fallback: bool = False
 ) -> tuple[int, int] | None:
     """Return the next human ruler after the given index within the same month."""
     for index in range(start_index + 1, len(ordered_ruler_nos)):
         ruler_no = ordered_ruler_nos[index]
         if not is_human_ruler(ruler_no):
             continue
-        if not province_service.get_ruler_provinces(ruler_no):
+        if not get_turn_provinces_for_ruler(ruler_no, allow_delegated_fallback):
             continue
         return index, ruler_no
     return None
 
 
-def _find_first_human_ruler(ordered_ruler_nos: list[int]) -> tuple[int, int] | None:
+def _find_first_human_ruler(
+    ordered_ruler_nos: list[int], allow_delegated_fallback: bool = False
+) -> tuple[int, int] | None:
     """Return the first human ruler in monthly order."""
     for index, ruler_no in enumerate(ordered_ruler_nos):
         if not is_human_ruler(ruler_no):
             continue
-        if not province_service.get_ruler_provinces(ruler_no):
+        if not get_turn_provinces_for_ruler(ruler_no, allow_delegated_fallback):
             continue
         return index, ruler_no
     return None
@@ -206,17 +248,21 @@ def advance_campaign_turn() -> TurnAdvanceResult:
     current_ruler_no = province_service.get_active_ruler_no()
     current_province_no = province_service.get_active_province_no()
 
-    province_result = province_service.advance_to_next_owned_province()
-    if province_result.advanced and province_result.next_province_no is not None:
+    next_province_no = _advance_to_next_turn_province(current_ruler_no, current_province_no)
+    if next_province_no is not None:
+        message = ""
+        if is_human_ruler(current_ruler_no) and is_delegated_province(current_province_no):
+            message = f"Province {current_province_no} is delegated. Continuing with Province {next_province_no}."
         return TurnAdvanceResult(
             kind="province",
             current_ruler_no=current_ruler_no,
             next_ruler_no=current_ruler_no,
             current_province_no=current_province_no,
-            next_province_no=province_result.next_province_no,
+            next_province_no=next_province_no,
             year=_get_current_year(),
             month=_get_current_month(),
             is_human_ruler=is_human_ruler(current_ruler_no),
+            message=message,
         )
 
     ordered_ruler_nos = get_ordered_ruler_nos()
@@ -258,9 +304,30 @@ def advance_campaign_turn() -> TurnAdvanceResult:
             message=_get_transition_message(ruler, province, include_date=True),
         )
 
+    fallback_human = _find_first_human_ruler(ordered_ruler_nos, allow_delegated_fallback=True)
+    if fallback_human is not None:
+        next_index, fallback_ruler_no = fallback_human
+        set_current_turn_ruler_index(next_index)
+        ruler, province = _set_active_ruler_and_first_province(
+            fallback_ruler_no, allow_delegated_fallback=True
+        )
+        return TurnAdvanceResult(
+            kind="month",
+            current_ruler_no=current_ruler_no,
+            next_ruler_no=fallback_ruler_no,
+            current_province_no=current_province_no,
+            next_province_no=province.No,
+            year=year,
+            month=month,
+            is_human_ruler=True,
+            message=_get_transition_message(ruler, province, include_date=True),
+        )
+
     fallback_ruler_no = ordered_ruler_nos[0] if ordered_ruler_nos else current_ruler_no
     set_current_turn_ruler_index(0)
-    ruler, province = _set_active_ruler_and_first_province(fallback_ruler_no)
+    ruler, province = _set_active_ruler_and_first_province(
+        fallback_ruler_no, allow_delegated_fallback=True
+    )
     return TurnAdvanceResult(
         kind="month",
         current_ruler_no=current_ruler_no,
