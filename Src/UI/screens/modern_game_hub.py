@@ -17,6 +17,7 @@ from UI.screens.reward_action_screen import RewardActionScreen
 from UI.screens.snes_province_screen import SnesProvinceScreen
 from UI.screens.territory_screen import TerritoryScreen
 from UI.screens.training_action_screen import TrainingActionScreen
+from services import campaign_turn_service
 from services import province_command_service as province_service
 
 if TYPE_CHECKING:
@@ -81,13 +82,10 @@ class ModernGameHub:
         print(f"Unhandled modern hub action: {action}")
 
     def _advance_to_next_province(self) -> None:
-        """Advance to the next province in the active ruler's province chain."""
-        result = province_service.advance_to_next_owned_province()
-        if result.advanced:
-            self.refresh()
-            return
-
-        self.refresh("All provinces have acted. Month-end processing is not implemented yet.")
+        """Advance campaign control to the next province, ruler, or month."""
+        result = campaign_turn_service.advance_campaign_turn()
+        prompt_text = result.message or None
+        self.refresh(prompt_text)
 
     def _show_other_province_selector(self) -> None:
         """Open province selection, then require an officer only for foreign provinces."""
