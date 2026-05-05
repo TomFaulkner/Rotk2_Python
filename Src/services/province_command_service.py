@@ -3,15 +3,18 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
+import json
 import math
+from pathlib import Path
 import random
 
+from Data import Data
 from Officer import Officer
 from Province import Province
 from Ruler import Ruler
 from officer_display import get_officer_display_name
-from Data import Data
 from config import get_settings
+from . import officer_state_service
 
 
 @dataclass(frozen=True)
@@ -108,6 +111,45 @@ class TrainingEstimate:
 
 
 @dataclass(frozen=True)
+class SpecialItem:
+    """Special battle-found item metadata."""
+
+    name: str
+    item_type: str
+    description: str
+    stat_name: str = ""
+    stat_attr: str = ""
+    bonus: int = 0
+    effect: str = ""
+    ruler_only: bool = False
+    max_charm: bool = False
+    max_trust: bool = False
+    grants_item_protection: bool = True
+    random_pool: bool = True
+    special_case: str = ""
+
+
+@dataclass(frozen=True)
+class SpecialItemAwardResult:
+    """Result of awarding a special battle-found item."""
+
+    province_no: int
+    province_name: str
+    item_name: str
+    officer: Officer
+    officer_name: str
+    current_loyalty: int
+    projected_loyalty: int
+    stat_name: str
+    current_stat_value: int
+    projected_stat_value: int
+    stat_gain: int
+    advisor_name: str | None = None
+    advisor_text: str = ""
+    detail_text: str = ""
+
+
+@dataclass(frozen=True)
 class ProvinceAdvanceResult:
     """Result of advancing the active province within the ruler's province chain."""
 
@@ -135,6 +177,13 @@ PROVINCE_NAMES = {
 }
 
 _reward_usage_by_month: dict[tuple[int, int, int], int] = {}
+_WAR_SPOILS_FILE = Path(__file__).resolve().parents[2] / "data" / "war_spoils.json"
+_STAT_NAME_MAP = {
+    "intelligence": ("Intelligence", "Int"),
+    "war": ("War", "War"),
+    "charm": ("Charm", "Chm"),
+}
+_special_item_cache: tuple[SpecialItem, ...] | None = None
 
 
 def get_active_province_no() -> int:
@@ -275,6 +324,70 @@ def get_reward_turn_limit() -> int:
     return max(1, settings.reward_turns_per_month)
 
 
+def _load_special_items() -> tuple[SpecialItem, ...]:
+    """Load moddable war-spoils items from JSON once."""
+    global _special_item_cache
+    if _special_item_cache is not None:
+        return _special_item_cache
+
+    with _WAR_SPOILS_FILE.open("r", encoding="utf-8") as item_file:
+        raw_data = json.load(item_file)
+
+    items: list[SpecialItem] = []
+    for item_data in raw_data.get("items", []):
+        stat_key = item_data.get("stat", "")
+        stat_name, stat_attr = _STAT_NAME_MAP.get(stat_key, ("", ""))
+        special_case = item_data.get("special_case", "")
+        items.append(
+            SpecialItem(
+                name=item_data["name"],
+                item_type=item_data.get("type", ""),
+                description=item_data.get("description", ""),
+                stat_name=stat_name,
+                stat_attr=stat_attr,
+                bonus=max(0, int(item_data.get("bonus", 0))),
+                effect=item_data.get("effect", ""),
+                ruler_only=bool(item_data.get("ruler_only", False)),
+                max_charm=bool(item_data.get("max_charm", False)),
+                max_trust=bool(item_data.get("max_trust", False)),
+                grants_item_protection=special_case not in {"medical_book", "seal", "ruler_seal"},
+                random_pool=bool(item_data.get("random_pool", True)),
+                special_case=special_case,
+            )
+        )
+
+    _special_item_cache = tuple(items)
+    return _special_item_cache
+
+
+def get_random_war_spoils_item() -> SpecialItem:
+    """Return a random awardable special item for war spoils."""
+    return random.choice(get_war_spoils_item_pool())
+
+
+def get_war_spoils_item_pool() -> tuple[SpecialItem, ...]:
+    """Return the awardable war-spoils items used by the cheat flow."""
+    return tuple(item for item in _load_special_items() if item.random_pool)
+
+
+def get_special_item_exclusions() -> tuple[str, ...]:
+    """Return special items intentionally excluded from the officer-award flow."""
+    return tuple(item.name for item in _load_special_items() if not item.random_pool)
+
+
+def get_owned_province_numbers(ruler_no: int | None = None) -> list[int]:
+    """Return sorted province numbers owned by the target ruler."""
+    return sorted(province.No for province in get_ruler_provinces(ruler_no))
+
+
+def get_officers_for_special_item(province_no: int, item: SpecialItem) -> list[Officer]:
+    """Return valid officer targets for the given special item."""
+    officers = get_province_officers(province_no)
+    if item.ruler_only:
+        return [officer for officer in officers if officer.IsRuler()]
+    return officers
+
+
 def get_horse_reward_gold_value() -> int:
     """Return the effective gold value used for horse rewards."""
     settings = get_settings()
@@ -336,6 +449,97 @@ def _register_reward_use(province_no: int) -> tuple[int, int]:
 def get_reward_governor(province_no: int) -> Officer:
     """Return the governor who issues province rewards."""
     return Officer.FromOffset(get_province(province_no).GovernorOffset)
+
+
+def preview_special_item_award(
+    province_no: int,
+    target_officer: Officer,
+    item: SpecialItem,
+) -> SpecialItemAwardResult:
+    """Preview the outcome of awarding a special battle-found item."""
+    province = get_province(province_no)
+    ruler = Ruler.FromNo(province.RulerNo)
+    advisor = get_advisor_in_province(province_no)
+    current_stat = getattr(target_officer, item.stat_attr, 0) if item.stat_attr else 0
+
+    projected_stat = current_stat
+    stat_gain = 0
+    if item.max_charm:
+        projected_stat = 100
+        stat_gain = max(0, projected_stat - current_stat)
+    elif item.stat_attr:
+        projected_stat = min(100, current_stat + item.bonus)
+        stat_gain = max(0, projected_stat - current_stat)
+
+    ruler_charm = getattr(ruler.RulerSelf, "Chm", 0) if ruler and ruler.RulerSelf else 0
+    loyalty_gain = min(
+        100 - target_officer.Loyalty,
+        40 + (ruler_charm // 10) + random.randint(0, 5),
+    )
+    projected_loyalty = min(100, target_officer.Loyalty + loyalty_gain)
+
+    advisor_name = get_officer_display_name(advisor) if advisor is not None else None
+    advisor_text = ""
+    if advisor_name:
+        advisor_text = f"Advisor {advisor_name}: This will surely earn loyalty."
+
+    detail_text = item.description
+    if item.effect == "uncapturable":
+        detail_text = f"{item.name} grants capture immunity when fleeing battle."
+    elif item.special_case == "medical_book":
+        detail_text = (
+            "Hua Tuo's Medical Book is treated separately from standard war-spoils awards."
+        )
+    elif item.special_case == "seal":
+        detail_text = f"{item.name} affects ruler credibility in addition to Charm."
+    elif item.special_case == "ruler_seal":
+        detail_text = "Ruler's Seal maxes the ruler's Charm and trust."
+    elif item.stat_name:
+        detail_text = f"{item.name} raises {item.stat_name} by {stat_gain} and sets loyalty to {projected_loyalty}."
+
+    return SpecialItemAwardResult(
+        province_no=province_no,
+        province_name=get_province_name(province),
+        item_name=item.name,
+        officer=target_officer,
+        officer_name=get_officer_display_name(target_officer),
+        current_loyalty=target_officer.Loyalty,
+        projected_loyalty=projected_loyalty,
+        stat_name=item.stat_name,
+        current_stat_value=current_stat,
+        projected_stat_value=projected_stat,
+        stat_gain=stat_gain,
+        advisor_name=advisor_name,
+        advisor_text=advisor_text,
+        detail_text=detail_text,
+    )
+
+
+def apply_special_item_award(
+    province_no: int,
+    target_officer: Officer,
+    item: SpecialItem,
+    preview: SpecialItemAwardResult | None = None,
+) -> SpecialItemAwardResult:
+    """Apply a special battle-found item without consuming any action."""
+    result = preview or preview_special_item_award(province_no, target_officer, item)
+    if item.stat_attr:
+        setattr(target_officer, item.stat_attr, result.projected_stat_value)
+    target_officer.Loyalty = result.projected_loyalty
+    target_officer.Flush()
+    if item.max_trust and target_officer.IsRuler():
+        ruler = Ruler.FromNo(target_officer.RulerNo)
+        if ruler is not None:
+            ruler.TrustRating = 100
+            Data.BUF[ruler.Offset + 6] = 100
+    if item.grants_item_protection:
+        officer_state_service.assign_special_item(
+            target_officer,
+            item.name,
+            target_officer.RulerNo,
+            grants_horse=item.effect == "uncapturable",
+        )
+    return result
 
 
 def can_use_book_reward(province_no: int) -> bool:

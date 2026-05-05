@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from Data import Data
 from Helper import Helper
+from services import officer_state_service
 
 
 SCENARIO_RECORD_SIZE = 0x33AF
@@ -82,6 +83,7 @@ def initialize_new_game_state(level: int, see_war: int, history: int) -> int:
     Data.BUF[UNKNOWN_STARTUP_OFFSET_1] = 5
     Data.BUF[UNKNOWN_STARTUP_OFFSET_2] = 4
 
+    officer_state_service.initialize_runtime_state()
     Helper.MainMap = Helper.GetMap()
     return active_ruler_no
 

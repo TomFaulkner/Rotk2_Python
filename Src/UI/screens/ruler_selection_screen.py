@@ -333,6 +333,26 @@ class RulerSelectionScreen(UIContainer):
         button_width = 150
         button_height = 40
 
+        self._selection_panel = UIContainer(
+            position=(430, self.SCREEN_HEIGHT - 138),
+            size=(420, 76),
+            background_color=(24, 28, 44),
+            border_color=(79, 189, 186),
+            border_width=2,
+            padding=10,
+            parent=self,
+        )
+
+        self._selection_label = UILabel(
+            text="Selected rulers: none",
+            position=(12, 12),
+            size=(396, 52),
+            font=pygame.font.Font(None, 22),
+            color=self.TEXT_COLOR,
+            align="left",
+            parent=self._selection_panel,
+        )
+
         # Random button
         UIButton(
             text="🎲 Random",
@@ -386,9 +406,18 @@ class RulerSelectionScreen(UIContainer):
         """Return footer text describing selected human rulers."""
         return f"Selected {len(self._selected_rulers)}/{self.MAX_HUMAN_PLAYERS} human rulers"
 
+    def _get_selection_list_text(self) -> str:
+        """Return the visible selected-ruler list text."""
+        if not self._selected_rulers:
+            return "Selected rulers: none"
+
+        names = [result.ruler_name for result in self._selected_rulers]
+        return "Selected rulers: " + ", ".join(names[:4]) + (" ..." if len(names) > 4 else "")
+
     def _update_selection_summary(self) -> None:
         """Refresh selection count and popup action label."""
         self._selection_count_label.text = self._get_selection_count_text()
+        self._selection_label.text = self._get_selection_list_text()
         if self._selected_result and any(
             result.ruler_no == self._selected_result.ruler_no for result in self._selected_rulers
         ):

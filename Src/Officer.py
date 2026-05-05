@@ -34,6 +34,10 @@ class Officer(object):
     CanMoveNow = 0
     MonthCannotMove = 0
     xueyuan = 0
+    YearsOfService = 0
+    RewardedItemRulerHistory = ()
+    HasItemProtection = False
+    HasHorse = False
     NextOfficerOffset = 0
     Portrait = 0
     IsUnClaimed = False
@@ -122,6 +126,12 @@ class Officer(object):
         o.CanMoveNow = (buffer[0x02] & 0x0F) != 1
         o.MonthCannotMove = buffer[0x03] >> 4
         o.Portrait = (buffer[0x1B] << 8) + buffer[0x1A] - 1
+        from services import officer_state_service
+
+        o.YearsOfService = officer_state_service.get_years_of_service(o)
+        o.RewardedItemRulerHistory = officer_state_service.get_rewarded_item_ruler_history(o)
+        o.HasItemProtection = officer_state_service.has_item_reward_from_current_ruler(o)
+        o.HasHorse = officer_state_service.has_horse(o)
 
         return o
 

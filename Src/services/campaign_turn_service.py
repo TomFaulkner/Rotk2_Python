@@ -9,6 +9,8 @@ from Helper import Helper
 from Province import Province
 from Ruler import Ruler
 from officer_display import get_officer_display_name
+from . import month_transition_service
+from . import peaceful_ai_service
 from . import province_command_service as province_service
 
 
@@ -167,26 +169,25 @@ def _advance_to_next_turn_province(current_ruler_no: int, current_province_no: i
 
 def reset_monthly_officer_actions() -> None:
     """Clear the monthly action-used bit for all officer records."""
-    for index in range(Data.MaxNumberOfGenerals):
-        offset = Data.OFFICER_START + index * Data.OFFICER_SIZE
-        Data.BUF[offset + 2] &= 0xFE
+    month_transition_service.reset_monthly_officer_actions()
 
 
 def advance_month() -> tuple[int, int]:
     """Advance the in-game month and clear monthly officer actions."""
-    month = _get_current_month() + 1
-    year = _get_current_year()
-    if month >= 12:
-        month = 0
-        year += 1
+    summary = month_transition_service.process_month_transition()
+    return summary.year, summary.month
 
-    Data.BUF[0x44] = year % 256
-    Data.BUF[0x45] = year >> 8
-    Data.BUF[0x46] = month
 
-    reset_monthly_officer_actions()
-    Helper.GetRulersOrder()
-    return year, month
+def _run_peaceful_automation_until_next_human(
+    ordered_ruler_nos: list[int], start_index: int
+) -> tuple[int, int] | None:
+    """Run peaceful automation for later rulers until the next human ruler is found."""
+    for index in range(start_index + 1, len(ordered_ruler_nos)):
+        ruler_no = ordered_ruler_nos[index]
+        peaceful_ai_service.run_peaceful_turn_for_ruler(ruler_no)
+        if is_human_ruler(ruler_no) and get_turn_provinces_for_ruler(ruler_no):
+            return index, ruler_no
+    return None
 
 
 def _get_transition_message(ruler: Ruler, province: Province, include_date: bool = False) -> str:
@@ -214,20 +215,6 @@ def _find_order_index(ordered_ruler_nos: list[int], current_ruler_no: int) -> in
         return current_index
     set_current_turn_ruler_index(0)
     return 0
-
-
-def _find_next_human_ruler(
-    ordered_ruler_nos: list[int], start_index: int, allow_delegated_fallback: bool = False
-) -> tuple[int, int] | None:
-    """Return the next human ruler after the given index within the same month."""
-    for index in range(start_index + 1, len(ordered_ruler_nos)):
-        ruler_no = ordered_ruler_nos[index]
-        if not is_human_ruler(ruler_no):
-            continue
-        if not get_turn_provinces_for_ruler(ruler_no, allow_delegated_fallback):
-            continue
-        return index, ruler_no
-    return None
 
 
 def _find_first_human_ruler(
@@ -267,7 +254,7 @@ def advance_campaign_turn() -> TurnAdvanceResult:
 
     ordered_ruler_nos = get_ordered_ruler_nos()
     current_index = _find_order_index(ordered_ruler_nos, current_ruler_no)
-    next_human = _find_next_human_ruler(ordered_ruler_nos, current_index)
+    next_human = _run_peaceful_automation_until_next_human(ordered_ruler_nos, current_index)
 
     if next_human is not None:
         next_index, next_ruler_no = next_human
@@ -287,7 +274,7 @@ def advance_campaign_turn() -> TurnAdvanceResult:
 
     year, month = advance_month()
     ordered_ruler_nos = get_ordered_ruler_nos()
-    first_human = _find_first_human_ruler(ordered_ruler_nos)
+    first_human = _run_peaceful_automation_until_next_human(ordered_ruler_nos, -1)
     if first_human is not None:
         next_index, next_ruler_no = first_human
         set_current_turn_ruler_index(next_index)

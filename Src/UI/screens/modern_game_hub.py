@@ -17,6 +17,7 @@ from UI.screens.reward_action_screen import RewardActionScreen
 from UI.screens.snes_province_screen import SnesProvinceScreen
 from UI.screens.territory_screen import TerritoryScreen
 from UI.screens.training_action_screen import TrainingActionScreen
+from UI.screens.war_spoils_screen import WarSpoilsScreen
 from services import campaign_turn_service
 from services import province_command_service as province_service
 
@@ -29,6 +30,7 @@ class ModernGameHub:
 
     def __init__(self):
         self._screen: SnesProvinceScreen | None = None
+        self._pending_war_spoils_item = None
         self.refresh()
 
     @property
@@ -109,6 +111,78 @@ class ModernGameHub:
         manager.current_screen = selector
         self._screen = selector
 
+    def _show_war_spoils_announcement(self) -> None:
+        """Show the found-item announcement before province selection."""
+        item = province_service.get_random_war_spoils_item()
+        self._pending_war_spoils_item = item
+        screen = WarSpoilsScreen.for_announcement(
+            item.name,
+            on_continue=self._show_war_spoils_province_selector,
+        )
+        self._set_current_screen(screen)
+
+    def _show_war_spoils_province_selector(self) -> None:
+        """Restrict map selection to the current ruler's provinces for war spoils."""
+        owned_provinces = set(province_service.get_owned_province_numbers())
+        selector = OtherProvinceSelectionScreen(
+            allowed_provinces=owned_provinces,
+            title="War Spoils",
+            info_text="Select the province that will receive this war spoil.",
+        )
+
+        def on_select(province_no: int | None) -> None:
+            if province_no is None:
+                self.refresh()
+                return
+            self._show_war_spoils_officer_picker(province_no)
+
+        selector.set_callback(on_select)
+        self._set_current_screen(selector)
+
+    def _show_war_spoils_officer_picker(self, province_no: int) -> None:
+        """Choose the exact officer who receives the pending war-spoils item."""
+        item = self._pending_war_spoils_item
+        if item is None:
+            self.refresh()
+            return
+
+        officers = province_service.get_officers_for_special_item(province_no, item)
+        if not officers:
+            self.refresh(f"No valid officers in Province {province_no} can receive {item.name}.")
+            return
+
+        picker = OfficerSelectionScreen(
+            officers,
+            title="Choose General",
+            subtitle=f"Select who will receive {item.name} in Province {province_no}.",
+            on_select=lambda officer: self._on_war_spoils_officer_selected(province_no, officer),
+        )
+        self._set_current_screen(picker)
+
+    def _on_war_spoils_officer_selected(self, province_no: int, officer: Officer | None) -> None:
+        """Apply the pending war-spoils item to the selected officer."""
+        if officer is None:
+            self._show_war_spoils_province_selector()
+            return
+
+        item = self._pending_war_spoils_item
+        if item is None:
+            self.refresh()
+            return
+
+        preview = province_service.preview_special_item_award(province_no, officer, item)
+        result = province_service.apply_special_item_award(province_no, officer, item, preview)
+        self._pending_war_spoils_item = None
+        screen = WarSpoilsScreen.for_result(result, on_continue=self.refresh)
+        self._set_current_screen(screen)
+
+    def _set_current_screen(self, screen) -> None:
+        """Install the supplied screen in the shared UI manager."""
+        manager = UIManager.get_instance()
+        manager.root_component = screen
+        manager.current_screen = screen
+        self._screen = screen
+
     def _show_other_province_officer_picker(self, province_no: int) -> None:
         """Choose the officer who will spend their action to inspect a foreign province."""
         available_officers = province_service.get_actionable_officers(
@@ -132,10 +206,7 @@ class ModernGameHub:
             ),
         )
 
-        manager = UIManager.get_instance()
-        manager.root_component = picker
-        manager.current_screen = picker
-        self._screen = picker
+        self._set_current_screen(picker)
 
     def _on_other_province_officer_selected(
         self, province_no: int, officer: Officer | None
@@ -173,39 +244,27 @@ class ModernGameHub:
 
         view_screen.set_action_callback(on_action)
 
-        manager = UIManager.get_instance()
-        manager.root_component = view_screen
-        manager.current_screen = view_screen
-        self._screen = view_screen
+        self._set_current_screen(view_screen)
 
     def _show_officer_summary(self, province_no: int, on_back) -> None:
         """Show the combined officer summary screen for a province."""
         province = province_service.get_province(province_no)
         summary_screen = OfficerSummaryScreen(province, on_back=on_back)
 
-        manager = UIManager.get_instance()
-        manager.root_component = summary_screen
-        manager.current_screen = summary_screen
-        self._screen = summary_screen
+        self._set_current_screen(summary_screen)
 
     def _show_officer_list(self, province_no: int, on_back) -> None:
         """Show the officer list screen for a province."""
         province = province_service.get_province(province_no)
         officer_screen = OfficerListScreen(province, on_back=on_back)
 
-        manager = UIManager.get_instance()
-        manager.root_component = officer_screen
-        manager.current_screen = officer_screen
-        self._screen = officer_screen
+        self._set_current_screen(officer_screen)
 
     def _show_territory(self, on_back) -> None:
         """Show a list of all provinces controlled by the active ruler."""
         territory_screen = TerritoryScreen(on_back=on_back)
 
-        manager = UIManager.get_instance()
-        manager.root_component = territory_screen
-        manager.current_screen = territory_screen
-        self._screen = territory_screen
+        self._set_current_screen(territory_screen)
 
     def _show_improve_land(self, on_back) -> None:
         """Show the modern Improve Land flow."""
@@ -220,10 +279,7 @@ class ModernGameHub:
             on_back=on_back,
         )
 
-        manager = UIManager.get_instance()
-        manager.root_component = screen
-        manager.current_screen = screen
-        self._screen = screen
+        self._set_current_screen(screen)
 
     def _show_give_food(self, on_back) -> None:
         """Show the modern Give Food flow."""
@@ -238,10 +294,7 @@ class ModernGameHub:
             on_back=on_back,
         )
 
-        manager = UIManager.get_instance()
-        manager.root_component = screen
-        manager.current_screen = screen
-        self._screen = screen
+        self._set_current_screen(screen)
 
     def _show_flood_control(self, on_back) -> None:
         """Show the modern Flood Control flow."""
@@ -256,10 +309,7 @@ class ModernGameHub:
             on_back=on_back,
         )
 
-        manager = UIManager.get_instance()
-        manager.root_component = screen
-        manager.current_screen = screen
-        self._screen = screen
+        self._set_current_screen(screen)
 
     def _show_rewards(self, on_back) -> None:
         """Show the modern reward flow."""
@@ -268,10 +318,7 @@ class ModernGameHub:
             on_back=on_back,
         )
 
-        manager = UIManager.get_instance()
-        manager.root_component = screen
-        manager.current_screen = screen
-        self._screen = screen
+        self._set_current_screen(screen)
 
     def _show_training(self, on_back) -> None:
         """Show the modern training flow."""
@@ -280,13 +327,18 @@ class ModernGameHub:
             on_back=on_back,
         )
 
-        manager = UIManager.get_instance()
-        manager.root_component = screen
-        manager.current_screen = screen
-        self._screen = screen
+        self._set_current_screen(screen)
 
     def handle_event(self, event: pygame.event.Event, transform: Transform | None = None) -> bool:
         """Forward events to the current province screen."""
+        if (
+            event.type == pygame.KEYDOWN
+            and event.key == pygame.K_r
+            and pygame.key.get_mods() & pygame.KMOD_CTRL
+            and pygame.key.get_mods() & pygame.KMOD_SHIFT
+        ):
+            self._show_war_spoils_announcement()
+            return True
         if not self._screen:
             return False
         return self._screen.handle_event(event, transform)

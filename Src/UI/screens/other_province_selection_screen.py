@@ -1,4 +1,4 @@
-"""Map-based other-province selection screen."""
+"""Map-based province selection screen."""
 
 from __future__ import annotations
 
@@ -16,14 +16,20 @@ from UI.core.manager import UIManager
 
 
 class OtherProvinceSelectionScreen(UIContainer):
-    """Select any province on the map, then confirm to view it."""
+    """Select provinces on the map, optionally restricted to a supplied set."""
 
     handles_own_navigation = True
 
     SCREEN_WIDTH = 1280
     SCREEN_HEIGHT = 800
 
-    def __init__(self, excluded_provinces: set[int] | None = None):
+    def __init__(
+        self,
+        excluded_provinces: set[int] | None = None,
+        allowed_provinces: set[int] | None = None,
+        title: str = "View Other Province",
+        info_text: str = "Select a province to inspect.",
+    ):
         super().__init__(
             position=(0, 0),
             size=(self.SCREEN_WIDTH, self.SCREEN_HEIGHT),
@@ -34,6 +40,9 @@ class OtherProvinceSelectionScreen(UIContainer):
         self._callback: Callable[[int | None], None] | None = None
         self._selected_province: int | None = None
         self._excluded_provinces = excluded_provinces or set()
+        self._allowed_provinces = allowed_provinces
+        self._title = title
+        self._default_info_text = info_text
 
         self._create_ui()
         self._set_initial_focus()
@@ -55,7 +64,7 @@ class OtherProvinceSelectionScreen(UIContainer):
         )
 
         UILabel(
-            text="View Other Province",
+            text=self._title,
             position=(self.SCREEN_WIDTH // 2, 30),
             size=(600, 40),
             font=pygame.font.Font(None, 40),
@@ -68,11 +77,7 @@ class OtherProvinceSelectionScreen(UIContainer):
         self._selector = UIProvinceSelector(
             position=(20, 70),
             size=(1240, 620),
-            playable_provinces=[
-                province.No
-                for province in Province.GetList()
-                if province.No not in self._excluded_provinces
-            ],
+            playable_provinces=self._get_playable_provinces(),
             on_province_changed=self._on_province_changed,
             on_province_confirmed=self._on_province_confirmed,
             parent=self,
@@ -83,7 +88,7 @@ class OtherProvinceSelectionScreen(UIContainer):
                 self._selector.map_renderer.set_province_ruler(province.No, province.RulerNo)
 
         self._info_label = UILabel(
-            text="Select a province to inspect.",
+            text=self._default_info_text,
             position=(60, 710),
             size=(700, 40),
             font=pygame.font.Font(None, 28),
@@ -107,7 +112,7 @@ class OtherProvinceSelectionScreen(UIContainer):
     def _on_province_changed(self, province_no: int | None) -> None:
         self._selected_province = province_no
         if province_no is None:
-            self._info_label.text = "Select a province to inspect."
+            self._info_label.text = self._default_info_text
             return
 
         province = Province.FromSequence(province_no)
@@ -126,6 +131,17 @@ class OtherProvinceSelectionScreen(UIContainer):
 
     def set_callback(self, callback: Callable[[int | None], None]) -> None:
         self._callback = callback
+
+    def _get_playable_provinces(self) -> list[int]:
+        """Return provinces available for selection."""
+        province_numbers: list[int] = []
+        for province in Province.GetList():
+            if province.No in self._excluded_provinces:
+                continue
+            if self._allowed_provinces is not None and province.No not in self._allowed_provinces:
+                continue
+            province_numbers.append(province.No)
+        return province_numbers
 
     def handle_gamepad_button(self, button: GamepadButton) -> bool:
         """Route gamepad input directly to the map selector."""

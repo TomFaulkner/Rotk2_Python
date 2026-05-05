@@ -576,7 +576,8 @@ def start_modern_ui():
                                 running = False
 
                         try:
-                            manager.handle_event(event)
+                            if not game_hub.handle_event(event, manager.transform):
+                                manager.handle_event(event)
                         except Exception as e:
                             print(f"Event error (non-fatal): {e}")
 
